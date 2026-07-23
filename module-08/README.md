@@ -1,121 +1,121 @@
 ---
 layout: default
-title: "Module 8: Advanced Topics"
+title: "Модуль 8: Продвинутые темы"
 nav_order: 8
-parent: Modules
+parent: Модули
 has_children: true
 has_toc: false
 permalink: /module-08/
 mermaid: true
 ---
 
-# Module 8: Advanced Topics and Real-World Patterns
+# Модуль 8: Продвинутые темы и практические паттерны
 
-## Overview
+## Обзор
 
-Congratulations on reaching the final module! Now that you can build production-ready operators ([Module 7](../module-07/README.md)), it's time to explore advanced topics and real-world patterns. This module covers multi-tenancy, operator composition, stateful application management, and best practices from popular operators.
+Поздравляем с достижением финального модуля! Теперь, когда вы умеете создавать готовые к продакшену операторы ([Модуль 7](../module-07/README.md)), пришло время изучить продвинутые темы и практические паттерны. Этот модуль охватывает мультиарендность, композицию операторов, управление stateful-приложениями и лучшие практики популярных операторов.
 
-**Duration:** 6-7 hours  
-**Prerequisites:** 
-- Completion of all previous modules (Modules 1-7)
-- Production-ready operator from Module 7
-- Understanding of advanced Kubernetes concepts
+**Продолжительность:** 6–7 часов  
+**Предварительные требования:** 
+- Завершение всех предыдущих модулей (Модули 1–7)
+- Готовый к продакшену оператор из Модуля 7
+- Понимание продвинутых концепций Kubernetes
 
-## Learning Objectives
+## Цели обучения
 
-By the end of this module, you will:
+К концу этого модуля вы:
 
-- Build cluster-scoped and multi-tenant operators
-- Compose multiple operators together
-- Manage stateful applications with backups and migrations
-- Understand real-world operator patterns
-- Apply best practices from popular operators
+- Научитесь создавать операторы с областью действия на весь кластер и мультиарендные операторы
+- Будете композировать несколько операторов вместе
+- Научитесь управлять stateful-приложениями с резервным копированием и миграциями
+- Разберётесь в практических паттернах операторов
+- Примените лучшие практики популярных операторов
 
-## Module Structure
+## Структура модуля
 
-1. **[Lesson 8.1: Multi-Tenancy and Namespace Isolation](lessons/01-multi-tenancy.md)**
-   - [Lab 8.1: Building Multi-Tenant Operator](labs/lab-01-multi-tenancy.md)
+1. **[Урок 8.1: Мультиарендность и изоляция пространств имён](lessons/01-multi-tenancy.md)**
+   - [Лабораторная 8.1: Создание мультиарендного оператора](labs/lab-01-multi-tenancy.md)
 
-2. **[Lesson 8.2: Operator Composition](lessons/02-operator-composition.md)**
-   - [Lab 8.2: Composing Operators](labs/lab-02-operator-composition.md)
+2. **[Урок 8.2: Композиция операторов](lessons/02-operator-composition.md)**
+   - [Лабораторная 8.2: Композиция операторов](labs/lab-02-operator-composition.md)
 
-3. **[Lesson 8.3: Stateful Application Management](lessons/03-stateful-applications.md)**
-   - [Lab 8.3: Managing Stateful Applications](labs/lab-03-stateful-applications.md)
+3. **[Урок 8.3: Управление stateful-приложениями](lessons/03-stateful-applications.md)**
+   - [Лабораторная 8.3: Управление stateful-приложениями](labs/lab-03-stateful-applications.md)
 
-4. **[Lesson 8.4: Real-World Patterns and Best Practices](lessons/04-real-world-patterns.md)**
-   - [Lab 8.4: Final Project](labs/lab-04-final-project.md)
+4. **[Урок 8.4: Практические паттерны и лучшие практики](lessons/04-real-world-patterns.md)**
+   - [Лабораторная 8.4: Финальный проект](labs/lab-04-final-project.md)
 
-## Prerequisites Check
+## Проверка предварительных требований
 
-Before starting, ensure you've completed:
+Перед началом убедитесь, что вы завершили:
 
-- ✅ [Module 7](../module-07/README.md): Production-ready operator
-- ✅ Have a working operator with all features
-- ✅ Understand production deployment
-- ✅ Ready for advanced topics
+- ✅ [Модуль 7](../module-07/README.md): готовый к продакшену оператор
+- ✅ Имеете рабочий оператор со всеми возможностями
+- ✅ Понимаете развёртывание в продакшене
+- ✅ Готовы к продвинутым темам
 
-If you haven't completed Module 7, start with [Module 7: Production Considerations](../module-07/README.md).
+Если вы не завершили Модуль 7, начните с [Модуля 7: Подготовка к продакшену](../module-07/README.md).
 
-## What You'll Build
+## Что вы создадите
 
-Throughout this module, you'll extend your Database operator with:
+На протяжении этого модуля вы расширите свой оператор Database, добавив:
 
-- A new cluster-scoped ClusterDatabase API for multi-tenant support
-- Backup and restore functionality
-- Advanced stateful application patterns
-- Real-world best practices
+- Новый API ClusterDatabase с областью действия на весь кластер для поддержки мультиарендности
+- Функциональность резервного копирования и восстановления
+- Продвинутые паттерны stateful-приложений
+- Практические лучшие практики
 
-## Setup
+## Настройка
 
-Before starting this module:
+Перед началом этого модуля:
 
-1. **Have your production-ready operator from Module 7:**
-   - Should be packaged and deployed
-   - Should have HA and security configured
-   - Ready for advanced features
+1. **Подготовьте свой готовый к продакшену оператор из Модуля 7:**
+   - Должен быть упакован и развёрнут
+   - Должны быть настроены HA и безопасность
+   - Готов к продвинутым возможностям
 
-2. **Ensure development environment is ready:**
+2. **Убедитесь, что среда разработки готова:**
    ```bash
    ./scripts/setup-dev-environment.sh
    ```
 
-3. **Have a kind cluster running:**
+3. **Запущенный кластер kind:**
    ```bash
    ./scripts/setup-kind-cluster.sh
    ```
 
-## Hands-on Labs
+## Практические лабораторные работы
 
-Each lesson includes hands-on exercises that add advanced features to your operator.
+Каждый урок включает практические упражнения, которые добавляют продвинутые возможности в ваш оператор.
 
-- [Lab 8.1: Building Multi-Tenant Operator](labs/lab-01-multi-tenancy.md)
-- [Lab 8.2: Composing Operators](labs/lab-02-operator-composition.md)
-- [Lab 8.3: Managing Stateful Applications](labs/lab-03-stateful-applications.md)
-- [Lab 8.4: Final Project](labs/lab-04-final-project.md)
+- [Лабораторная 8.1: Создание мультиарендного оператора](labs/lab-01-multi-tenancy.md)
+- [Лабораторная 8.2: Композиция операторов](labs/lab-02-operator-composition.md)
+- [Лабораторная 8.3: Управление stateful-приложениями](labs/lab-03-stateful-applications.md)
+- [Лабораторная 8.4: Финальный проект](labs/lab-04-final-project.md)
 
-## Solutions
+## Решения
 
-Complete working solutions for all labs are available in the [solutions directory](solutions/):
+Полные рабочие решения для всех лабораторных доступны в [каталоге решений](solutions/):
 
-### Lab 8.1 Solutions - Multi-Tenant Operator
-- [clusterdatabase-types.go](solutions/clusterdatabase-types.go) - ClusterDatabase API type definitions
-- [clusterdatabase-controller.go](solutions/clusterdatabase-controller.go) - ClusterDatabase controller implementation
-- [multi-tenant-controller.go](solutions/multi-tenant-controller.go) - Multi-tenant patterns and helpers
+### Решения лабораторной 8.1 — мультиарендный оператор
+- [clusterdatabase-types.go](solutions/clusterdatabase-types.go) — определения типов API ClusterDatabase
+- [clusterdatabase-controller.go](solutions/clusterdatabase-controller.go) — реализация контроллера ClusterDatabase
+- [multi-tenant-controller.go](solutions/multi-tenant-controller.go) — паттерны и помощники мультиарендности
 
-### Lab 8.2 Solutions - Operator Composition
-- [backup-operator.go](solutions/backup-operator.go) - Complete backup operator
-- [operator-coordination.go](solutions/operator-coordination.go) - Operator coordination examples
+### Решения лабораторной 8.2 — композиция операторов
+- [backup-operator.go](solutions/backup-operator.go) — полный оператор резервного копирования
+- [operator-coordination.go](solutions/operator-coordination.go) — примеры координации операторов
 
-### Lab 8.3 Solutions - Stateful Application Management
-- [backup.go](solutions/backup.go) - Backup functionality implementation
-- [restore.go](solutions/restore.go) - Restore functionality implementation
-- [rolling-update.go](solutions/rolling-update.go) - Rolling update handling
+### Решения лабораторной 8.3 — управление stateful-приложениями
+- [backup.go](solutions/backup.go) — реализация функциональности резервного копирования
+- [restore.go](solutions/restore.go) — реализация функциональности восстановления
+- [rolling-update.go](solutions/rolling-update.go) — обработка скользящих обновлений
 
-### Lab 8.4 Solutions - Final Project
-- See [solutions README](solutions/README.md) for complete examples
+### Решения лабораторной 8.4 — финальный проект
+- Полные примеры см. в [README решений](solutions/README.md)
 
 
-## Navigation
+## Навигация
 
-- [← Previous: Module 7 - Production Considerations](../module-07/README.md)
-- [Course Overview](../README.md)
+- [← Предыдущий: Модуль 7 — Подготовка к продакшену](../module-07/README.md)
+- [Обзор курса](../README.md)

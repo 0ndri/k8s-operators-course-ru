@@ -2,88 +2,88 @@
 layout: default
 title: "08.3 Stateful Applications"
 nav_order: 3
-parent: "Module 8: Advanced Topics"
-grand_parent: Modules
+parent: "Модуль 8: Продвинутые темы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 8.3: Stateful Application Management
+# Урок 8.3: Управление stateful-приложениями
 
-**Navigation:** [← Previous: Operator Composition](02-operator-composition.md) | [Module Overview](../README.md) | [Next: Real-World Patterns →](04-real-world-patterns.md)
+**Навигация:** [← Предыдущий: Композиция операторов](02-operator-composition.md) | [Обзор модуля](../README.md) | [Далее: Практические паттерны →](04-real-world-patterns.md)
 
-## Introduction
+## Введение
 
-Stateful applications require special handling: backups, restores, migrations, and data consistency. This lesson covers patterns for managing stateful applications in operators, including backup/restore, rolling updates, and ensuring data consistency.
+Stateful-приложения требуют особого обращения: резервное копирование, восстановление, миграции и согласованность данных. Этот урок охватывает паттерны управления stateful-приложениями в операторах, включая резервное копирование/восстановление, скользящие обновления и обеспечение согласованности данных.
 
-## Theory: Stateful Application Management
+## Теория: управление stateful-приложениями
 
-Stateful applications have **persistent data** that must be managed carefully.
+У stateful-приложений есть **персистентные данные**, которыми нужно управлять аккуратно.
 
-### Why Stateful Applications Are Complex
+### Почему stateful-приложения сложны
 
-**Data Persistence:**
-- Data must survive pod restarts
-- Data must be backed up
-- Data must be restored
-- Data consistency is critical
+**Персистентность данных:**
+- Данные должны переживать перезапуски подов
+- Данные должны резервироваться
+- Данные должны восстанавливаться
+- Согласованность данных критична
 
-**Lifecycle Management:**
-- Complex deployment procedures
-- Ordered pod creation/deletion
-- StatefulSet requirements
-- Rolling update challenges
+**Управление жизненным циклом:**
+- Сложные процедуры развёртывания
+- Упорядоченное создание/удаление подов
+- Требования StatefulSet
+- Сложности скользящих обновлений
 
-**Data Operations:**
-- Backup and restore
-- Data migration
-- Version upgrades
-- Disaster recovery
+**Операции с данными:**
+- Резервное копирование и восстановление
+- Миграция данных
+- Обновление версий
+- Аварийное восстановление
 
-### StatefulSet Characteristics
+### Характеристики StatefulSet
 
-**Pod Identity:**
-- Stable network identity
-- Stable storage
-- Ordered creation/deletion
-- Predictable naming
+**Идентичность пода:**
+- Стабильная сетевая идентичность
+- Стабильное хранилище
+- Упорядоченное создание/удаление
+- Предсказуемое именование
 
-**Storage:**
-- Persistent volumes
-- Pod-specific storage
-- Data survives pod restarts
-- Storage class management
+**Хранилище:**
+- Персистентные тома (persistent volumes)
+- Хранилище для конкретного пода
+- Данные переживают перезапуски подов
+- Управление классами хранилищ
 
-**Ordering:**
-- Pods created in order
-- Pods deleted in reverse order
-- Enables initialization
-- Supports stateful workloads
+**Упорядоченность:**
+- Поды создаются по порядку
+- Поды удаляются в обратном порядке
+- Обеспечивает инициализацию
+- Поддерживает stateful-нагрузки
 
-### Backup and Restore
+### Резервное копирование и восстановление
 
-**Backup Strategy:**
-- Regular backups
-- Point-in-time backups
-- Incremental backups
-- Backup validation
+**Стратегия резервного копирования:**
+- Регулярные резервные копии
+- Резервные копии на определённый момент времени (point-in-time)
+- Инкрементальные резервные копии
+- Валидация резервных копий
 
-**Restore Strategy:**
-- Restore from backup
-- Point-in-time restore
-- Data validation
-- Rollback capability
+**Стратегия восстановления:**
+- Восстановление из резервной копии
+- Восстановление на определённый момент времени
+- Валидация данных
+- Возможность отката
 
-**Consistency:**
-- Ensure data consistency
-- Transactional operations
-- Quiesce before backup
-- Verify after restore
+**Согласованность:**
+- Обеспечение согласованности данных
+- Транзакционные операции
+- Приостановка (quiesce) перед резервным копированием
+- Проверка после восстановления
 
-Understanding stateful applications helps you build operators that manage data reliably.
+Понимание stateful-приложений помогает создавать операторы, надёжно управляющие данными.
 
-## Stateful Application Challenges
+## Сложности stateful-приложений
 
-### Key Challenges
+### Ключевые сложности
 
 ```mermaid
 graph TB
@@ -102,9 +102,9 @@ graph TB
     style CHALLENGES fill:#FFB6C1
 ```
 
-## Backup and Restore Patterns
+## Паттерны резервного копирования и восстановления
 
-### Backup Flow
+### Процесс резервного копирования
 
 ```mermaid
 sequenceDiagram
@@ -124,7 +124,7 @@ sequenceDiagram
     Note over Operator: Backup scheduled<br/>or on-demand
 ```
 
-### Implementing Backups
+### Реализация резервного копирования
 
 ```go
 type BackupSpec struct {
@@ -172,9 +172,9 @@ func (r *BackupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 }
 ```
 
-## Restore Patterns
+## Паттерны восстановления
 
-### Restore Flow
+### Процесс восстановления
 
 ```mermaid
 sequenceDiagram
@@ -195,7 +195,7 @@ sequenceDiagram
     Note over Operator: Point-in-time<br/>or latest backup
 ```
 
-### Implementing Restores
+### Реализация восстановления
 
 ```go
 type RestoreSpec struct {
@@ -242,9 +242,9 @@ func (r *RestoreReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 }
 ```
 
-## Rolling Updates
+## Скользящие обновления (Rolling Updates)
 
-### Rolling Update Strategy
+### Стратегия скользящего обновления
 
 ```mermaid
 graph TB
@@ -260,7 +260,7 @@ graph TB
     style UPDATE fill:#90EE90
 ```
 
-### Managing Rolling Updates
+### Управление скользящими обновлениями
 
 ```go
 func (r *DatabaseReconciler) updateStatefulSet(ctx context.Context, db *databasev1.Database) error {
@@ -308,9 +308,9 @@ func (r *DatabaseReconciler) waitForRollingUpdate(ctx context.Context, ss *appsv
 }
 ```
 
-## Data Consistency
+## Согласованность данных
 
-### Consistency Guarantees
+### Гарантии согласованности
 
 ```mermaid
 graph TB
@@ -329,7 +329,7 @@ graph TB
     style EVENTUAL fill:#FFE4B5
 ```
 
-### Ensuring Consistency
+### Обеспечение согласованности
 
 ```go
 func (r *DatabaseReconciler) ensureDataConsistency(ctx context.Context, db *databasev1.Database) error {
@@ -359,50 +359,50 @@ func (r *DatabaseReconciler) ensureDataConsistency(ctx context.Context, db *data
 }
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Backups** protect data from loss
-- **Restores** recover from backups
-- **Rolling updates** update without downtime
-- **Data consistency** ensures correctness
-- **StatefulSets** provide ordered, stable pods
-- **Persistent volumes** maintain data
-- **Point-in-time restore** recovers to specific time
+- **Резервные копии** защищают данные от потери
+- **Восстановление** возвращает данные из резервных копий
+- **Скользящие обновления** обновляют без простоя
+- **Согласованность данных** обеспечивает корректность
+- **StatefulSet** предоставляют упорядоченные, стабильные поды
+- **Персистентные тома** сохраняют данные
+- **Восстановление на определённый момент времени** возвращает состояние на конкретный момент
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When managing stateful applications:
-- Implement backup functionality
-- Support restore operations
-- Handle rolling updates carefully
-- Ensure data consistency
-- Use StatefulSets for stateful workloads
-- Leverage persistent volumes
-- Test backup/restore scenarios
+При управлении stateful-приложениями:
+- Реализуйте функциональность резервного копирования
+- Поддерживайте операции восстановления
+- Аккуратно обрабатывайте скользящие обновления
+- Обеспечивайте согласованность данных
+- Используйте StatefulSet для stateful-нагрузок
+- Задействуйте персистентные тома
+- Тестируйте сценарии резервного копирования/восстановления
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 8.3: Managing Stateful Applications](../labs/lab-03-stateful-applications.md) - Hands-on exercises for this lesson
+- [Лабораторная 8.3: Управление stateful-приложениями](../labs/lab-03-stateful-applications.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
-- [Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
-- [Volume Snapshots](https://kubernetes.io/docs/concepts/storage/volume-snapshots/)
+### Официальная документация
+- [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
+- [Персистентные тома](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+- [Снимки томов (Volume Snapshots)](https://kubernetes.io/docs/concepts/storage/volume-snapshots/)
 
-### Further Reading
-- **Kubernetes: Up and Running** by Kelsey Hightower, Brendan Burns, and Joe Beda - Chapter 7: StatefulSets
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 17: Stateful Applications
-- [StatefulSet Patterns](https://kubernetes.io/docs/tutorials/stateful-application/)
+### Дополнительное чтение
+- **Kubernetes: Up and Running**, Kelsey Hightower, Brendan Burns и Joe Beda — глава 7: StatefulSets
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 17: Stateful Applications
+- [Паттерны StatefulSet](https://kubernetes.io/docs/tutorials/stateful-application/)
 
-### Related Topics
-- [StatefulSet Best Practices](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations)
-- [Persistent Volume Claims](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
-- [Data Backup Strategies](https://kubernetes.io/docs/concepts/storage/volume-snapshots/)
+### Смежные темы
+- [Лучшие практики StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations)
+- [Заявки на персистентные тома (PVC)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+- [Стратегии резервного копирования данных](https://kubernetes.io/docs/concepts/storage/volume-snapshots/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand stateful applications, let's learn about real-world patterns and best practices.
+Теперь, когда вы понимаете stateful-приложения, давайте изучим практические паттерны и лучшие практики.
 
-**Navigation:** [← Previous: Operator Composition](02-operator-composition.md) | [Module Overview](../README.md) | [Next: Real-World Patterns →](04-real-world-patterns.md)
+**Навигация:** [← Предыдущий: Композиция операторов](02-operator-composition.md) | [Обзор модуля](../README.md) | [Далее: Практические паттерны →](04-real-world-patterns.md)

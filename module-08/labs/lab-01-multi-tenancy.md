@@ -2,47 +2,47 @@
 layout: default
 title: "Lab 08.1: Multi Tenancy"
 nav_order: 11
-parent: "Module 8: Advanced Topics"
-grand_parent: Modules
+parent: "Модуль 8: Продвинутые темы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 8.1: Building Multi-Tenant Operator
+# Лабораторная 8.1: Создание мультиарендного оператора
 
-**Related Lesson:** [Lesson 8.1: Multi-Tenancy and Namespace Isolation](../lessons/01-multi-tenancy.md)  
-**Navigation:** [Module Overview](../README.md) | [Next Lab: Operator Composition →](lab-02-operator-composition.md)
+**Связанный урок:** [Урок 8.1: Мультиарендность и изоляция пространств имён](../lessons/01-multi-tenancy.md)  
+**Навигация:** [Обзор модуля](../README.md) | [Следующая лабораторная: Композиция операторов →](lab-02-operator-composition.md)
 
-## Objectives
+## Цели
 
-- Scaffold a new cluster-scoped API using kubebuilder
-- Keep existing namespace-scoped Database controller
-- Implement namespace isolation
-- Handle resource quotas
-- Test multi-tenant scenarios
+- Сгенерировать каркас нового API с областью действия на кластер с помощью kubebuilder
+- Сохранить существующий контроллер Database области действия на пространство имён
+- Реализовать изоляцию пространств имён
+- Обрабатывать квоты ресурсов
+- Протестировать мультиарендные сценарии
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Module 7](../../module-07/README.md)
-- Database operator ready
-- Understanding of namespaces and RBAC
+- Завершение [Модуля 7](../../module-07/README.md)
+- Готовый оператор Database
+- Понимание пространств имён и RBAC
 
-## Overview
+## Обзор
 
-In this lab, you'll create a **new** cluster-scoped API called `ClusterDatabase` alongside your existing namespace-scoped `Database` API. This approach allows you to:
+В этой лабораторной вы создадите **новый** API с областью действия на кластер под названием `ClusterDatabase` наряду с существующим API `Database` области действия на пространство имён. Такой подход позволяет:
 
-1. **Keep your existing Database controller** - No changes needed
-2. **Learn cluster-scoped concepts** - With a dedicated API
-3. **Compare both approaches** - Side by side in the same project
+1. **Сохранить существующий контроллер Database** — изменения не нужны
+2. **Изучить концепции области действия на кластер** — на выделенном API
+3. **Сравнить оба подхода** — рядом в одном проекте
 
-The key difference:
-- `Database` (existing): Namespace-scoped, manages databases within a single namespace
-- `ClusterDatabase` (new): Cluster-scoped, manages databases across any namespace
+Ключевое отличие:
+- `Database` (существующий): область действия на пространство имён, управляет базами данных внутри одного пространства имён
+- `ClusterDatabase` (новый): область действия на кластер, управляет базами данных в любом пространстве имён
 
-## Exercise 1: Scaffold Cluster-Scoped API with Kubebuilder
+## Упражнение 1: генерация каркаса API с областью действия на кластер с помощью Kubebuilder
 
-### Task 1.1: Create New API
+### Задача 1.1: создайте новый API
 
-Use kubebuilder to scaffold the new ClusterDatabase API:
+Используйте kubebuilder для генерации каркаса нового API ClusterDatabase:
 
 ```bash
 # Navigate to your operator project
@@ -60,13 +60,13 @@ kubebuilder create api \
 # Create Controller [y/n]: y
 ```
 
-This creates:
-- `api/v1/clusterdatabase_types.go` - API type definitions
-- `internal/controller/clusterdatabase_controller.go` - Controller scaffold
+Это создаёт:
+- `api/v1/clusterdatabase_types.go` — определения типов API
+- `internal/controller/clusterdatabase_controller.go` — каркас контроллера
 
-### Task 1.2: Configure Cluster Scope
+### Задача 1.2: настройте область действия на кластер
 
-Edit `api/v1/clusterdatabase_types.go` to add the cluster scope marker:
+Отредактируйте `api/v1/clusterdatabase_types.go`, добавив маркер области действия на кластер:
 
 ```go
 // +kubebuilder:object:root=true
@@ -89,11 +89,11 @@ type ClusterDatabase struct {
 }
 ```
 
-The key marker is `// +kubebuilder:resource:scope=Cluster`.
+Ключевой маркер — `// +kubebuilder:resource:scope=Cluster`.
 
-### Task 1.3: Define ClusterDatabase Spec
+### Задача 1.3: определите Spec ClusterDatabase
 
-Update the spec in `api/v1/clusterdatabase_types.go`:
+Обновите spec в `api/v1/clusterdatabase_types.go`:
 
 ```go
 // ClusterDatabaseSpec defines the desired state of ClusterDatabase
@@ -134,9 +134,9 @@ type ClusterDatabaseSpec struct {
 }
 ```
 
-Note: You can reuse the `StorageSpec` type from your existing Database API.
+Примечание: вы можете переиспользовать тип `StorageSpec` из вашего существующего API Database.
 
-### Task 1.4: Define ClusterDatabase Status
+### Задача 1.4: определите Status ClusterDatabase
 
 ```go
 // ClusterDatabaseStatus defines the observed state of ClusterDatabase
@@ -162,7 +162,7 @@ type ClusterDatabaseStatus struct {
 }
 ```
 
-### Task 1.5: Generate and Apply CRD
+### Задача 1.5: сгенерируйте и примените CRD
 
 ```bash
 # Generate code and CRD manifests
@@ -187,43 +187,43 @@ kubectl get crd clusterdatabases.database.example.com -o jsonpath='{.spec.scope}
 # Should output: Cluster
 ```
 
-### Key Differences from Database:
+### Ключевые отличия от Database:
 
-| Aspect | Database (Namespaced) | ClusterDatabase (Cluster-Scoped) |
+| Аспект | Database (Namespaced) | ClusterDatabase (Cluster-Scoped) |
 |--------|----------------------|----------------------------------|
-| Scope marker | (none or `scope=Namespaced`) | `+kubebuilder:resource:scope=Cluster` |
-| Namespace | Implicit from resource | Explicit `targetNamespace` field |
-| Access | Within one namespace | Across all namespaces |
-| Use case | Team-level resources | Platform-level management |
+| Маркер области действия | (нет или `scope=Namespaced`) | `+kubebuilder:resource:scope=Cluster` |
+| Пространство имён | Неявное из ресурса | Явное поле `targetNamespace` |
+| Доступ | В рамках одного пространства имён | Во всех пространствах имён |
+| Сценарий использования | Ресурсы уровня команды | Управление уровня платформы |
 
-## Exercise 2: Implement ClusterDatabase Controller
+## Упражнение 2: реализация контроллера ClusterDatabase
 
-### Task 2.1: Copy Complete Controller Implementation
+### Задача 2.1: скопируйте полную реализацию контроллера
 
-The ClusterDatabase controller is similar to your existing Database controller, but with key differences for cluster-scoped resources. Rather than writing it from scratch, copy the complete implementation from the solutions file:
+Контроллер ClusterDatabase похож на ваш существующий контроллер Database, но с ключевыми отличиями для ресурсов области действия на кластер. Вместо написания с нуля скопируйте полную реализацию из файла решений:
 
 ```bash
 # Copy the complete controller implementation
 cp path/to/solutions/clusterdatabase-controller.go internal/controller/clusterdatabase_controller.go
 ```
 
-Or, if you prefer to type it yourself, copy the complete controller from:
+Или, если предпочитаете набрать сами, скопируйте полный контроллер из:
 **[solutions/clusterdatabase-controller.go](../solutions/clusterdatabase-controller.go)**
 
-The complete controller includes:
-- `Reconcile()` - Main reconciliation loop
-- `validateNamespace()` - Validates target namespace exists
-- `checkQuota()` - Checks resource quotas
-- `reconcileSecret()` - Creates credentials Secret in target namespace
-- `reconcileStatefulSet()` - Creates StatefulSet in target namespace
-- `reconcileService()` - Creates Service in target namespace
-- `updateStatus()` - Updates ClusterDatabase status
+Полный контроллер включает:
+- `Reconcile()` — основной цикл согласования
+- `validateNamespace()` — проверяет существование целевого пространства имён
+- `checkQuota()` — проверяет квоты ресурсов
+- `reconcileSecret()` — создаёт Secret с учётными данными в целевом пространстве имён
+- `reconcileStatefulSet()` — создаёт StatefulSet в целевом пространстве имён
+- `reconcileService()` — создаёт Service в целевом пространстве имён
+- `updateStatus()` — обновляет статус ClusterDatabase
 
-### Task 2.2: Understand Key Differences from Database Controller
+### Задача 2.2: разберитесь в ключевых отличиях от контроллера Database
 
-Here are the key differences in the ClusterDatabase controller:
+Вот ключевые отличия в контроллере ClusterDatabase:
 
-**1. Target Namespace Field:**
+**1. Поле целевого пространства имён:**
 ```go
 // Database controller uses implicit namespace from the resource
 namespace := db.Namespace
@@ -232,7 +232,7 @@ namespace := db.Namespace
 namespace := db.Spec.TargetNamespace
 ```
 
-**2. No OwnerReferences (use labels instead):**
+**2. Нет OwnerReferences (используются метки):**
 ```go
 // Database controller can use OwnerReferences
 ctrl.SetControllerReference(db, statefulSet, r.Scheme)
@@ -242,7 +242,7 @@ statefulSet.Labels["clusterdatabase"] = db.Name
 statefulSet.Labels["tenant"] = db.Spec.Tenant
 ```
 
-**3. Namespace Validation:**
+**3. Валидация пространства имён:**
 ```go
 // ClusterDatabase must validate target namespace exists
 func (r *ClusterDatabaseReconciler) validateNamespace(ctx context.Context, namespace string) error {
@@ -257,9 +257,9 @@ func (r *ClusterDatabaseReconciler) validateNamespace(ctx context.Context, names
 }
 ```
 
-### Task 2.3: Verify Controller is Registered
+### Задача 2.3: убедитесь, что контроллер зарегистрирован
 
-Kubebuilder automatically registers the controller in `cmd/main.go`. Verify it looks like this:
+Kubebuilder автоматически регистрирует контроллер в `cmd/main.go`. Убедитесь, что это выглядит так:
 
 ```go
 // This should already be added by kubebuilder
@@ -272,7 +272,7 @@ if err = (&controller.ClusterDatabaseReconciler{
 }
 ```
 
-### Task 2.4: Build and Verify
+### Задача 2.4: соберите и проверьте
 
 ```bash
 # Ensure the code compiles
@@ -282,13 +282,13 @@ make build
 # controller from the solutions file
 ```
 
-## Exercise 3: Handle Resource Quotas
+## Упражнение 3: обработка квот ресурсов
 
-The `checkQuota` function is already included in the solutions file you copied. Let's understand how it works and test it.
+Функция `checkQuota` уже включена в скопированный вами файл решений. Разберёмся, как она работает, и протестируем её.
 
-### Task 3.1: Create Resource Quota
+### Задача 3.1: создайте квоту ресурсов
 
-Create `config/samples/quota.yaml`:
+Создайте `config/samples/quota.yaml`:
 
 ```yaml
 apiVersion: v1
@@ -302,9 +302,9 @@ spec:
     clusterdatabases.database.example.com: "5"
 ```
 
-### Task 3.2: Understand Quota Checking
+### Задача 3.2: разберитесь в проверке квот
 
-The `checkQuota` function in your controller (from solutions) works like this:
+Функция `checkQuota` в вашем контроллере (из решений) работает так:
 
 ```go
 func (r *ClusterDatabaseReconciler) checkQuota(ctx context.Context, namespace string) error {
@@ -348,18 +348,18 @@ func (r *ClusterDatabaseReconciler) checkQuota(ctx context.Context, namespace st
 }
 ```
 
-Key points:
-- Checks if a ResourceQuota exists in the target namespace
-- Counts all ClusterDatabases targeting that namespace (cluster-wide list, then filter)
-- Returns error if quota would be exceeded
+Ключевые моменты:
+- Проверяет, существует ли ResourceQuota в целевом пространстве имён
+- Считает все ClusterDatabase, нацеленные на это пространство имён (список по всему кластеру, затем фильтр)
+- Возвращает ошибку, если квота была бы превышена
 
-## Exercise 4: Test Multi-Tenant Scenarios
+## Упражнение 4: тестирование мультиарендных сценариев
 
-> **Prerequisites:** Ensure you have completed Exercise 2 (copied the complete controller from solutions) and your code compiles with `make build`.
+> **Предварительные требования:** убедитесь, что вы завершили Упражнение 2 (скопировали полный контроллер из решений) и ваш код компилируется через `make build`.
 
-### Task 4.1: Build and Deploy Operator to Kind Cluster
+### Задача 4.1: соберите и разверните оператор в кластер Kind
 
-Since operators with webhooks (from earlier modules) require TLS certificates and in-cluster deployment, we'll deploy to the kind cluster:
+Поскольку операторы с вебхуками (из предыдущих модулей) требуют TLS-сертификатов и развёртывания в кластере, мы развернём в кластер kind:
 
 ```bash
 # Verify code compiles
@@ -375,7 +375,7 @@ make docker-build IMG=postgres-operator:latest
 kind load docker-image postgres-operator:latest --name k8s-operators-course
 ```
 
-Before deploying, ensure `imagePullPolicy: IfNotPresent` is set in `config/manager/manager.yaml`:
+Перед развёртыванием убедитесь, что в `config/manager/manager.yaml` установлено `imagePullPolicy: IfNotPresent`:
 
 ```yaml
 containers:
@@ -384,7 +384,7 @@ containers:
   imagePullPolicy: IfNotPresent  # Add this line if not present
 ```
 
-Now deploy:
+Теперь разверните:
 
 ```bash
 # Deploy operator to cluster
@@ -397,7 +397,7 @@ kubectl get pods -n postgres-operator-system
 kubectl logs -n postgres-operator-system deployment/postgres-operator-controller-manager -f
 ```
 
-> **Using Podman instead of Docker?**
+> **Используете Podman вместо Docker?**
 > 
 > ```bash
 > # Build with podman
@@ -412,13 +412,13 @@ kubectl logs -n postgres-operator-system deployment/postgres-operator-controller
 > make deploy IMG=localhost/postgres-operator:latest
 > ```
 
-> **Getting `ErrImagePull` or `ImagePullBackOff`?**
+> **Получаете `ErrImagePull` или `ImagePullBackOff`?**
 > 
-> Ensure `imagePullPolicy: IfNotPresent` is set and the image name matches what's loaded in kind.
+> Убедитесь, что установлено `imagePullPolicy: IfNotPresent` и имя образа совпадает с загруженным в kind.
 
-### Task 4.2: Create Tenant Namespaces
+### Задача 4.2: создайте пространства имён арендаторов
 
-In a new terminal (or the same one after deployment):
+В новом терминале (или в том же после развёртывания):
 
 ```bash
 # Create namespaces for tenants
@@ -430,7 +430,7 @@ kubectl label namespace tenant-1 tenant=tenant-1
 kubectl label namespace tenant-2 tenant=tenant-2
 ```
 
-### Task 4.3: Create ClusterDatabases for Different Tenants
+### Задача 4.3: создайте ClusterDatabase для разных арендаторов
 
 ```bash
 # Create ClusterDatabase for tenant-1
@@ -468,7 +468,7 @@ spec:
 EOF
 ```
 
-### Task 4.4: Verify Isolation
+### Задача 4.4: проверьте изоляцию
 
 ```bash
 # List all ClusterDatabases (cluster-wide view)
@@ -487,12 +487,12 @@ kubectl get statefulsets -n tenant-2
 kubectl get clusterdatabases -o jsonpath='{range .items[?(@.spec.tenant=="tenant-1")]}{.metadata.name}{"\n"}{end}'
 ```
 
-> **Resources not being created?** Check the operator logs:
+> **Ресурсы не создаются?** Проверьте логи оператора:
 > ```bash
 > kubectl logs -n postgres-operator-system deployment/postgres-operator-controller-manager
 > ```
 
-### Task 4.5: Compare with Namespace-Scoped Database
+### Задача 4.5: сравните с Database области действия на пространство имён
 
 ```bash
 # You can still use the namespace-scoped Database in parallel
@@ -516,15 +516,15 @@ kubectl get databases -n tenant-1    # Shows namespace-scoped
 kubectl get clusterdatabases          # Shows cluster-scoped
 ```
 
-## Exercise 5: Understanding Ownership Limitations
+## Упражнение 5: понимание ограничений владения
 
-The solutions file already implements these patterns. This exercise explains the concepts so you understand what's happening.
+Файл решений уже реализует эти паттерны. Это упражнение объясняет концепции, чтобы вы понимали, что происходит.
 
-### Task 5.1: Cluster-Scoped Owner Restrictions
+### Задача 5.1: ограничения владельца области действия на кластер
 
-Important: Cluster-scoped resources **cannot** use `OwnerReferences` to own namespace-scoped resources. The solutions file uses labels instead.
+Важно: ресурсы области действия на кластер **не могут** использовать `OwnerReferences`, чтобы владеть ресурсами области действия на пространство имён. Файл решений вместо этого использует метки.
 
-In the `buildStatefulSet` helper function, labels are set to track ownership:
+Во вспомогательной функции `buildStatefulSet` устанавливаются метки для отслеживания владения:
 
 ```go
 func (r *ClusterDatabaseReconciler) buildStatefulSet(db *databasev1.ClusterDatabase) *appsv1.StatefulSet {
@@ -546,7 +546,7 @@ func (r *ClusterDatabaseReconciler) buildStatefulSet(db *databasev1.ClusterDatab
 }
 ```
 
-Note the key difference from the namespace-scoped Database controller:
+Обратите внимание на ключевое отличие от контроллера Database области действия на пространство имён:
 
 ```go
 // Database controller (namespace-scoped) - CAN use OwnerReferences:
@@ -557,9 +557,9 @@ ctrl.SetControllerReference(db, statefulSet, r.Scheme)  // ✓ Works
 // Instead, we use labels and cleanup with finalizers
 ```
 
-### Task 5.2: Cleanup with Finalizers
+### Задача 5.2: очистка с помощью финализаторов
 
-Since we can't use OwnerReferences for automatic garbage collection, the solutions file implements finalizers. Here's how they work:
+Поскольку мы не можем использовать OwnerReferences для автоматической сборки мусора, файл решений реализует финализаторы. Вот как они работают:
 
 ```go
 const clusterDatabaseFinalizer = "database.example.com/clusterdatabase-finalizer"
@@ -637,7 +637,7 @@ func (r *ClusterDatabaseReconciler) cleanupManagedResources(ctx context.Context,
 }
 ```
 
-### Task 5.3: Test Cleanup Behavior
+### Задача 5.3: протестируйте поведение очистки
 
 ```bash
 # Ensure tenant-1 namespace exists (from earlier)
@@ -674,7 +674,7 @@ kubectl get statefulsets -n tenant-1
 # The StatefulSet should be deleted
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete ClusterDatabases
@@ -687,45 +687,45 @@ kubectl delete namespace tenant-1 tenant-2
 make undeploy
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Scaffolded a new cluster-scoped API using kubebuilder
-- Kept the existing namespace-scoped Database controller
-- Implemented namespace isolation with `targetNamespace`
-- Added resource quota handling
-- Tested multi-tenant scenarios
-- Learned about cluster-scoped ownership limitations
+В этой лабораторной вы:
+- Сгенерировали каркас нового API области действия на кластер с помощью kubebuilder
+- Сохранили существующий контроллер Database области действия на пространство имён
+- Реализовали изоляцию пространств имён с помощью `targetNamespace`
+- Добавили обработку квот ресурсов
+- Протестировали мультиарендные сценарии
+- Узнали об ограничениях владения при области действия на кластер
 
-## Key Learnings
+## Ключевые уроки
 
-1. **Use kubebuilder to scaffold new APIs** - `kubebuilder create api` handles boilerplate
-2. **Use `+kubebuilder:resource:scope=Cluster` marker** - Makes the CRD cluster-scoped
-3. **Cluster-scoped resources need explicit namespace fields** - Use `targetNamespace`
-4. **Cannot use OwnerReferences across scopes** - Use labels and finalizers instead
-5. **Both controllers can coexist** - Each manages its own resource type
-6. **`make manifests` generates CRDs** - No need to write CRD YAML manually
+1. **Используйте kubebuilder для генерации каркаса новых API** — `kubebuilder create api` берёт на себя шаблонный код
+2. **Используйте маркер `+kubebuilder:resource:scope=Cluster`** — делает CRD с областью действия на кластер
+3. **Ресурсам области действия на кластер нужны явные поля пространства имён** — используйте `targetNamespace`
+4. **Нельзя использовать OwnerReferences между областями действия** — вместо этого используйте метки и финализаторы
+5. **Оба контроллера могут сосуществовать** — каждый управляет своим типом ресурса
+6. **`make manifests` генерирует CRD** — не нужно писать YAML CRD вручную
 
-## Comparison: Database vs ClusterDatabase
+## Сравнение: Database против ClusterDatabase
 
-| Feature | Database | ClusterDatabase |
+| Возможность | Database | ClusterDatabase |
 |---------|----------|-----------------|
-| Scope | Namespaced | Cluster |
-| Namespace | Implicit | Explicit (`targetNamespace`) |
-| OwnerReferences | Yes | No (use labels) |
-| Cleanup | Automatic (GC) | Manual (finalizers) |
-| RBAC | Per namespace | Cluster-wide |
-| Use case | Team resources | Platform management |
+| Область действия | Namespaced | Cluster |
+| Пространство имён | Неявное | Явное (`targetNamespace`) |
+| OwnerReferences | Да | Нет (используются метки) |
+| Очистка | Автоматическая (GC) | Ручная (финализаторы) |
+| RBAC | На пространство имён | На весь кластер |
+| Сценарий использования | Ресурсы команды | Управление платформой |
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [ClusterDatabase Types](../solutions/clusterdatabase-types.go) - Complete API type definitions
-- [ClusterDatabase Controller](../solutions/clusterdatabase-controller.go) - Complete controller implementation
-- [Multi-Tenant Controller](../solutions/multi-tenant-controller.go) - Multi-tenant patterns example
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [ClusterDatabase Types](../solutions/clusterdatabase-types.go) — полные определения типов API
+- [ClusterDatabase Controller](../solutions/clusterdatabase-controller.go) — полная реализация контроллера
+- [Multi-Tenant Controller](../solutions/multi-tenant-controller.go) — пример паттернов мультиарендности
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's learn about operator composition!
+Теперь давайте изучим композицию операторов!
 
-**Navigation:** [← Module Overview](../README.md) | [Related Lesson](../lessons/01-multi-tenancy.md) | [Next Lab: Operator Composition →](lab-02-operator-composition.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Связанный урок](../lessons/01-multi-tenancy.md) | [Следующая лабораторная: Композиция операторов →](lab-02-operator-composition.md)

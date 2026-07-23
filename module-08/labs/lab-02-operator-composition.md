@@ -2,34 +2,34 @@
 layout: default
 title: "Lab 08.2: Operator Composition"
 nav_order: 12
-parent: "Module 8: Advanced Topics"
-grand_parent: Modules
+parent: "Модуль 8: Продвинутые темы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 8.2: Composing Operators
+# Лабораторная 8.2: Композиция операторов
 
-**Related Lesson:** [Lesson 8.2: Operator Composition](../lessons/02-operator-composition.md)  
-**Navigation:** [← Previous Lab: Multi-Tenancy](lab-01-multi-tenancy.md) | [Module Overview](../README.md) | [Next Lab: Stateful Applications →](lab-03-stateful-applications.md)
+**Связанный урок:** [Урок 8.2: Композиция операторов](../lessons/02-operator-composition.md)  
+**Навигация:** [← Предыдущая лабораторная: Мультиарендность](lab-01-multi-tenancy.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Stateful-приложения →](lab-03-stateful-applications.md)
 
-## Objectives
+## Цели
 
-- Create dependent operators
-- Implement operator coordination
-- Use resource references
-- Test operator composition
+- Создать зависимые операторы
+- Реализовать координацию операторов
+- Использовать ссылки на ресурсы
+- Протестировать композицию операторов
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 8.1](lab-01-multi-tenancy.md)
-- Database operator ready
-- Understanding of operator dependencies
+- Завершение [Лабораторной 8.1](lab-01-multi-tenancy.md)
+- Готовый оператор Database
+- Понимание зависимостей операторов
 
-## Exercise 1: Create Backup Operator
+## Упражнение 1: создание оператора резервного копирования
 
-### Task 1.1: Scaffold Backup API with Kubebuilder
+### Задача 1.1: сгенерируйте каркас API Backup с помощью Kubebuilder
 
-Use kubebuilder to scaffold the new Backup API. Since Backup is related to Database, we use the same `database` group:
+Используйте kubebuilder для генерации каркаса нового API Backup. Поскольку Backup связан с Database, мы используем ту же группу `database`:
 
 ```bash
 # Navigate to your operator project
@@ -47,15 +47,15 @@ kubebuilder create api \
 # Create Controller [y/n]: y
 ```
 
-> **Note:** We use `--group database` (same as Database) because both resources are part of the same operator. Using a different group would require enabling multi-group layout. See [kubebuilder multi-group docs](https://kubebuilder.io/migration/multi-group.html) if you need separate groups.
+> **Примечание:** мы используем `--group database` (как у Database), потому что оба ресурса — часть одного оператора. Использование другой группы потребовало бы включения многогрупповой компоновки. См. [документацию kubebuilder по нескольким группам](https://kubebuilder.io/migration/multi-group.html), если вам нужны отдельные группы.
 
-This creates:
-- `api/v1/backup_types.go` - API type definitions
-- `internal/controller/backup_controller.go` - Controller scaffold
+Это создаёт:
+- `api/v1/backup_types.go` — определения типов API
+- `internal/controller/backup_controller.go` — каркас контроллера
 
-### Task 1.2: Define Backup Spec and Status
+### Задача 1.2: определите Spec и Status Backup
 
-Edit the generated `api/v1/backup_types.go` to add the spec and status fields:
+Отредактируйте сгенерированный `api/v1/backup_types.go`, добавив поля spec и status:
 
 ```go
 package v1
@@ -127,7 +127,7 @@ func init() {
 }
 ```
 
-### Task 1.3: Generate and Install CRD
+### Задача 1.3: сгенерируйте и установите CRD
 
 ```bash
 # Generate code and CRD manifests
@@ -141,25 +141,25 @@ make install
 kubectl get crd backups.database.example.com
 ```
 
-### Task 1.4: Implement Backup Controller
+### Задача 1.4: реализуйте контроллер Backup
 
-The Backup controller needs several functions to work properly. Rather than writing it from scratch, copy the complete implementation from the solutions file:
+Контроллеру Backup нужно несколько функций для корректной работы. Вместо написания с нуля скопируйте полную реализацию из файла решений:
 
 ```bash
 # Copy the complete controller implementation
 cp path/to/solutions/backup-operator.go internal/controller/backup_controller.go
 ```
 
-Or, if you prefer to type it yourself, copy the complete controller from:
+Или, если предпочитаете набрать сами, скопируйте полный контроллер из:
 **[solutions/backup-operator.go](../solutions/backup-operator.go)**
 
-The complete controller includes:
-- `Reconcile()` - Main reconciliation loop (shown below)
-- `performBackup()` - Updates status and triggers backup
-- `createBackup()` - Performs the actual backup operation
-- `SetupWithManager()` - Registers controller with manager
+Полный контроллер включает:
+- `Reconcile()` — основной цикл согласования (показан ниже)
+- `performBackup()` — обновляет статус и запускает резервное копирование
+- `createBackup()` — выполняет фактическую операцию резервного копирования
+- `SetupWithManager()` — регистрирует контроллер в менеджере
 
-**Key reconciliation logic:**
+**Ключевая логика согласования:**
 
 ```go
 func (r *BackupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -203,7 +203,7 @@ func (r *BackupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 }
 ```
 
-### Task 1.5: Build and Verify
+### Задача 1.5: соберите и проверьте
 
 ```bash
 # Generate code (deep copy methods, etc.)
@@ -219,13 +219,13 @@ make build
 # controller from the solutions file
 ```
 
-The `make manifests` command generates RBAC rules from the `+kubebuilder:rbac` markers in the controller, creating the necessary ClusterRole permissions.
+Команда `make manifests` генерирует правила RBAC из маркеров `+kubebuilder:rbac` в контроллере, создавая необходимые разрешения ClusterRole.
 
-## Exercise 2: Coordinate Operators
+## Упражнение 2: координация операторов
 
-### Task 2.1: Add Backup Reference to Database
+### Задача 2.1: добавьте ссылку на Backup в Database
 
-Update your existing `api/v1/database_types.go` to add a BackupRef field to the DatabaseSpec:
+Обновите существующий `api/v1/database_types.go`, добавив поле BackupRef в DatabaseSpec:
 
 ```go
 type DatabaseSpec struct {
@@ -238,17 +238,17 @@ type DatabaseSpec struct {
 }
 ```
 
-After adding the field, regenerate manifests:
+После добавления поля перегенерируйте манифесты:
 
 ```bash
 make generate manifests
 ```
 
-### Task 2.2: Check Backup Status
+### Задача 2.2: проверка статуса Backup
 
-The Database controller uses a state machine pattern. Add a helper function to check backup status, then integrate it into the reconciliation flow.
+Контроллер Database использует паттерн конечного автомата. Добавьте вспомогательную функцию для проверки статуса резервной копии, затем интегрируйте её в поток согласования.
 
-First, add a helper function to `internal/controller/database_controller.go`:
+Сначала добавьте вспомогательную функцию в `internal/controller/database_controller.go`:
 
 ```go
 // checkBackupStatus checks if the referenced Backup is ready
@@ -285,7 +285,7 @@ func (r *DatabaseReconciler) checkBackupStatus(ctx context.Context, db *database
 }
 ```
 
-Then, integrate it into the `reconcileWithStateMachine` function (before the state switch):
+Затем интегрируйте её в функцию `reconcileWithStateMachine` (перед switch по состояниям):
 
 ```go
 func (r *DatabaseReconciler) reconcileWithStateMachine(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -317,25 +317,25 @@ func (r *DatabaseReconciler) reconcileWithStateMachine(ctx context.Context, db *
 }
 ```
 
-Don't forget to add the RBAC marker to allow reading Backup resources:
+Не забудьте добавить маркер RBAC для чтения ресурсов Backup:
 
 ```go
 // +kubebuilder:rbac:groups=database.example.com,resources=backups,verbs=get;list;watch
 ```
 
-After making changes, regenerate manifests:
+После внесения изменений перегенерируйте манифесты:
 
 ```bash
 make generate manifests
 ```
 
-## Exercise 3: Use Status Conditions
+## Упражнение 3: использование условий статуса
 
-Status conditions provide a standardized way for operators to communicate state. This exercise shows how the Backup controller sets conditions and how the Database controller reads them.
+Условия статуса предоставляют стандартизированный способ для операторов сообщать о состоянии. Это упражнение показывает, как контроллер Backup устанавливает условия, а контроллер Database их читает.
 
-### Task 3.1: Set Condition in Backup Controller
+### Задача 3.1: установите условие в контроллере Backup
 
-Edit `internal/controller/backup_controller.go` to set conditions when backup completes:
+Отредактируйте `internal/controller/backup_controller.go`, чтобы устанавливать условия при завершении резервного копирования:
 
 ```go
 func (r *BackupReconciler) performBackup(ctx context.Context, db *databasev1.Database, backup *databasev1.Backup) (ctrl.Result, error) {
@@ -354,13 +354,13 @@ func (r *BackupReconciler) performBackup(ctx context.Context, db *databasev1.Dat
 }
 ```
 
-> **Note:** If you copied the complete controller from `solutions/backup-operator.go`, this is already implemented.
+> **Примечание:** если вы скопировали полный контроллер из `solutions/backup-operator.go`, это уже реализовано.
 
-### Task 3.2: Check Condition in Database Controller
+### Задача 3.2: проверьте условие в контроллере Database
 
-This is an improved version of the `checkBackupStatus` function from Task 2.2. Instead of checking `Phase`, it uses the standardized `Condition` pattern which provides more detailed state information.
+Это улучшенная версия функции `checkBackupStatus` из Задачи 2.2. Вместо проверки `Phase` она использует стандартизированный паттерн `Condition`, который предоставляет более детальную информацию о состоянии.
 
-Update the `checkBackupStatus` function in `internal/controller/database_controller.go` to use conditions:
+Обновите функцию `checkBackupStatus` в `internal/controller/database_controller.go`, чтобы использовать условия:
 
 ```go
 // checkBackupStatus checks if the referenced Backup is ready using conditions
@@ -397,13 +397,13 @@ func (r *DatabaseReconciler) checkBackupStatus(ctx context.Context, db *database
 }
 ```
 
-This function is already integrated into `reconcileWithStateMachine` from Task 2.2, so no additional changes are needed.
+Эта функция уже интегрирована в `reconcileWithStateMachine` из Задачи 2.2, поэтому дополнительные изменения не нужны.
 
-## Exercise 4: Test Operator Composition
+## Упражнение 4: тестирование композиции операторов
 
-### Task 4.1: Build and Deploy Operator to Kind Cluster
+### Задача 4.1: соберите и разверните оператор в кластер Kind
 
-Build and deploy the operator with the new Backup controller:
+Соберите и разверните оператор с новым контроллером Backup:
 
 ```bash
 # Build the container image
@@ -413,7 +413,7 @@ make docker-build IMG=postgres-operator:latest
 kind load docker-image postgres-operator:latest --name k8s-operators-course
 ```
 
-Before deploying, ensure `imagePullPolicy: IfNotPresent` is set in `config/manager/manager.yaml`:
+Перед развёртыванием убедитесь, что в `config/manager/manager.yaml` установлено `imagePullPolicy: IfNotPresent`:
 
 ```yaml
 containers:
@@ -422,7 +422,7 @@ containers:
   imagePullPolicy: IfNotPresent  # Add this line if not present
 ```
 
-Now deploy:
+Теперь разверните:
 
 ```bash
 # Deploy operator to cluster
@@ -435,7 +435,7 @@ kubectl get pods -n postgres-operator-system
 kubectl logs -n postgres-operator-system deployment/postgres-operator-controller-manager -f
 ```
 
-> **Using Podman instead of Docker?**
+> **Используете Podman вместо Docker?**
 > 
 > ```bash
 > # Build with podman
@@ -450,11 +450,11 @@ kubectl logs -n postgres-operator-system deployment/postgres-operator-controller
 > make deploy IMG=localhost/postgres-operator:latest
 > ```
 
-> **Getting `ErrImagePull` or `ImagePullBackOff`?**
+> **Получаете `ErrImagePull` или `ImagePullBackOff`?**
 > 
-> Ensure `imagePullPolicy: IfNotPresent` is set and the image name matches what's loaded in kind.
+> Убедитесь, что установлено `imagePullPolicy: IfNotPresent` и имя образа совпадает с загруженным в kind.
 
-Rollout restart the deployment if you were using existing kind cluster from previous labs which already had the operator deployed -
+Перезапустите развёртывание, если вы используете существующий кластер kind из предыдущих лабораторных, где оператор уже был развёрнут:
 
 ```
 # restart the deployment to pickup newly pushed image
@@ -463,9 +463,9 @@ kubectl rollout restart deploy -n postgres-operator-system   postgres-operator-c
 # check status of the deployment
 kubectl rollout status deploy -n postgres-operator-system   postgres-operator-controller-manager
 ```
-### Task 4.2: Create Database and Backup
+### Задача 4.2: создайте Database и Backup
 
-First, create the Database. The Backup will wait for it to be ready:
+Сначала создайте Database. Backup будет ждать, пока он станет готов:
 
 ```bash
 # Create Database first
@@ -496,9 +496,9 @@ spec:
 EOF
 ```
 
-> **Note:** The Backup references the Database via `databaseRef`. The Backup controller will wait for the Database to be Ready before performing the backup. The `backupRef` field on Database (from Task 2.1) is optional and used for advanced scenarios like restore-before-provision.
+> **Примечание:** Backup ссылается на Database через `databaseRef`. Контроллер Backup будет ждать, пока Database станет Ready, перед выполнением резервного копирования. Поле `backupRef` в Database (из Задачи 2.1) опционально и используется для продвинутых сценариев, таких как восстановление перед провижинингом.
 
-### Task 4.3: Verify Coordination
+### Задача 4.3: проверьте координацию
 
 ```bash
 # Check Database status
@@ -511,7 +511,7 @@ kubectl get backup my-database-backup -o yaml
 kubectl logs -n postgres-operator-system -l control-plane=controller-manager | grep -i backup
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete test resources
@@ -519,32 +519,32 @@ kubectl delete databases --all
 kubectl delete backups --all
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Scaffolded a new Backup API using kubebuilder
-- Implemented backup operator with coordination logic
-- Used resource references between operators
-- Tested operator composition
+В этой лабораторной вы:
+- Сгенерировали каркас нового API Backup с помощью kubebuilder
+- Реализовали оператор резервного копирования с логикой координации
+- Использовали ссылки на ресурсы между операторами
+- Протестировали композицию операторов
 
-## Key Learnings
+## Ключевые уроки
 
-1. **Use kubebuilder to scaffold new APIs** - `kubebuilder create api` handles boilerplate
-2. **Operators can depend on each other** - Backup depends on Database
-3. **Resource references link operators** - `DatabaseRef` connects Backup to Database
-4. **Status conditions coordinate state** - `BackupReady` condition for cross-operator checks
-5. **Dependency management is important** - Wait for dependencies before proceeding
-6. **Composition enables complex applications** - Multiple operators working together
+1. **Используйте kubebuilder для генерации каркаса новых API** — `kubebuilder create api` берёт на себя шаблонный код
+2. **Операторы могут зависеть друг от друга** — Backup зависит от Database
+3. **Ссылки на ресурсы связывают операторы** — `DatabaseRef` соединяет Backup с Database
+4. **Условия статуса координируют состояние** — условие `BackupReady` для проверок между операторами
+5. **Управление зависимостями важно** — ждите зависимости перед продолжением
+6. **Композиция позволяет создавать сложные приложения** — несколько операторов работают вместе
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Backup Types](../solutions/backup_types.go) - Complete API type definitions
-- [Backup Operator](../solutions/backup-operator.go) - Complete backup controller
-- [Operator Coordination](../solutions/operator-coordination.go) - Coordination examples
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Backup Types](../solutions/backup_types.go) — полные определения типов API
+- [Backup Operator](../solutions/backup-operator.go) — полный контроллер резервного копирования
+- [Operator Coordination](../solutions/operator-coordination.go) — примеры координации
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's learn about managing stateful applications!
+Теперь давайте изучим управление stateful-приложениями!
 
-**Navigation:** [← Previous Lab: Multi-Tenancy](lab-01-multi-tenancy.md) | [Related Lesson](../lessons/02-operator-composition.md) | [Next Lab: Stateful Applications →](lab-03-stateful-applications.md)
+**Навигация:** [← Предыдущая лабораторная: Мультиарендность](lab-01-multi-tenancy.md) | [Связанный урок](../lessons/02-operator-composition.md) | [Следующая лабораторная: Stateful-приложения →](lab-03-stateful-applications.md)
