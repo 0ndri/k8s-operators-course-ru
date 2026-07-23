@@ -1,32 +1,31 @@
-# Module 1 Solutions
+# Решения Модуля 1
 
-This directory contains complete, working solutions for Module 1 labs.
+Этот каталог содержит полные рабочие решения для лабораторных Модуля 1.
 
-## Files
+## Файлы
 
-- [**website-crd.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-01/solutions/website-crd.yaml): Complete Website CRD definition
-- [**example-website.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-01/solutions/example-website.yaml): Example Website Custom Resource
+- [**website-crd.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-01/solutions/website-crd.yaml): полное определение CRD Website
+- [**example-website.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-01/solutions/example-website.yaml): пример пользовательского ресурса Website
 
-## Usage
+## Использование
 
-These solutions can be used as:
-- Reference when creating your own CRDs
-- Starting point if you get stuck
-- Examples of CRD best practices
+Эти решения можно использовать как:
+- Справочный материал при создании собственных CRD
+- Отправную точку, если вы застряли
+- Примеры лучших практик CRD
 
-## Integration
+## Интеграция
 
-To use these solutions:
+Чтобы использовать эти решения:
 
-1. Apply the CRD: `kubectl apply -f website-crd.yaml`
-2. Wait for CRD to be established: `kubectl wait --for condition=established crd/websites.example.com`
-3. Create a Website: `kubectl apply -f example-website.yaml`
-4. Verify: `kubectl get websites`
+1. Примените CRD: `kubectl apply -f website-crd.yaml`
+2. Дождитесь установки CRD: `kubectl wait --for condition=established crd/websites.example.com`
+3. Создайте Website: `kubectl apply -f example-website.yaml`
+4. Проверьте: `kubectl get websites`
 
-## Notes
+## Примечания
 
-- These are complete, working examples
-- They follow Kubernetes best practices
-- Validation rules are included
-- Status subresource is properly configured
-
+- Это полные рабочие примеры
+- Они следуют лучшим практикам Kubernetes
+- Правила валидации включены
+- Подресурс status настроен корректно

@@ -1,83 +1,82 @@
 ---
 layout: default
-title: "Module 1: Kubernetes Architecture"
+title: "Модуль 1: Архитектура Kubernetes"
 nav_order: 1
-parent: Modules
+parent: Модули
 has_children: true
 has_toc: false
 permalink: /module-01/
 mermaid: true
 ---
 
-# Module 1: Kubernetes Architecture Deep Dive
+# Модуль 1: Глубокое погружение в архитектуру Kubernetes
 
-## Overview
+## Обзор
 
-This module provides a deep understanding of Kubernetes architecture, focusing on the components and patterns that operators build upon. You'll learn how the control plane works, how the API machinery operates, the controller pattern, and how custom resources extend Kubernetes.
+Этот модуль даёт глубокое понимание архитектуры Kubernetes, с упором на компоненты и паттерны, на которых строятся операторы. Вы узнаете, как работает управляющий слой (control plane), как функционируют механизмы API (API machinery), что такое паттерн контроллера и как пользовательские ресурсы (custom resources) расширяют Kubernetes.
 
-**Duration:** 5-6 hours  
-**Prerequisites:** Basic Kubernetes knowledge, kubectl familiarity
+**Продолжительность:** 5–6 часов  
+**Предварительные требования:** базовые знания Kubernetes, знакомство с kubectl
 
-## Learning Objectives
+## Цели обучения
 
-By the end of this module, you will:
+К концу этого модуля вы:
 
-- Understand Kubernetes control plane components and their interactions
-- Know how the Kubernetes API machinery works
-- Comprehend the controller pattern and reconciliation loops
-- Understand Custom Resource Definitions (CRDs) and when to use them
+- Будете понимать компоненты управляющего слоя Kubernetes и их взаимодействие
+- Узнаете, как работают механизмы API Kubernetes
+- Разберётесь в паттерне контроллера и циклах согласования (reconciliation loops)
+- Поймёте, что такое определения пользовательских ресурсов (CRD) и когда их использовать
 
-## Module Structure
+## Структура модуля
 
-1. **[Lesson 1.1: Kubernetes Control Plane Review](lessons/01-control-plane.md)**
-   - [Lab 1.1: Exploring the Control Plane](labs/lab-01-control-plane.md)
+1. **[Урок 1.1: Обзор управляющего слоя Kubernetes](lessons/01-control-plane.md)**
+   - [Лабораторная 1.1: Исследование управляющего слоя](labs/lab-01-control-plane.md)
 
-2. **[Lesson 1.2: Kubernetes API Machinery](lessons/02-api-machinery.md)**
-   - [Lab 1.2: Working with the Kubernetes API](labs/lab-02-api-machinery.md)
+2. **[Урок 1.2: Механизмы API Kubernetes](lessons/02-api-machinery.md)**
+   - [Лабораторная 1.2: Работа с API Kubernetes](labs/lab-02-api-machinery.md)
 
-3. **[Lesson 1.3: The Controller Pattern](lessons/03-controller-pattern.md)**
-   - [Lab 1.3: Observing Controllers in Action](labs/lab-03-controller-pattern.md)
+3. **[Урок 1.3: Паттерн контроллера](lessons/03-controller-pattern.md)**
+   - [Лабораторная 1.3: Наблюдение за контроллерами в действии](labs/lab-03-controller-pattern.md)
 
-4. **[Lesson 1.4: Custom Resources](lessons/04-custom-resources.md)**
-   - [Lab 1.4: Creating Your First CRD](labs/lab-04-custom-resources.md)
+4. **[Урок 1.4: Пользовательские ресурсы](lessons/04-custom-resources.md)**
+   - [Лабораторная 1.4: Создание вашего первого CRD](labs/lab-04-custom-resources.md)
 
-## Setup
+## Настройка
 
-Before starting, ensure you have:
+Перед началом убедитесь, что вы:
 
-1. Completed the development environment setup:
+1. Завершили настройку среды разработки:
    ```bash
    ./scripts/setup-dev-environment.sh
    ```
 
-2. Created a kind cluster:
+2. Создали кластер kind:
    ```bash
    ./scripts/setup-kind-cluster.sh
    ```
 
-3. Verified cluster access:
+3. Проверили доступ к кластеру:
    ```bash
    kubectl cluster-info
    kubectl get nodes
    ```
 
-## Hands-on Labs
+## Практические лабораторные работы
 
-Each lesson includes hands-on exercises. All labs use the kind cluster you set up.
+Каждый урок включает практические упражнения. Все лабораторные используют настроенный вами кластер kind.
 
-- [Lab 1.1: Exploring the Control Plane](labs/lab-01-control-plane.md)
-- [Lab 1.2: Working with the Kubernetes API](labs/lab-02-api-machinery.md)
-- [Lab 1.3: Observing Controllers in Action](labs/lab-03-controller-pattern.md)
-- [Lab 1.4: Creating Your First CRD](labs/lab-04-custom-resources.md)
+- [Лабораторная 1.1: Исследование управляющего слоя](labs/lab-01-control-plane.md)
+- [Лабораторная 1.2: Работа с API Kubernetes](labs/lab-02-api-machinery.md)
+- [Лабораторная 1.3: Наблюдение за контроллерами в действии](labs/lab-03-controller-pattern.md)
+- [Лабораторная 1.4: Создание вашего первого CRD](labs/lab-04-custom-resources.md)
 
-## Solutions
+## Решения
 
-Complete working solutions for all labs are available in the [solutions directory](solutions/):
-- [Lab 1.4 Solutions](solutions/) - Website CRD and example resources
+Полные рабочие решения для всех лабораторных доступны в [каталоге решений](solutions/):
+- [Решения лабораторной 1.4](solutions/) — CRD Website и примеры ресурсов
 
 
-## Navigation
+## Навигация
 
-- [← Back to Course Overview](../README.md)
-- [Next: Module 2 →](../module-02/README.md)
-
+- [← Назад к обзору курса](../README.md)
+- [Далее: Модуль 2 →](../module-02/README.md)

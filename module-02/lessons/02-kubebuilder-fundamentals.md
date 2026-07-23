@@ -2,55 +2,55 @@
 layout: default
 title: "02.2 Kubebuilder Fundamentals"
 nav_order: 2
-parent: "Module 2: Introduction to Operators"
-grand_parent: Modules
+parent: "Модуль 2: Введение в операторы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 2.2: Kubebuilder Fundamentals
+# Урок 2.2: Основы Kubebuilder
 
-**Navigation:** [← Previous: Operator Pattern](01-operator-pattern.md) | [Module Overview](../README.md) | [Next: Dev Environment →](03-dev-environment.md)
+**Навигация:** [← Предыдущий: Паттерн оператора](01-operator-pattern.md) | [Обзор модуля](../README.md) | [Далее: Среда разработки →](03-dev-environment.md)
 
-## Introduction
+## Введение
 
-Kubebuilder is a framework for building Kubernetes operators using the controller-runtime library. It provides scaffolding, code generation, and best practices to make operator development easier. In this lesson, you'll learn how Kubebuilder works and its architecture.
+Kubebuilder — это фреймворк для создания операторов Kubernetes на основе библиотеки controller-runtime. Он предоставляет генерацию каркаса кода, кодогенерацию и лучшие практики, упрощающие разработку операторов. В этом уроке вы узнаете, как работает Kubebuilder и его архитектуру.
 
-## Theory: Kubebuilder Framework
+## Теория: фреймворк Kubebuilder
 
-Kubebuilder is a SDK and framework that simplifies operator development by providing code generation, project scaffolding, and best practices.
+Kubebuilder — это SDK и фреймворк, который упрощает разработку операторов за счёт кодогенерации, создания каркаса проекта и лучших практик.
 
-### Core Concepts
+### Основные концепции
 
-**Code Generation:**
-- Generates boilerplate code (CRDs, controllers, RBAC)
-- Reduces manual coding and errors
-- Ensures consistency with Kubernetes patterns
+**Кодогенерация:**
+- Генерирует шаблонный код (CRD, контроллеры, RBAC)
+- Сокращает ручное написание кода и ошибки
+- Обеспечивает согласованность с паттернами Kubernetes
 
-**Project Structure:**
-- Standardized layout for operator projects
-- Separates API definitions from controller logic
-- Makes projects maintainable and scalable
+**Структура проекта:**
+- Стандартизированная компоновка для проектов операторов
+- Отделяет определения API от логики контроллера
+- Делает проекты сопровождаемыми и масштабируемыми
 
-**Controller-Runtime Integration:**
-- Built on controller-runtime (same library Kubernetes uses)
-- Provides Manager, Reconciler, Client abstractions
-- Handles caching, watching, and leader election
+**Интеграция с controller-runtime:**
+- Построен на controller-runtime (той же библиотеке, что использует Kubernetes)
+- Предоставляет абстракции Manager, Reconciler, Client
+- Обрабатывает кеширование, отслеживание (watching) и выбор лидера
 
-**Why Kubebuilder:**
-- **Productivity**: Generates boilerplate, focuses on business logic
-- **Best Practices**: Enforces Kubernetes patterns
-- **Community**: Widely used, well-documented
-- **Tooling**: Rich CLI for common tasks
+**Почему Kubebuilder:**
+- **Продуктивность**: генерирует шаблонный код, позволяя сосредоточиться на бизнес-логике
+- **Лучшие практики**: обеспечивает соблюдение паттернов Kubernetes
+- **Сообщество**: широко используется, хорошо документирован
+- **Инструментарий**: богатый CLI для типовых задач
 
-Understanding Kubebuilder helps you build operators efficiently and correctly.
+Понимание Kubebuilder помогает создавать операторы эффективно и правильно.
 
-## What is Kubebuilder?
+## Что такое Kubebuilder?
 
-Kubebuilder is:
-- A **SDK** for building operators in Go
-- A **scaffolding tool** that generates project structure
-- A **code generator** for CRDs and controllers
-- Built on **controller-runtime** (the library used by Kubernetes itself)
+Kubebuilder — это:
+- **SDK** для создания операторов на Go
+- **Инструмент генерации каркаса**, создающий структуру проекта
+- **Генератор кода** для CRD и контроллеров
+- Построен на **controller-runtime** (библиотеке, которую использует сам Kubernetes)
 
 ```mermaid
 graph TB
@@ -78,9 +78,9 @@ graph TB
     style RUNTIME fill:#90EE90
 ```
 
-## Kubebuilder Architecture
+## Архитектура Kubebuilder
 
-Kubebuilder uses controller-runtime, the same library that powers Kubernetes controllers:
+Kubebuilder использует controller-runtime — ту же библиотеку, что лежит в основе контроллеров Kubernetes:
 
 ```mermaid
 graph LR
@@ -111,9 +111,9 @@ graph LR
     style CLIENT fill:#90EE90
 ```
 
-## Kubebuilder Project Structure
+## Структура проекта Kubebuilder
 
-When you scaffold a project, Kubebuilder creates this structure:
+Когда вы создаёте каркас проекта, Kubebuilder создаёт следующую структуру:
 
 ```mermaid
 graph TB
@@ -136,16 +136,16 @@ graph TB
     style CONTROLLERS fill:#FFB6C1
 ```
 
-### Key Directories
+### Ключевые каталоги
 
-- **`api/`**: Your API definitions (CRD types)
-- **`internal/controller/`**: Your controller logic
-- **`config/`**: Kubernetes manifests (CRDs, RBAC, etc.)
-- **`main.go`**: Entry point that sets up the manager
+- **`api/`**: ваши определения API (типы CRD)
+- **`internal/controller/`**: логика вашего контроллера
+- **`config/`**: манифесты Kubernetes (CRD, RBAC и т. д.)
+- **`main.go`**: точка входа, настраивающая менеджер (manager)
 
-## Code Generation Flow
+## Процесс кодогенерации
 
-Kubebuilder uses markers (comments) to generate code:
+Kubebuilder использует маркеры (комментарии) для генерации кода:
 
 ```mermaid
 sequenceDiagram
@@ -165,55 +165,55 @@ sequenceDiagram
     Gen->>Dev: Ready to use
 ```
 
-### Common Markers
+### Распространённые маркеры
 
-- `// +kubebuilder:object:root=true` - Marks root type
-- `// +kubebuilder:subresource:status` - Enables status subresource
-- `// +kubebuilder:resource:path=...` - Defines resource path
-- `// +kubebuilder:validation:...` - Adds validation rules
+- `// +kubebuilder:object:root=true` — помечает корневой тип
+- `// +kubebuilder:subresource:status` — включает подресурс status
+- `// +kubebuilder:resource:path=...` — определяет путь ресурса
+- `// +kubebuilder:validation:...` — добавляет правила валидации
 
-## Kubebuilder CLI Commands
+## Команды CLI Kubebuilder
 
-Kubebuilder provides several commands:
+Kubebuilder предоставляет несколько команд:
 
 ### `kubebuilder init`
 
-Initializes a new project:
-- Creates project structure
-- Sets up Go modules
-- Configures Makefile
-- Sets up controller-runtime
+Инициализирует новый проект:
+- Создаёт структуру проекта
+- Настраивает Go-модули
+- Конфигурирует Makefile
+- Настраивает controller-runtime
 
 ### `kubebuilder create api`
 
-Creates a new API (CRD):
-- Generates API types
-- Creates controller skeleton
-- Generates CRD manifests
-- Sets up RBAC
+Создаёт новый API (CRD):
+- Генерирует типы API
+- Создаёт каркас контроллера
+- Генерирует манифесты CRD
+- Настраивает RBAC
 
 ### `kubebuilder create webhook`
 
-Creates webhooks:
-- Validating webhooks
-- Mutating webhooks
-- Certificate management
+Создаёт вебхуки:
+- Валидирующие вебхуки
+- Мутирующие вебхуки
+- Управление сертификатами
 
 ### `make generate`
 
-Generates code:
-- CRD manifests
-- Deep copy methods
-- Client code
+Генерирует код:
+- Манифесты CRD
+- Методы глубокого копирования (deep copy)
+- Код клиента
 
 ### `make manifests`
 
-Generates manifests:
-- CRD YAML files
-- RBAC manifests
-- Webhook configurations
+Генерирует манифесты:
+- YAML-файлы CRD
+- Манифесты RBAC
+- Конфигурации вебхуков
 
-## Kubebuilder vs Operator SDK
+## Kubebuilder против Operator SDK
 
 ```mermaid
 graph LR
@@ -236,80 +236,80 @@ graph LR
 ```
 
 **Kubebuilder:**
-- Go-only
-- Simpler, more focused
-- Native Kubernetes patterns
-- Used by Kubernetes project itself
-- Better for learning
+- Только Go
+- Проще, более сфокусирован
+- Нативные паттерны Kubernetes
+- Используется самим проектом Kubernetes
+- Лучше для обучения
 
 **Operator SDK:**
-- Multiple languages (Go, Ansible, Helm)
-- More features (OLM, scorecard)
-- Larger ecosystem
-- More complex
+- Несколько языков (Go, Ansible, Helm)
+- Больше возможностей (OLM, scorecard)
+- Более крупная экосистема
+- Более сложный
 
-**For this course:** We use Kubebuilder because it's simpler, follows Kubernetes patterns closely, and is excellent for learning.
+**Для этого курса:** мы используем Kubebuilder, потому что он проще, тесно следует паттернам Kubernetes и отлично подходит для обучения.
 
-## Understanding Generated Code
+## Понимание сгенерированного кода
 
-When Kubebuilder generates code, it creates:
+Когда Kubebuilder генерирует код, он создаёт:
 
-1. **API Types** (`api/v1/`):
-   - Your Custom Resource Go structs
-   - Spec and Status definitions
-   - Deep copy methods
+1. **Типы API** (`api/v1/`):
+   - Go-структуры вашего пользовательского ресурса
+   - Определения Spec и Status
+   - Методы глубокого копирования
 
-2. **Controller** (`internal/controller/`):
-   - Reconciler struct
-   - Reconcile function skeleton
-   - Setup with manager
+2. **Контроллер** (`internal/controller/`):
+   - Структуру Reconciler
+   - Каркас функции Reconcile
+   - Настройку с менеджером
 
-3. **Manifests** (`config/`):
-   - CRD YAML files
-   - RBAC rules
-   - Manager deployment
+3. **Манифесты** (`config/`):
+   - YAML-файлы CRD
+   - Правила RBAC
+   - Развёртывание менеджера
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Kubebuilder** is a framework for building operators in Go
-- Uses **controller-runtime** (same as Kubernetes)
-- Provides **scaffolding** and **code generation**
-- Project structure is **standardized** and **organized**
-- Uses **markers** (comments) to generate code
-- Simpler than Operator SDK, better for learning
+- **Kubebuilder** — это фреймворк для создания операторов на Go
+- Использует **controller-runtime** (как и Kubernetes)
+- Предоставляет **генерацию каркаса** и **кодогенерацию**
+- Структура проекта **стандартизирована** и **организована**
+- Использует **маркеры** (комментарии) для генерации кода
+- Проще, чем Operator SDK, лучше для обучения
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When using Kubebuilder:
-- You'll define API types with markers
-- Kubebuilder generates CRDs automatically
-- You'll implement the Reconcile function
-- Kubebuilder handles the boilerplate
-- You focus on business logic
+При использовании Kubebuilder:
+- Вы будете определять типы API с маркерами
+- Kubebuilder автоматически генерирует CRD
+- Вы будете реализовывать функцию Reconcile
+- Kubebuilder берёт на себя шаблонный код
+- Вы фокусируетесь на бизнес-логике
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 2.2: Kubebuilder CLI and Project Structure](../labs/lab-02-kubebuilder-fundamentals.md) - Hands-on exercises for this lesson
+- [Лабораторная 2.2: CLI Kubebuilder и структура проекта](../labs/lab-02-kubebuilder-fundamentals.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Kubebuilder Documentation](https://book.kubebuilder.io/)
-- [Kubebuilder Quick Start](https://book.kubebuilder.io/quick-start.html)
+### Официальная документация
+- [Документация Kubebuilder](https://book.kubebuilder.io/)
+- [Быстрый старт Kubebuilder](https://book.kubebuilder.io/quick-start.html)
 - [Controller Runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime)
 
-### Further Reading
-- **Kubebuilder Book** - Official comprehensive guide
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 4: Working with Client Libraries
-- [Kubebuilder GitHub](https://github.com/kubernetes-sigs/kubebuilder) - Source code and examples
+### Дополнительное чтение
+- **Kubebuilder Book** — официальное исчерпывающее руководство
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 4: Working with Client Libraries
+- [Kubebuilder на GitHub](https://github.com/kubernetes-sigs/kubebuilder) — исходный код и примеры
 
-### Related Topics
-- [Kubebuilder vs Operator SDK](https://book.kubebuilder.io/faq.html#kubebuilder-vs-operator-sdk)
-- [Project Layout](https://book.kubebuilder.io/migration/manually_migration_guide_v1_to_v2.html#project-layout)
-- [Code Generation](https://book.kubebuilder.io/reference/generating-crd.html)
+### Смежные темы
+- [Kubebuilder против Operator SDK](https://book.kubebuilder.io/faq.html#kubebuilder-vs-operator-sdk)
+- [Компоновка проекта](https://book.kubebuilder.io/migration/manually_migration_guide_v1_to_v2.html#project-layout)
+- [Кодогенерация](https://book.kubebuilder.io/reference/generating-crd.html)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand Kubebuilder, let's set up your development environment and create your first operator!
+Теперь, когда вы понимаете Kubebuilder, давайте настроим вашу среду разработки и создадим ваш первый оператор!
 
-**Navigation:** [← Previous: Operator Pattern](01-operator-pattern.md) | [Module Overview](../README.md) | [Next: Dev Environment →](03-dev-environment.md)
+**Навигация:** [← Предыдущий: Паттерн оператора](01-operator-pattern.md) | [Обзор модуля](../README.md) | [Далее: Среда разработки →](03-dev-environment.md)

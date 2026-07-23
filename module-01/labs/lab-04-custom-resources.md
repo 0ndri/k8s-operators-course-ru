@@ -2,32 +2,32 @@
 layout: default
 title: "Lab 01.4: Custom Resources"
 nav_order: 14
-parent: "Module 1: Kubernetes Architecture"
-grand_parent: Modules
+parent: "Модуль 1: Архитектура Kubernetes"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 1.4: Creating Your First CRD
+# Лабораторная 1.4: Создание вашего первого CRD
 
-**Related Lesson:** [Lesson 1.4: Custom Resources](../lessons/04-custom-resources.md)  
-**Navigation:** [← Previous Lab: Controller Pattern](lab-03-controller-pattern.md) | [Module Overview](../README.md)
+**Связанный урок:** [Урок 1.4: Пользовательские ресурсы](../lessons/04-custom-resources.md)  
+**Навигация:** [← Предыдущая лабораторная: Паттерн контроллера](lab-03-controller-pattern.md) | [Обзор модуля](../README.md)
 
-## Objectives
+## Цели
 
-- Create a Custom Resource Definition (CRD)
-- Create and manage Custom Resources
-- Understand CRD validation
-- Work with status subresources
-- Understand when to use CRDs
+- Создать определение пользовательского ресурса (CRD)
+- Создавать пользовательскими ресурсами и управлять ими
+- Понять валидацию CRD
+- Поработать с подресурсами status
+- Понять, когда использовать CRD
 
-## Prerequisites
+## Предварительные требования
 
-- Kind cluster running
-- kubectl configured
+- Запущенный кластер kind
+- Настроенный kubectl
 
-## Exercise 1: Create a Simple CRD
+## Упражнение 1: создание простого CRD
 
-### Task 1.1: Define a Website CRD
+### Задача 1.1: определите CRD Website
 
 ```bash
 # Create a CRD for managing websites
@@ -92,7 +92,7 @@ kubectl get crd websites.example.com
 kubectl api-resources | grep websites
 ```
 
-### Task 1.2: Verify API Endpoint
+### Задача 1.2: проверьте эндпоинт API
 
 ```bash
 # Check the API endpoint is available
@@ -102,9 +102,9 @@ kubectl get --raw /apis/example.com/v1
 kubectl get crd websites.example.com -o yaml | head -50
 ```
 
-## Exercise 2: Create Custom Resources
+## Упражнение 2: создание пользовательских ресурсов
 
-### Task 2.1: Create a Valid Website Resource
+### Задача 2.1: создайте корректный ресурс Website
 
 ```bash
 # Create a website resource
@@ -128,7 +128,7 @@ kubectl get ws my-blog  # Using short name
 kubectl get website my-blog -o yaml
 ```
 
-### Task 2.2: Create Multiple Websites
+### Задача 2.2: создайте несколько сайтов
 
 ```bash
 # Create more websites
@@ -159,9 +159,9 @@ kubectl get websites
 kubectl get website my-shop -o yaml
 ```
 
-## Exercise 3: Test Validation
+## Упражнение 3: проверка валидации
 
-### Task 3.1: Test Required Fields
+### Задача 3.1: проверьте обязательные поля
 
 ```bash
 # Try to create website without required field
@@ -176,9 +176,9 @@ spec:
 EOF
 ```
 
-**Expected Result:** Validation error about missing required field.
+**Ожидаемый результат:** ошибка валидации об отсутствующем обязательном поле.
 
-### Task 3.2: Test URL Pattern Validation
+### Задача 3.2: проверьте валидацию шаблона URL
 
 ```bash
 # Try invalid URL (doesn't match pattern)
@@ -193,9 +193,9 @@ spec:
 EOF
 ```
 
-**Expected Result:** Validation error about URL pattern.
+**Ожидаемый результат:** ошибка валидации о шаблоне URL.
 
-### Task 3.3: Test Replica Range Validation
+### Задача 3.3: проверьте валидацию диапазона реплик
 
 ```bash
 # Try replicas below minimum
@@ -210,7 +210,7 @@ spec:
 EOF
 ```
 
-**Expected Result:** Validation error about minimum value.
+**Ожидаемый результат:** ошибка валидации о минимальном значении.
 
 ```bash
 # Try replicas above maximum
@@ -225,9 +225,9 @@ spec:
 EOF
 ```
 
-**Expected Result:** Validation error about maximum value.
+**Ожидаемый результат:** ошибка валидации о максимальном значении.
 
-### Task 3.4: Test Enum Validation
+### Задача 3.4: проверьте валидацию enum
 
 ```bash
 # Try invalid environment value
@@ -243,9 +243,9 @@ spec:
 EOF
 ```
 
-**Expected Result:** Validation error about enum value.
+**Ожидаемый результат:** ошибка валидации о значении enum.
 
-### Task 3.5: Test Default Values
+### Задача 3.5: проверьте значения по умолчанию
 
 ```bash
 # Create website without environment (should use default)
@@ -264,11 +264,11 @@ kubectl get website default-env -o jsonpath='{.spec.environment}'
 echo
 ```
 
-**Expected Result:** Environment should be "development" (the default).
+**Ожидаемый результат:** environment должно быть «development» (значение по умолчанию).
 
-## Exercise 4: Update Custom Resources
+## Упражнение 4: обновление пользовательских ресурсов
 
-### Task 4.1: Update Spec
+### Задача 4.1: обновите spec
 
 ```bash
 # Update the website
@@ -286,7 +286,7 @@ kubectl get website my-blog -o jsonpath='{.spec.url}'
 echo
 ```
 
-### Task 4.2: Update via YAML
+### Задача 4.2: обновите через YAML
 
 ```bash
 # Get current resource
@@ -303,9 +303,9 @@ kubectl get website my-shop -o jsonpath='{.spec.replicas}'
 echo
 ```
 
-## Exercise 5: Status Subresource
+## Упражнение 5: подресурс status
 
-### Task 5.1: Examine Status Field
+### Задача 5.1: изучите поле status
 
 ```bash
 # Get website with status
@@ -315,7 +315,7 @@ kubectl get website my-blog -o yaml | grep -A 10 status
 # In a real operator, the controller would update this
 ```
 
-### Task 5.2: Understand Spec vs Status
+### Задача 5.2: разберитесь в spec и status
 
 ```bash
 # Compare spec and status
@@ -329,9 +329,9 @@ kubectl get website my-blog -o jsonpath='{.status}' | jq '.'
 # Status is what actually exists (updated by controller)
 ```
 
-## Exercise 6: CRD vs ConfigMap Comparison
+## Упражнение 6: сравнение CRD и ConfigMap
 
-### Task 6.1: Create Equivalent ConfigMap
+### Задача 6.1: создайте эквивалентный ConfigMap
 
 ```bash
 # Create a ConfigMap with similar data
@@ -354,13 +354,13 @@ echo -e "\n=== ConfigMap ==="
 kubectl get configmap website-config -o yaml
 ```
 
-**Key Differences:**
-1. CRD has structured schema and validation
-2. ConfigMap is just key-value pairs
-3. CRD has API semantics (can watch, has resourceVersion)
-4. CRD can have status subresource
+**Ключевые различия:**
+1. У CRD есть структурированная схема и валидация
+2. ConfigMap — это просто пары «ключ-значение»
+3. У CRD есть семантика API (можно отслеживать, есть resourceVersion)
+4. У CRD может быть подресурс status
 
-### Task 6.2: Try Invalid ConfigMap Data
+### Задача 6.2: попробуйте некорректные данные в ConfigMap
 
 ```bash
 # ConfigMap accepts any data (no validation)
@@ -381,9 +381,9 @@ kubectl get configmap invalid-config
 # But our CRD would reject this
 ```
 
-## Exercise 7: Explore CRD Details
+## Упражнение 7: изучение деталей CRD
 
-### Task 7.1: Examine CRD Schema
+### Задача 7.1: изучите схему CRD
 
 ```bash
 # Get the full CRD definition
@@ -396,7 +396,7 @@ kubectl get crd websites.example.com -o jsonpath='{.spec.versions[0].schema}' | 
 kubectl get crd websites.example.com -o jsonpath='{.spec.versions[0].schema.openAPIV3Schema.properties.spec.properties}' | jq '.'
 ```
 
-### Task 7.2: API Discovery
+### Задача 7.2: обнаружение API
 
 ```bash
 # Discover the API
@@ -409,9 +409,9 @@ kubectl get --raw /apis/example.com/v1 | jq '.resources[].name'
 kubectl get --raw /apis/example.com/v1/namespaces/default/websites/my-blog | jq '.'
 ```
 
-## Exercise 8: Delete and Cleanup
+## Упражнение 8: удаление и очистка
 
-### Task 8.1: Delete Custom Resources
+### Задача 8.1: удалите пользовательские ресурсы
 
 ```bash
 # Delete individual websites
@@ -425,7 +425,7 @@ kubectl delete websites --all
 kubectl get websites
 ```
 
-### Task 8.2: Delete CRD
+### Задача 8.2: удалите CRD
 
 ```bash
 # Delete the CRD
@@ -438,9 +438,9 @@ kubectl get crd websites.example.com
 kubectl create website test --url=https://test.com --replicas=2
 ```
 
-**Note:** Deleting a CRD also deletes all Custom Resources of that type!
+**Примечание:** удаление CRD также удаляет все пользовательские ресурсы этого типа!
 
-## Cleanup
+## Очистка
 
 ```bash
 # Clean up any remaining resources
@@ -450,42 +450,42 @@ kubectl delete configmap website-config invalid-config 2>/dev/null
 rm -f /tmp/website.yaml /tmp/crd.yaml
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Created a Custom Resource Definition (CRD)
-- Created and managed Custom Resources
-- Tested CRD validation rules
-- Compared CRDs with ConfigMaps
-- Understood spec vs status separation
-- Explored CRD schema and API discovery
+В этой лабораторной вы:
+- Создали определение пользовательского ресурса (CRD)
+- Создавали пользовательскими ресурсами и управляли ими
+- Проверили правила валидации CRD
+- Сравнили CRD с ConfigMap
+- Разобрались в разделении spec и status
+- Изучили схему CRD и обнаружение API
 
-## Key Learnings
+## Ключевые уроки
 
-1. CRDs extend Kubernetes with domain-specific resources
-2. CRDs provide schema validation (unlike ConfigMaps)
-3. CRDs have API semantics (watch, resourceVersion, etc.)
-4. Spec describes desired state, status describes actual state
-5. Validation happens at the API level before storage
-6. CRDs are the foundation for building operators
+1. CRD расширяют Kubernetes ресурсами, специфичными для предметной области
+2. CRD обеспечивают валидацию схемы (в отличие от ConfigMap)
+3. У CRD есть семантика API (watch, resourceVersion и т. д.)
+4. Spec описывает желаемое состояние, status — фактическое
+5. Валидация происходит на уровне API до сохранения
+6. CRD — это основа для создания операторов
 
-## When to Use CRDs
+## Когда использовать CRD
 
-**Use CRDs when:**
-- You need structured data with validation
-- You want API semantics (watch, etc.)
-- You're building an operator
-- You need status subresource
+**Используйте CRD, когда:**
+- Нужны структурированные данные с валидацией
+- Нужна семантика API (watch и т. д.)
+- Вы создаёте оператор
+- Нужен подресурс status
 
-**Use ConfigMaps when:**
-- Simple key-value configuration
-- No validation needed
-- No API semantics required
+**Используйте ConfigMap, когда:**
+- Простая конфигурация «ключ-значение»
+- Валидация не нужна
+- Семантика API не требуется
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Website CRD](../solutions/website-crd.yaml) - Complete CRD definition
-- [Example Website](../solutions/example-website.yaml) - Example Custom Resource
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Website CRD](../solutions/website-crd.yaml) — полное определение CRD
+- [Example Website](../solutions/example-website.yaml) — пример пользовательского ресурса
 
-**Navigation:** [← Previous Lab: Controller Pattern](lab-03-controller-pattern.md) | [Related Lesson](../lessons/04-custom-resources.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущая лабораторная: Паттерн контроллера](lab-03-controller-pattern.md) | [Связанный урок](../lessons/04-custom-resources.md) | [Обзор модуля](../README.md)

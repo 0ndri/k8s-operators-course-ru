@@ -2,61 +2,61 @@
 layout: default
 title: "1.4 Custom Resources"
 nav_order: 4
-parent: "Module 1: Kubernetes Architecture"
-grand_parent: Modules
+parent: "Модуль 1: Архитектура Kubernetes"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 1.4: Custom Resources
+# Урок 1.4: Пользовательские ресурсы
 
-**Navigation:** [← Previous: Controller Pattern](03-controller-pattern.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущий: Паттерн контроллера](03-controller-pattern.md) | [Обзор модуля](../README.md)
 
-## Introduction
+## Введение
 
-Custom Resources extend Kubernetes with domain-specific objects. Custom Resource Definitions (CRDs) define the schema for these resources. Understanding CRDs is essential for building operators, as operators manage Custom Resources.
+Пользовательские ресурсы (Custom Resources) расширяют Kubernetes объектами, специфичными для предметной области. Определения пользовательских ресурсов (CRD) задают схему для этих ресурсов. Понимание CRD необходимо для создания операторов, поскольку операторы управляют пользовательскими ресурсами.
 
-## Theory: Custom Resources and Extensibility
+## Теория: пользовательские ресурсы и расширяемость
 
-Custom Resources extend Kubernetes with domain-specific types, enabling you to model your application's concepts as first-class Kubernetes objects.
+Пользовательские ресурсы расширяют Kubernetes типами, специфичными для предметной области, позволяя моделировать концепции вашего приложения как полноценные объекты Kubernetes.
 
-### Core Concepts
+### Основные концепции
 
-**Custom Resource Definition (CRD):**
-- Defines a new resource type in Kubernetes
-- Like a "schema" for your custom resource
-- Registered with the API server
-- Enables validation and defaulting
+**Определение пользовательского ресурса (Custom Resource Definition, CRD):**
+- Определяет новый тип ресурса в Kubernetes
+- Похоже на «схему» для вашего пользовательского ресурса
+- Регистрируется в API-сервере
+- Обеспечивает валидацию и значения по умолчанию
 
-**Custom Resource (CR):**
-- An instance of a CRD
-- Stored in etcd like built-in resources
-- Can have spec and status
-- Managed by controllers (operators)
+**Пользовательский ресурс (Custom Resource, CR):**
+- Экземпляр CRD
+- Хранится в etcd, как и встроенные ресурсы
+- Может иметь spec и status
+- Управляется контроллерами (операторами)
 
-**Why CRDs Matter:**
-- **Domain Modeling**: Represent application concepts naturally
-- **API Consistency**: Use same patterns as built-in resources
-- **Tool Compatibility**: Works with kubectl, dashboards, etc.
-- **Controller Integration**: Enables operator pattern
+**Почему CRD важны:**
+- **Моделирование предметной области**: естественное представление концепций приложения
+- **Согласованность API**: используются те же паттерны, что и для встроенных ресурсов
+- **Совместимость с инструментами**: работает с kubectl, дашбордами и т. д.
+- **Интеграция с контроллерами**: обеспечивает паттерн оператора
 
-### When to Use CRDs
+### Когда использовать CRD
 
-**Use CRDs when:**
-- You need to model domain-specific concepts
-- You want Kubernetes-native APIs
-- You need lifecycle management
-- You want to leverage Kubernetes tooling
+**Используйте CRD, когда:**
+- Нужно смоделировать концепции, специфичные для предметной области
+- Нужны Kubernetes-нативные API
+- Требуется управление жизненным циклом
+- Хотите задействовать инструментарий Kubernetes
 
-**Don't use CRDs when:**
-- Simple configuration (use ConfigMap)
-- Temporary data (use annotations)
-- No lifecycle needed (use labels/annotations)
+**Не используйте CRD, когда:**
+- Простая конфигурация (используйте ConfigMap)
+- Временные данные (используйте аннотации)
+- Управление жизненным циклом не нужно (используйте метки/аннотации)
 
-Understanding CRDs is essential for building operators, as operators manage Custom Resources.
+Понимание CRD необходимо для создания операторов, поскольку операторы управляют пользовательскими ресурсами.
 
-## What are Custom Resources?
+## Что такое пользовательские ресурсы?
 
-Custom Resources are extensions to the Kubernetes API that store structured data. They follow the same patterns as built-in resources but are defined by you.
+Пользовательские ресурсы — это расширения API Kubernetes, которые хранят структурированные данные. Они следуют тем же паттернам, что и встроенные ресурсы, но определяются вами.
 
 ```mermaid
 graph TB
@@ -88,13 +88,13 @@ graph TB
     style BACKUP fill:#90EE90
 ```
 
-## Custom Resource Definitions (CRDs)
+## Определения пользовательских ресурсов (CRD)
 
-A CRD defines:
-- The resource name and API group
-- The schema (structure) of the resource
-- Validation rules
-- Subresources (like status)
+CRD определяет:
+- Имя ресурса и группу API
+- Схему (структуру) ресурса
+- Правила валидации
+- Подресурсы (например, status)
 
 ```mermaid
 graph TB
@@ -114,9 +114,9 @@ graph TB
     style SCHEMA fill:#FFE4B5
 ```
 
-## CRD Structure
+## Структура CRD
 
-A CRD has a specific structure:
+CRD имеет определённую структуру:
 
 ```yaml
 apiVersion: apiextensions.k8s.io/v1
@@ -149,9 +149,9 @@ spec:
     kind: Database
 ```
 
-## CRD Registration Flow
+## Процесс регистрации CRD
 
-When you create a CRD, here's what happens:
+Когда вы создаёте CRD, происходит следующее:
 
 ```mermaid
 sequenceDiagram
@@ -175,7 +175,7 @@ sequenceDiagram
     API-->>User: Database Created
 ```
 
-## When to Use CRDs vs ConfigMaps
+## Когда использовать CRD, а когда ConfigMap
 
 ```mermaid
 flowchart TD
@@ -195,20 +195,20 @@ flowchart TD
     style OPERATOR fill:#FFB6C1
 ```
 
-**Use ConfigMaps when:**
-- Simple key-value data
-- No validation needed
-- No API semantics required
+**Используйте ConfigMap, когда:**
+- Простые данные «ключ-значение»
+- Валидация не нужна
+- Семантика API не требуется
 
-**Use CRDs when:**
-- Structured data with schema
-- Validation required
-- API semantics needed
-- Building an operator
+**Используйте CRD, когда:**
+- Структурированные данные со схемой
+- Требуется валидация
+- Нужна семантика API
+- Вы создаёте оператор
 
-## CRD Schema and Validation
+## Схема CRD и валидация
 
-CRDs use OpenAPI v3 schema for validation:
+CRD используют схему OpenAPI v3 для валидации:
 
 ```mermaid
 graph TB
@@ -229,9 +229,9 @@ graph TB
     style SCHEMA fill:#FFE4B5
 ```
 
-## Status Subresource
+## Подресурс status
 
-CRDs can have a status subresource, separating spec (desired) from status (actual):
+CRD могут иметь подресурс status, разделяющий spec (желаемое состояние) и status (фактическое):
 
 ```mermaid
 graph LR
@@ -245,14 +245,14 @@ graph LR
     style STATUS fill:#FFB6C1
 ```
 
-Benefits:
-- Users can't accidentally modify status
-- Status updates don't trigger spec validation
-- Clear separation of concerns
+Преимущества:
+- Пользователи не могут случайно изменить status
+- Обновления status не запускают валидацию spec
+- Чёткое разделение ответственности
 
-## Hands-on Exercise: Creating Your First CRD
+## Практическое упражнение: создание вашего первого CRD
 
-### Step 1: Create a Simple CRD
+### Шаг 1: создайте простой CRD
 
 ```bash
 # Create a CRD for a simple "Website" resource
@@ -308,7 +308,7 @@ kubectl get crd websites.example.com
 kubectl api-resources | grep websites
 ```
 
-### Step 2: Create a Custom Resource
+### Шаг 2: создайте пользовательский ресурс
 
 ```bash
 # Create a Website resource
@@ -331,7 +331,7 @@ kubectl get ws my-website  # Using short name
 kubectl get website my-website -o yaml
 ```
 
-### Step 3: Test Validation
+### Шаг 3: проверьте валидацию
 
 ```bash
 # Try to create an invalid resource (missing required field)
@@ -374,7 +374,7 @@ EOF
 # You should see a validation error
 ```
 
-### Step 4: Update Status
+### Шаг 4: обновите status
 
 ```bash
 # Update the status (if status subresource is enabled)
@@ -385,7 +385,7 @@ kubectl get website my-website -o yaml
 # In a real operator, the controller would update this
 ```
 
-### Step 5: Explore CRD Details
+### Шаг 5: исследуйте детали CRD
 
 ```bash
 # Get detailed CRD information
@@ -398,7 +398,7 @@ kubectl get crd websites.example.com -o jsonpath='{.spec.versions[0].schema}'
 kubectl get --raw /apis/example.com/v1
 ```
 
-### Step 6: Clean Up
+### Шаг 6: очистка
 
 ```bash
 # Delete the custom resources
@@ -408,9 +408,9 @@ kubectl delete website my-website
 kubectl delete crd websites.example.com
 ```
 
-## CRD Versioning
+## Версионирование CRD
 
-CRDs support multiple versions with conversion:
+CRD поддерживают несколько версий с конвертацией:
 
 ```mermaid
 graph TB
@@ -428,55 +428,54 @@ graph TB
     style STORAGE fill:#FFB6C1
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Custom Resources** extend Kubernetes with domain-specific objects
-- **CRDs** define the schema and validation for Custom Resources
-- CRDs use **OpenAPI v3 schema** for validation
-- **Status subresource** separates desired (spec) from actual (status) state
-- CRDs provide **API semantics** (GET, POST, PUT, DELETE, WATCH)
-- Use CRDs when you need structured data with validation
-- CRDs are the foundation for building operators
+- **Пользовательские ресурсы** расширяют Kubernetes объектами, специфичными для предметной области
+- **CRD** определяют схему и валидацию для пользовательских ресурсов
+- CRD используют **схему OpenAPI v3** для валидации
+- **Подресурс status** отделяет желаемое состояние (spec) от фактического (status)
+- CRD предоставляют **семантику API** (GET, POST, PUT, DELETE, WATCH)
+- Используйте CRD, когда нужны структурированные данные с валидацией
+- CRD — это основа для создания операторов
 
-## Understanding for Operators
+## Что это значит для операторов
 
-When building operators:
-- You'll create CRDs for your domain objects
-- Your operator will watch and reconcile Custom Resources
-- You'll use spec for desired state, status for actual state
-- Validation in CRD schema prevents invalid resources
-- CRDs enable declarative management of your applications
+При создании операторов:
+- Вы будете создавать CRD для объектов вашей предметной области
+- Ваш оператор будет отслеживать и согласовывать пользовательские ресурсы
+- Вы будете использовать spec для желаемого состояния, status — для фактического
+- Валидация в схеме CRD предотвращает создание некорректных ресурсов
+- CRD обеспечивают декларативное управление вашими приложениями
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 1.4: Creating Your First CRD](../labs/lab-04-custom-resources.md) - Hands-on exercises for this lesson
+- [Лабораторная 1.4: Создание вашего первого CRD](../labs/lab-04-custom-resources.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
-- [Custom Resource Definitions](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
-- [API Extension Patterns](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/)
+### Официальная документация
+- [Пользовательские ресурсы](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+- [Определения пользовательских ресурсов](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
+- [Паттерны расширения API](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/)
 
-### Further Reading
-- **Kubernetes: Up and Running** by Kelsey Hightower, Brendan Burns, and Joe Beda - Chapter 15: Extending Kubernetes
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 3: Custom Resources
-- [Kubernetes API Extension Guide](https://kubernetes.io/docs/concepts/extend-kubernetes/)
+### Дополнительное чтение
+- **Kubernetes: Up and Running**, Kelsey Hightower, Brendan Burns и Joe Beda — глава 15: Extending Kubernetes
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 3: Custom Resources
+- [Руководство по расширению API Kubernetes](https://kubernetes.io/docs/concepts/extend-kubernetes/)
 
-### Related Topics
-- [CRD Best Practices](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#best-practices)
-- [API Versioning](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#api-versioning)
-- [OpenAPI Schema](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#specifying-a-structural-schema)
+### Смежные темы
+- [Лучшие практики CRD](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#best-practices)
+- [Версионирование API](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#api-versioning)
+- [Схема OpenAPI](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#specifying-a-structural-schema)
 
-## Next Steps
+## Дальнейшие шаги
 
-Congratulations! You've completed Module 1. You now understand:
-- Kubernetes control plane architecture
-- API machinery and resource structure
-- The controller pattern and reconciliation
-- Custom Resources and CRDs
+Поздравляем! Вы завершили Модуль 1. Теперь вы понимаете:
+- Архитектуру управляющего слоя Kubernetes
+- Механизмы API и структуру ресурсов
+- Паттерн контроллера и согласование
+- Пользовательские ресурсы и CRD
 
-In [Module 2](../../module-02/README.md), you'll build your first operator using Kubebuilder!
+В [Модуле 2](../../module-02/README.md) вы создадите свой первый оператор с помощью Kubebuilder!
 
-**Navigation:** [← Previous: Controller Pattern](03-controller-pattern.md) | [Module Overview](../README.md) | [Next: Module 2 →](../../module-02/README.md)
-
+**Навигация:** [← Предыдущий: Паттерн контроллера](03-controller-pattern.md) | [Обзор модуля](../README.md) | [Далее: Модуль 2 →](../../module-02/README.md)

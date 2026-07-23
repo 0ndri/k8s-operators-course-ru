@@ -2,31 +2,31 @@
 layout: default
 title: "Lab 02.3: Dev Environment"
 nav_order: 13
-parent: "Module 2: Introduction to Operators"
-grand_parent: Modules
+parent: "Модуль 2: Введение в операторы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 2.3: Setting Up Your Environment
+# Лабораторная 2.3: Настройка вашей среды
 
-**Related Lesson:** [Lesson 2.3: Development Environment Setup](../lessons/03-dev-environment.md)  
-**Navigation:** [← Previous Lab: Kubebuilder Fundamentals](lab-02-kubebuilder-fundamentals.md) | [Module Overview](../README.md) | [Next Lab: First Operator →](lab-04-first-operator.md)
+**Связанный урок:** [Урок 2.3: Настройка среды разработки](../lessons/03-dev-environment.md)  
+**Навигация:** [← Предыдущая лабораторная: Основы Kubebuilder](lab-02-kubebuilder-fundamentals.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Первый оператор →](lab-04-first-operator.md)
 
-## Objectives
+## Цели
 
-- Verify all required tools are installed
-- Set up complete development environment
-- Create and verify kind cluster
-- Test the complete setup
+- Проверить, что все необходимые инструменты установлены
+- Настроить полноценную среду разработки
+- Создать и проверить кластер kind
+- Протестировать полную настройку
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Module 1](../module-01/README.md) setup
-- Basic understanding of the tools needed
+- Завершение настройки [Модуля 1](../module-01/README.md)
+- Базовое понимание необходимых инструментов
 
-## Exercise 1: Verify Prerequisites
+## Упражнение 1: проверка предварительных требований
 
-### Task 1.1: Check Go Installation
+### Задача 1.1: проверьте установку Go
 
 ```bash
 # Check Go version (need 1.21+)
@@ -40,9 +40,9 @@ echo $GOPATH
 echo $GOROOT
 ```
 
-**Expected:** Go 1.21 or higher
+**Ожидается:** Go 1.21 или выше
 
-### Task 1.2: Check kubectl
+### Задача 1.2: проверьте kubectl
 
 ```bash
 # Check kubectl version
@@ -52,9 +52,9 @@ kubectl version --client
 kubectl cluster-info
 ```
 
-**Note:** If no cluster is configured, that's okay - we'll create one.
+**Примечание:** если кластер не настроен — это нормально, мы его создадим.
 
-### Task 1.3: Check Docker/Podman
+### Задача 1.3: проверьте Docker/Podman
 
 ```bash
 # Check Docker
@@ -66,25 +66,25 @@ podman --version
 podman info
 ```
 
-**Expected:** Docker or Podman running
+**Ожидается:** запущенный Docker или Podman
 
-## Exercise 2: Install Missing Tools
+## Упражнение 2: установка недостающих инструментов
 
-### Task 2.1: Use Setup Script
+### Задача 2.1: используйте скрипт настройки
 
 ```bash
 # Run the setup script
 ./scripts/setup-dev-environment.sh
 ```
 
-**Observe:**
-- Which tools are already installed?
-- Which tools need installation?
-- What gets installed automatically?
+**Обратите внимание:**
+- Какие инструменты уже установлены?
+- Какие инструменты нужно установить?
+- Что устанавливается автоматически?
 
-### Task 2.2: Manual Verification
+### Задача 2.2: ручная проверка
 
-After running the script, verify each tool:
+После запуска скрипта проверьте каждый инструмент:
 
 ```bash
 # Go
@@ -103,21 +103,21 @@ kind version
 docker --version  # or podman --version
 ```
 
-## Exercise 3: Set Up Kind Cluster
+## Упражнение 3: настройка кластера kind
 
-### Task 3.1: Use Setup Script
+### Задача 3.1: используйте скрипт настройки
 
 ```bash
 # Run kind cluster setup
 ./scripts/setup-kind-cluster.sh
 ```
 
-**Observe:**
-- Cluster creation process
-- What gets installed?
-- How long does it take?
+**Обратите внимание:**
+- Процесс создания кластера
+- Что устанавливается?
+- Сколько времени это занимает?
 
-### Task 3.2: Verify Cluster
+### Задача 3.2: проверьте кластер
 
 ```bash
 # Check cluster info
@@ -132,7 +132,7 @@ kubectl config current-context
 # Should show: kind-k8s-operators-course
 ```
 
-### Task 3.3: Test Cluster
+### Задача 3.3: протестируйте кластер
 
 ```bash
 # Create a test pod
@@ -148,9 +148,9 @@ kubectl get pods
 kubectl delete pod test-pod
 ```
 
-## Exercise 4: Verify kubebuilder
+## Упражнение 4: проверка kubebuilder
 
-### Task 4.1: Check Installation
+### Задача 4.1: проверьте установку
 
 ```bash
 # Check kubebuilder version
@@ -163,7 +163,7 @@ which kubebuilder
 kubebuilder --help
 ```
 
-### Task 4.2: Test kubebuilder Init
+### Задача 4.2: протестируйте kubebuilder init
 
 ```bash
 # Create a test directory
@@ -184,11 +184,11 @@ cd ~
 rm -rf /tmp/env-test
 ```
 
-## Exercise 5: Complete Environment Checklist
+## Упражнение 5: полный чек-лист среды
 
-### Task 5.1: Run Verification Checklist
+### Задача 5.1: выполните чек-лист проверки
 
-Check each item:
+Проверьте каждый пункт:
 
 ```bash
 # Go 1.21+
@@ -210,17 +210,17 @@ kind version > /dev/null 2>&1 && echo "✅ kind OK" || echo "❌ kind missing"
 kubectl cluster-info --context kind-k8s-operators-course > /dev/null 2>&1 && echo "✅ Kind cluster OK" || echo "❌ Kind cluster missing"
 ```
 
-### Task 5.2: Fix Any Issues
+### Задача 5.2: устраните любые проблемы
 
-If any checks fail:
-- Review error messages
-- Re-run setup scripts
-- Check documentation
-- Ask for help if needed
+Если какие-либо проверки не прошли:
+- Просмотрите сообщения об ошибках
+- Перезапустите скрипты настройки
+- Проверьте документацию
+- При необходимости обратитесь за помощью
 
-## Exercise 6: Test Development Workflow
+## Упражнение 6: тестирование рабочего процесса разработки
 
-### Task 6.1: Create Test Project
+### Задача 6.1: создайте тестовый проект
 
 ```bash
 # Create test project
@@ -231,7 +231,7 @@ cd /tmp/workflow-test
 kubebuilder init --domain test.com --repo github.com/test/workflow-test
 ```
 
-### Task 6.2: Generate and Install
+### Задача 6.2: сгенерируйте и установите
 
 ```bash
 # Generate code
@@ -244,7 +244,7 @@ make manifests
 make install || echo "No cluster, skipping install"
 ```
 
-### Task 6.3: Verify Workflow
+### Задача 6.3: проверьте рабочий процесс
 
 ```bash
 # Check generated files
@@ -255,18 +255,18 @@ ls -la config/rbac/
 make help
 ```
 
-### Task 6.4: Cleanup
+### Задача 6.4: очистка
 
 ```bash
 cd ~
 rm -rf /tmp/workflow-test
 ```
 
-## Exercise 7: IDE Setup (Optional)
+## Упражнение 7: настройка IDE (опционально)
 
-### Task 7.1: VS Code Setup
+### Задача 7.1: настройка VS Code
 
-If using VS Code:
+Если вы используете VS Code:
 
 ```bash
 # Install Go extension
@@ -276,65 +276,65 @@ code --install-extension golang.go
 code --install-extension ms-kubernetes-tools.vscode-kubernetes-tools
 ```
 
-### Task 7.2: GoLand Setup
+### Задача 7.2: настройка GoLand
 
-If using GoLand:
-- GoLand has built-in Go and Kubernetes support
-- No additional setup needed
+Если вы используете GoLand:
+- В GoLand есть встроенная поддержка Go и Kubernetes
+- Дополнительная настройка не нужна
 
-## Environment Verification Summary
+## Сводка по проверке среды
 
-Your environment should have:
+В вашей среде должно быть:
 
 - ✅ Go 1.21+
 - ✅ kubectl
 - ✅ kubebuilder
 - ✅ kind
-- ✅ Docker or Podman
-- ✅ Kind cluster running
-- ✅ kubectl context set to kind cluster
+- ✅ Docker или Podman
+- ✅ Запущенный кластер kind
+- ✅ Контекст kubectl настроен на кластер kind
 
-## Troubleshooting
+## Устранение неполадок
 
-### Issue: kubebuilder not found
+### Проблема: kubebuilder не найден
 ```bash
 # Add to PATH
 export PATH=$PATH:/usr/local/bin
 # Or reinstall
 ```
 
-### Issue: kind cluster not accessible
+### Проблема: кластер kind недоступен
 ```bash
 # Recreate cluster
 kind delete cluster --name k8s-operators-course
 ./scripts/setup-kind-cluster.sh
 ```
 
-### Issue: Go module errors
+### Проблема: ошибки Go-модулей
 ```bash
 # Enable Go modules
 export GO111MODULE=on
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Verified all required tools
-- Set up complete development environment
-- Created and verified kind cluster
-- Tested the development workflow
-- Verified everything works together
+В этой лабораторной вы:
+- Проверили все необходимые инструменты
+- Настроили полноценную среду разработки
+- Создали и проверили кластер kind
+- Протестировали рабочий процесс разработки
+- Убедились, что всё работает вместе
 
-## Key Learnings
+## Ключевые уроки
 
-1. Complete environment includes: Go, kubebuilder, kubectl, kind, Docker/Podman
-2. Setup scripts automate installation
-3. Kind cluster provides local Kubernetes
-4. All tools must work together
-5. Verification is important before starting development
+1. Полноценная среда включает: Go, kubebuilder, kubectl, kind, Docker/Podman
+2. Скрипты настройки автоматизируют установку
+3. Кластер kind предоставляет локальный Kubernetes
+4. Все инструменты должны работать вместе
+5. Проверка важна перед началом разработки
 
-## Next Steps
+## Дальнейшие шаги
 
-Your environment is ready! Now let's build your first operator.
+Ваша среда готова! Теперь давайте создадим ваш первый оператор.
 
-**Navigation:** [← Previous Lab: Kubebuilder Fundamentals](lab-02-kubebuilder-fundamentals.md) | [Related Lesson](../lessons/03-dev-environment.md) | [Next Lab: First Operator →](lab-04-first-operator.md)
+**Навигация:** [← Предыдущая лабораторная: Основы Kubebuilder](lab-02-kubebuilder-fundamentals.md) | [Связанный урок](../lessons/03-dev-environment.md) | [Следующая лабораторная: Первый оператор →](lab-04-first-operator.md)

@@ -2,40 +2,40 @@
 layout: default
 title: "Lab 02.2: Kubebuilder Fundamentals"
 nav_order: 12
-parent: "Module 2: Introduction to Operators"
-grand_parent: Modules
+parent: "Модуль 2: Введение в операторы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 2.2: Kubebuilder CLI and Project Structure
+# Лабораторная 2.2: CLI Kubebuilder и структура проекта
 
-**Related Lesson:** [Lesson 2.2: Kubebuilder Fundamentals](../lessons/02-kubebuilder-fundamentals.md)  
-**Navigation:** [← Previous Lab: Operator Pattern](lab-01-operator-pattern.md) | [Module Overview](../README.md) | [Next Lab: Dev Environment →](lab-03-dev-environment.md)
+**Связанный урок:** [Урок 2.2: Основы Kubebuilder](../lessons/02-kubebuilder-fundamentals.md)  
+**Навигация:** [← Предыдущая лабораторная: Паттерн оператора](lab-01-operator-pattern.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Среда разработки →](lab-03-dev-environment.md)
 
-## Objectives
+## Цели
 
-- Install and verify kubebuilder
-- Understand kubebuilder CLI commands
-- Explore kubebuilder project structure
-- Understand code generation
+- Установить и проверить kubebuilder
+- Разобраться в командах CLI kubebuilder
+- Изучить структуру проекта kubebuilder
+- Понять кодогенерацию
 
-## Prerequisites
+## Предварительные требования
 
-- Go 1.21+ installed
-- Understanding of operators from [Lesson 2.1](../lessons/01-operator-pattern.md)
+- Установленный Go 1.21+
+- Понимание операторов из [Урока 2.1](../lessons/01-operator-pattern.md)
 
-## Exercise 1: Install Kubebuilder
+## Упражнение 1: установка Kubebuilder
 
-### Task 1.1: Check if Kubebuilder is Installed
+### Задача 1.1: проверьте, установлен ли Kubebuilder
 
 ```bash
 # Check kubebuilder version
 kubebuilder version
 ```
 
-If not installed, proceed to installation.
+Если не установлен, переходите к установке.
 
-### Task 1.2: Install Kubebuilder
+### Задача 1.2: установите Kubebuilder
 
 ```bash
 # Download kubebuilder
@@ -47,7 +47,7 @@ sudo mv kubebuilder /usr/local/bin/
 kubebuilder version
 ```
 
-### Task 1.3: Verify Installation
+### Задача 1.3: проверьте установку
 
 ```bash
 # Check kubebuilder is in PATH
@@ -60,9 +60,9 @@ kubebuilder version
 kubebuilder --help
 ```
 
-## Exercise 2: Explore Kubebuilder Commands
+## Упражнение 2: изучение команд Kubebuilder
 
-### Task 2.1: Initialize a Test Project
+### Задача 2.1: инициализируйте тестовый проект
 
 ```bash
 # Create a test directory
@@ -73,12 +73,12 @@ cd /tmp/kubebuilder-test
 kubebuilder init --domain example.com --repo github.com/example/test-operator
 ```
 
-**Observe:**
-- What files were created?
-- What directories were created?
-- What's in the Makefile?
+**Обратите внимание:**
+- Какие файлы были созданы?
+- Какие каталоги были созданы?
+- Что находится в Makefile?
 
-### Task 2.2: Examine Project Structure
+### Задача 2.2: изучите структуру проекта
 
 ```bash
 # List all files
@@ -94,54 +94,54 @@ cat Makefile | head -30
 cat go.mod
 ```
 
-**Questions:**
-1. What's the purpose of `main.go`?
-2. What Makefile targets are available?
-3. What dependencies are in `go.mod`?
+**Вопросы:**
+1. Каково назначение `main.go`?
+2. Какие цели (targets) Makefile доступны?
+3. Какие зависимости есть в `go.mod`?
 
-### Task 2.3: Create an API
+### Задача 2.3: создайте API
 
 ```bash
 # Create an API
 kubebuilder create api --group test --version v1 --kind TestResource
 ```
 
-When prompted:
+При запросах:
 - Create Resource [y/n]: **y**
 - Create Controller [y/n]: **y**
 
-**Observe:**
-- What new files were created?
-- What directories were added?
-- What's in the API directory?
+**Обратите внимание:**
+- Какие новые файлы были созданы?
+- Какие каталоги были добавлены?
+- Что находится в каталоге API?
 
-## Exercise 3: Understand Generated Code
+## Упражнение 3: понимание сгенерированного кода
 
-### Task 3.1: Examine API Types
+### Задача 3.1: изучите типы API
 
 ```bash
 # Look at generated types
 cat api/v1/testresource_types.go
 ```
 
-**Key Observations:**
-- Spec structure
-- Status structure
-- Kubebuilder markers (comments starting with `// +kubebuilder:`)
+**Ключевые наблюдения:**
+- Структура Spec
+- Структура Status
+- Маркеры kubebuilder (комментарии, начинающиеся с `// +kubebuilder:`)
 
-### Task 3.2: Examine Controller
+### Задача 3.2: изучите контроллер
 
 ```bash
 # Look at generated controller
 cat internal/controller/testresource_controller.go
 ```
 
-**Key Observations:**
-- Reconcile function skeleton
-- RBAC markers
-- SetupWithManager function
+**Ключевые наблюдения:**
+- Каркас функции Reconcile
+- Маркеры RBAC
+- Функция SetupWithManager
 
-### Task 3.3: Generate Code
+### Задача 3.3: сгенерируйте код
 
 ```bash
 # Generate code
@@ -151,14 +151,14 @@ make generate
 make manifests
 ```
 
-**Observe:**
-- What files were generated?
-- Check `config/crd/bases/` directory
-- Check `config/rbac/` directory
+**Обратите внимание:**
+- Какие файлы были сгенерированы?
+- Проверьте каталог `config/crd/bases/`
+- Проверьте каталог `config/rbac/`
 
-## Exercise 4: Explore Generated Manifests
+## Упражнение 4: изучение сгенерированных манифестов
 
-### Task 4.1: Examine CRD
+### Задача 4.1: изучите CRD
 
 ```bash
 # List generated CRDs
@@ -168,12 +168,12 @@ ls -la config/crd/bases/
 cat config/crd/bases/test.example.com_testresources.yaml | head -50
 ```
 
-**Questions:**
-1. What API group is used?
-2. What's the resource name?
-3. What validation is included?
+**Вопросы:**
+1. Какая группа API используется?
+2. Как называется ресурс?
+3. Какая валидация включена?
 
-### Task 4.2: Examine RBAC
+### Задача 4.2: изучите RBAC
 
 ```bash
 # List RBAC files
@@ -183,15 +183,15 @@ ls -la config/rbac/
 cat config/rbac/role.yaml
 ```
 
-**Questions:**
-1. What permissions are granted?
-2. How are permissions determined?
+**Вопросы:**
+1. Какие разрешения предоставлены?
+2. Как определяются разрешения?
 
-## Exercise 5: Understand Code Generation Flow
+## Упражнение 5: понимание процесса кодогенерации
 
-### Task 5.1: Modify Types
+### Задача 5.1: измените типы
 
-Edit `api/v1/testresource_types.go` and add a field:
+Отредактируйте `api/v1/testresource_types.go` и добавьте поле:
 
 ```go
 // TestResourceSpec defines the desired state of TestResource
@@ -201,7 +201,7 @@ type TestResourceSpec struct {
 }
 ```
 
-### Task 5.2: Regenerate
+### Задача 5.2: перегенерируйте
 
 ```bash
 # Regenerate code
@@ -212,27 +212,27 @@ make manifests
 cat config/crd/bases/test.example.com_testresources.yaml | grep -A 5 message
 ```
 
-**Observation:** The CRD schema was updated automatically!
+**Наблюдение:** схема CRD была обновлена автоматически!
 
-## Exercise 6: Explore Makefile Targets
+## Упражнение 6: изучение целей Makefile
 
-### Task 6.1: List Available Targets
+### Задача 6.1: перечислите доступные цели
 
 ```bash
 # List all Makefile targets
 make help
 ```
 
-### Task 6.2: Understand Key Targets
+### Задача 6.2: разберитесь в ключевых целях
 
-**Important targets:**
-- `make generate` - Generates code
-- `make manifests` - Generates manifests
-- `make install` - Installs CRDs
-- `make run` - Runs operator locally
-- `make docker-build` - Builds container image
+**Важные цели:**
+- `make generate` — генерирует код
+- `make manifests` — генерирует манифесты
+- `make install` — устанавливает CRD
+- `make run` — запускает оператор локально
+- `make docker-build` — собирает образ контейнера
 
-### Task 6.3: Try Some Targets
+### Задача 6.3: попробуйте некоторые цели
 
 ```bash
 # Generate everything
@@ -243,11 +243,11 @@ ls -la config/crd/bases/
 ls -la config/rbac/
 ```
 
-## Exercise 7: Project Structure Deep Dive
+## Упражнение 7: глубокое погружение в структуру проекта
 
-### Task 7.1: Map the Structure
+### Задача 7.1: составьте карту структуры
 
-Create a mental map of the project:
+Составьте мысленную карту проекта:
 
 ```
 project-root/
@@ -263,17 +263,17 @@ project-root/
 └── go.mod                    # Go dependencies
 ```
 
-### Task 7.2: Understand Each Component
+### Задача 7.2: разберитесь в каждом компоненте
 
-For each directory, understand its purpose:
+Для каждого каталога поймите его назначение:
 
-- **api/**: Your Custom Resource type definitions
-- **internal/controller/**: Your reconciliation logic
-- **config/crd/**: Generated CRD YAML files
-- **config/rbac/**: Generated RBAC manifests
-- **main.go**: Sets up and starts the manager
+- **api/**: определения типов вашего пользовательского ресурса
+- **internal/controller/**: ваша логика согласования
+- **config/crd/**: сгенерированные YAML-файлы CRD
+- **config/rbac/**: сгенерированные манифесты RBAC
+- **main.go**: настраивает и запускает менеджер
 
-## Cleanup
+## Очистка
 
 ```bash
 # Remove test project
@@ -281,27 +281,27 @@ cd ~
 rm -rf /tmp/kubebuilder-test
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Installed and verified kubebuilder
-- Explored kubebuilder CLI commands
-- Created a test project
-- Examined generated code structure
-- Understood code generation flow
-- Explored project structure
+В этой лабораторной вы:
+- Установили и проверили kubebuilder
+- Изучили команды CLI kubebuilder
+- Создали тестовый проект
+- Изучили структуру сгенерированного кода
+- Разобрались в процессе кодогенерации
+- Изучили структуру проекта
 
-## Key Learnings
+## Ключевые уроки
 
-1. Kubebuilder provides scaffolding for operator projects
-2. `kubebuilder init` creates project structure
-3. `kubebuilder create api` generates API types and controller
-4. `make generate` and `make manifests` generate code and YAML
-5. Project structure is standardized and organized
-6. Kubebuilder markers control code generation
+1. Kubebuilder предоставляет каркас для проектов операторов
+2. `kubebuilder init` создаёт структуру проекта
+3. `kubebuilder create api` генерирует типы API и контроллер
+4. `make generate` и `make manifests` генерируют код и YAML
+5. Структура проекта стандартизирована и организована
+6. Маркеры kubebuilder управляют кодогенерацией
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand kubebuilder, let's set up your complete development environment!
+Теперь, когда вы понимаете kubebuilder, давайте настроим вашу полноценную среду разработки!
 
-**Navigation:** [← Previous Lab: Operator Pattern](lab-01-operator-pattern.md) | [Related Lesson](../lessons/02-kubebuilder-fundamentals.md) | [Next Lab: Dev Environment →](lab-03-dev-environment.md)
+**Навигация:** [← Предыдущая лабораторная: Паттерн оператора](lab-01-operator-pattern.md) | [Связанный урок](../lessons/02-kubebuilder-fundamentals.md) | [Следующая лабораторная: Среда разработки →](lab-03-dev-environment.md)
