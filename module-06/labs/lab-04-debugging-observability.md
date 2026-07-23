@@ -2,37 +2,37 @@
 layout: default
 title: "Lab 06.4: Debugging Observability"
 nav_order: 14
-parent: "Module 6: Testing & Debugging"
-grand_parent: Modules
+parent: "Модуль 6: Тестирование и отладка"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 6.4: Adding Observability
+# Лабораторная 6.4: Добавление наблюдаемости
 
-**Related Lesson:** [Lesson 6.4: Debugging and Observability](../lessons/04-debugging-observability.md)  
-**Navigation:** [← Previous Lab: Integration Testing](lab-03-integration-testing.md) | [Module Overview](../README.md)
+**Связанный урок:** [Урок 6.4: Отладка и наблюдаемость](../lessons/04-debugging-observability.md)  
+**Навигация:** [← Предыдущая лабораторная: Интеграционное тестирование](lab-03-integration-testing.md) | [Обзор модуля](../README.md)
 
-## Objectives
+## Цели
 
-- Understand existing structured logging
-- Add custom Prometheus metrics
-- Add Kubernetes event emission
-- Set up debugging with Delve
-- Verify all observability features work
+- Разобраться в существующем структурированном логировании
+- Добавить пользовательские метрики Prometheus
+- Добавить генерацию событий Kubernetes
+- Настроить отладку с Delve
+- Проверить, что все возможности наблюдаемости работают
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 6.3](lab-03-integration-testing.md)
-- Database operator deployed to cluster
-- Understanding of observability concepts
+- Завершение [Лабораторной 6.3](lab-03-integration-testing.md)
+- Оператор Database, развёрнутый в кластере
+- Понимание концепций наблюдаемости
 
-## Exercise 1: Verify Structured Logging
+## Упражнение 1: проверка структурированного логирования
 
-Kubebuilder already configures structured logging with zap. Let's verify it works.
+Kubebuilder уже настраивает структурированное логирование с zap. Проверим, что оно работает.
 
-### Task 1.1: Check Existing Logging Configuration
+### Задача 1.1: проверьте существующую конфигурацию логирования
 
-Your `cmd/main.go` already has logging configured:
+В вашем `cmd/main.go` логирование уже настроено:
 
 ```go
 opts := zap.Options{
@@ -44,9 +44,9 @@ flag.Parse()
 ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 ```
 
-### Task 1.2: Verify Logging in Controller
+### Задача 1.2: проверьте логирование в контроллере
 
-Your controller already uses structured logging. Check `internal/controller/database_controller.go`:
+Ваш контроллер уже использует структурированное логирование. Проверьте `internal/controller/database_controller.go`:
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -58,7 +58,7 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-### Task 1.3: Test Logging
+### Задача 1.3: протестируйте логирование
 
 ```bash
 # Deploy the operator (if not already deployed)
@@ -84,7 +84,7 @@ spec:
 EOF
 ```
 
-**Expected output** (in the logs terminal):
+**Ожидаемый вывод** (в терминале с логами):
 ```
 INFO    Reconciling Database    {"controller": "database", "name": "test-logging"}
 INFO    STATE TRANSITION: Pending -> Provisioning    {"database": "test-logging"}
@@ -92,19 +92,19 @@ INFO    Creating Secret    {"name": "test-logging-credentials"}
 INFO    Creating StatefulSet    {"name": "test-logging"}
 ```
 
-### Task 1.4: Cleanup
+### Задача 1.4: очистка
 
 ```bash
 kubectl delete database test-logging
 ```
 
-## Exercise 2: Add Prometheus Metrics
+## Упражнение 2: добавление метрик Prometheus
 
-### Task 2.1: Add Metrics RBAC Binding
+### Задача 2.1: добавьте RBAC-привязку для метрик
 
-The Kubebuilder scaffolding creates a `metrics-reader` ClusterRole but doesn't bind it to anyone. We need to create the binding so the ServiceAccount can access its own metrics.
+Каркас Kubebuilder создаёт ClusterRole `metrics-reader`, но не привязывает его ни к кому. Нужно создать привязку, чтобы ServiceAccount мог обращаться к своим метрикам.
 
-Create `config/rbac/metrics_reader_role_binding.yaml`:
+Создайте `config/rbac/metrics_reader_role_binding.yaml`:
 
 ```bash
 cat > ~/postgres-operator/config/rbac/metrics_reader_role_binding.yaml << 'EOF'
@@ -126,7 +126,7 @@ subjects:
 EOF
 ```
 
-Update `config/rbac/kustomization.yaml` to include the new file:
+Обновите `config/rbac/kustomization.yaml`, чтобы включить новый файл:
 
 ```bash
 cat > ~/postgres-operator/config/rbac/kustomization.yaml << 'EOF'
@@ -161,9 +161,9 @@ resources:
 EOF
 ```
 
-### Task 2.2: Create Metrics File
+### Задача 2.2: создайте файл метрик
 
-Create `internal/controller/metrics.go`:
+Создайте `internal/controller/metrics.go`:
 
 ```bash
 cat > ~/postgres-operator/internal/controller/metrics.go << 'EOF'
@@ -241,11 +241,11 @@ func init() {
 EOF
 ```
 
-### Task 2.3: Update Controller to Use Metrics
+### Задача 2.3: обновите контроллер для использования метрик
 
-Add metrics instrumentation to your `Reconcile` function. Update `internal/controller/database_controller.go`:
+Добавьте инструментирование метриками в вашу функцию `Reconcile`. Обновите `internal/controller/database_controller.go`:
 
-**Add import:**
+**Добавьте импорт:**
 ```go
 import (
     // ... existing imports ...
@@ -253,7 +253,7 @@ import (
 )
 ```
 
-**Update the Reconcile function** - add at the very beginning:
+**Обновите функцию Reconcile** — добавьте в самом начале:
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -272,7 +272,7 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
     // ... rest of existing code ...
 ```
 
-**Update error handling** - when returning errors, set the result:
+**Обновите обработку ошибок** — при возврате ошибок задавайте результат:
 
 ```go
     // Example: in error returns, set reconcileResult before returning
@@ -285,7 +285,7 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
     }
 ```
 
-**Add database info metric** - in the reconcile function after getting the database:
+**Добавьте метрику информации о базе данных** — в функции reconcile после получения базы данных:
 
 ```go
     // Record database info metric
@@ -297,7 +297,7 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
     ).Set(1)
 ```
 
-### Task 2.4: Rebuild and Deploy
+### Задача 2.4: пересоберите и разверните
 
 ```bash
 cd ~/postgres-operator
@@ -329,11 +329,11 @@ kubectl rollout restart deployment -n postgres-operator-system postgres-operator
 kubectl wait --for=condition=ready pod -l control-plane=controller-manager -n postgres-operator-system --timeout=60s
 ```
 
-### Task 2.5: Test Metrics
+### Задача 2.5: протестируйте метрики
 
-The metrics endpoint uses HTTPS with authentication by default.
+Эндпоинт метрик по умолчанию использует HTTPS с аутентификацией.
 
-**Note**: The operator's RBAC includes a `metrics-reader-rolebinding` that grants the controller's ServiceAccount permission to read metrics. This was added to `config/rbac/metrics_reader_role_binding.yaml`.
+**Примечание**: RBAC оператора включает `metrics-reader-rolebinding`, который предоставляет ServiceAccount контроллера разрешение на чтение метрик. Это было добавлено в `config/rbac/metrics_reader_role_binding.yaml`.
 
 ```bash
 # Create a test database first
@@ -368,9 +368,9 @@ curl -k -H "Authorization: Bearer $TOKEN" https://localhost:8443/metrics 2>/dev/
 pkill -f "port-forward.*8443"
 ```
 
-**Alternative: Disable secure metrics for local development**
+**Альтернатива: отключить защищённые метрики для локальной разработки**
 
-If you prefer simpler access during development:
+Если вы предпочитаете более простой доступ во время разработки:
 
 ```bash
 # Patch the deployment to disable secure metrics
@@ -396,7 +396,7 @@ curl http://localhost:8080/metrics 2>/dev/null | grep database_
 pkill -f "port-forward.*8080"
 ```
 
-**Expected output:**
+**Ожидаемый вывод:**
 ```
 # HELP database_reconcile_total Total number of reconciliations per controller
 # TYPE database_reconcile_total counter
@@ -410,7 +410,7 @@ database_reconcile_duration_seconds_bucket{result="success",le="0.005"} 2
 database_info{image="postgres:14",name="test-metrics",namespace="default",phase="Provisioning"} 1
 ```
 
-### Task 2.6: Cleanup
+### Задача 2.6: очистка
 
 ```bash
 # Stop port-forward
@@ -420,13 +420,13 @@ pkill -f "port-forward.*8443"
 kubectl delete database test-metrics
 ```
 
-## Exercise 3: Add Kubernetes Events
+## Упражнение 3: добавление событий Kubernetes
 
-### Task 3.1: Add RBAC Permission for Events
+### Задача 3.1: добавьте разрешение RBAC для событий
 
-The controller needs permission to create events. Add a kubebuilder RBAC marker in `internal/controller/database_controller.go`.
+Контроллеру нужно разрешение на создание событий. Добавьте маркер RBAC kubebuilder в `internal/controller/database_controller.go`.
 
-Find the existing RBAC markers (near the top of the file, before the `Reconcile` function) and add the events permission:
+Найдите существующие маркеры RBAC (в начале файла, перед функцией `Reconcile`) и добавьте разрешение на события:
 
 ```go
 // +kubebuilder:rbac:groups=database.example.com,resources=databases,verbs=get;list;watch;create;update;patch;delete
@@ -438,20 +438,20 @@ Find the existing RBAC markers (near the top of the file, before the `Reconcile`
 // +kubebuilder:rbac:groups=core,resources=events,verbs=create;patch  // <-- ADD THIS LINE
 ```
 
-Then regenerate the RBAC manifests:
+Затем перегенерируйте манифесты RBAC:
 
 ```bash
 cd ~/postgres-operator
 make manifests
 ```
 
-This will update `config/rbac/role.yaml` to include the events permission.
+Это обновит `config/rbac/role.yaml`, добавив разрешение на события.
 
-### Task 3.2: Add Event Recorder to Controller
+### Задача 3.2: добавьте регистратор событий (Event Recorder) в контроллер
 
-Update `internal/controller/database_controller.go`:
+Обновите `internal/controller/database_controller.go`:
 
-**Add import:**
+**Добавьте импорт:**
 ```go
 import (
     // ... existing imports ...
@@ -459,7 +459,7 @@ import (
 )
 ```
 
-**Update the struct:**
+**Обновите структуру:**
 ```go
 // DatabaseReconciler reconciles a Database object
 type DatabaseReconciler struct {
@@ -469,9 +469,9 @@ type DatabaseReconciler struct {
 }
 ```
 
-### Task 3.3: Update main.go to Provide Event Recorder
+### Задача 3.3: обновите main.go, чтобы предоставить регистратор событий
 
-Update `cmd/main.go`:
+Обновите `cmd/main.go`:
 
 ```go
 if err := (&controller.DatabaseReconciler{
@@ -481,11 +481,11 @@ if err := (&controller.DatabaseReconciler{
 }).SetupWithManager(mgr); err != nil {
 ```
 
-### Task 3.4: Emit Events in Controller
+### Задача 3.4: генерируйте события в контроллере
 
-Add events at key points in your controller. Update `internal/controller/database_controller.go`:
+Добавьте события в ключевых точках вашего контроллера. Обновите `internal/controller/database_controller.go`:
 
-**In `handleProvisioning` after creating StatefulSet:**
+**В `handleProvisioning` после создания StatefulSet:**
 ```go
 func (r *DatabaseReconciler) handleProvisioning(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
     // ... existing code ...
@@ -504,7 +504,7 @@ func (r *DatabaseReconciler) handleProvisioning(ctx context.Context, db *databas
 }
 ```
 
-**In `handleVerifying` when database becomes ready:**
+**В `handleVerifying`, когда база данных становится готова:**
 ```go
 func (r *DatabaseReconciler) handleVerifying(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
     // ... existing code ...
@@ -516,7 +516,7 @@ func (r *DatabaseReconciler) handleVerifying(ctx context.Context, db *databasev1
 }
 ```
 
-**In `handleDeletion`:**
+**В `handleDeletion`:**
 ```go
 func (r *DatabaseReconciler) handleDeletion(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
     // ... at the beginning ...
@@ -529,9 +529,9 @@ func (r *DatabaseReconciler) handleDeletion(ctx context.Context, db *databasev1.
 }
 ```
 
-### Task 3.5: Update Test Files (Important!)
+### Задача 3.5: обновите тестовые файлы (важно!)
 
-Since we added `Recorder` to the struct, update `internal/controller/database_controller_test.go`:
+Поскольку мы добавили `Recorder` в структуру, обновите `internal/controller/database_controller_test.go`:
 
 ```go
 // In each test where you create DatabaseReconciler, add the Recorder field:
@@ -542,7 +542,7 @@ controllerReconciler := &DatabaseReconciler{
 }
 ```
 
-**Add import:**
+**Добавьте импорт:**
 ```go
 import (
     // ... existing imports ...
@@ -550,7 +550,7 @@ import (
 )
 ```
 
-### Task 3.6: Rebuild and Deploy
+### Задача 3.6: пересоберите и разверните
 
 ```
 cd ~/postgres-operator
@@ -585,7 +585,7 @@ kubectl rollout restart deployment -n postgres-operator-system postgres-operator
 kubectl wait --for=condition=ready pod -l control-plane=controller-manager -n postgres-operator-system --timeout=60s
 ```
 
-### Task 3.7: Test Events
+### Задача 3.7: протестируйте события
 
 ```bash
 # Create a test database
@@ -613,24 +613,24 @@ kubectl get events --field-selector involvedObject.name=test-events --sort-by='.
 kubectl get events -n default --sort-by='.lastTimestamp' | head -20
 ```
 
-**Expected output:**
+**Ожидаемый вывод:**
 ```
 LAST SEEN   TYPE     REASON    OBJECT                  MESSAGE
 30s         Normal   Created   database/test-events    StatefulSet created successfully
 15s         Normal   Ready     database/test-events    Database is ready at test-events.default.svc.cluster.local:5432
 ```
 
-### Task 3.8: Cleanup
+### Задача 3.8: очистка
 
 ```bash
 kubectl delete database test-events
 ```
 
-## Exercise 4: Set Up Delve Debugger
+## Упражнение 4: настройка отладчика Delve
 
-**Note**: For this exercise, you'll run the operator locally (outside the cluster) for debugging. First, scale down the deployed operator so it doesn't conflict.
+**Примечание**: для этого упражнения вы запустите оператор локально (вне кластера) для отладки. Сначала уменьшите масштаб развёрнутого оператора, чтобы он не конфликтовал.
 
-### Task 4.1: Install Delve
+### Задача 4.1: установите Delve
 
 ```bash
 go install github.com/go-delve/delve/cmd/dlv@latest
@@ -639,7 +639,7 @@ go install github.com/go-delve/delve/cmd/dlv@latest
 dlv version
 ```
 
-### Task 4.2: Prepare for Local Debugging
+### Задача 4.2: подготовьтесь к локальной отладке
 
 ```bash
 cd ~/postgres-operator
@@ -654,12 +654,12 @@ kubectl get pods -n postgres-operator-system
 make install
 ```
 
-### Task 4.3: Debug with Delve
+### Задача 4.3: отладка с Delve
 
-When running the operator locally for debugging:
-- **Webhooks must be disabled** - They require TLS certificates that don't exist locally
-- **CRDs must be installed** - Already done from previous exercises
-- **Kubeconfig must be valid** - Your local kubectl context is used
+При локальном запуске оператора для отладки:
+- **Вебхуки должны быть отключены** — им нужны TLS-сертификаты, которых локально нет
+- **CRD должны быть установлены** — уже сделано в предыдущих упражнениях
+- **Kubeconfig должен быть валиден** — используется ваш локальный контекст kubectl
 
 ```bash
 cd ~/postgres-operator
@@ -674,7 +674,7 @@ dlv debug ./cmd/main.go -- \
   --metrics-secure=false
 ```
 
-Now in the Delve console:
+Теперь в консоли Delve:
 
 ```
 # Set a breakpoint in the Reconcile function
@@ -685,7 +685,7 @@ Breakpoint 1 set at ...
 (dlv) continue
 ```
 
-The operator is now running. In **another terminal**, create a Database to trigger reconciliation:
+Оператор теперь запущен. В **другом терминале** создайте Database, чтобы запустить согласование:
 
 ```bash
 kubectl apply -f - <<EOF
@@ -703,7 +703,7 @@ spec:
 EOF
 ```
 
-Back in Delve, the breakpoint should hit:
+Вернувшись в Delve, точка останова должна сработать:
 
 ```
 # Inspect variables
@@ -725,7 +725,7 @@ Back in Delve, the breakpoint should hit:
 (dlv) quit
 ```
 
-### Task 4.4: Cleanup Debug Session
+### Задача 4.4: очистка сессии отладки
 
 ```bash
 cd ~/postgres-operator
@@ -743,9 +743,9 @@ kubectl wait --for=condition=ready pod -l control-plane=controller-manager -n po
 kubectl delete database debug-test
 ```
 
-### Task 4.5: VS Code Debugging (Alternative)
+### Задача 4.5: отладка в VS Code (альтернатива)
 
-For easier debugging, create `.vscode/launch.json`:
+Для более удобной отладки создайте `.vscode/launch.json`:
 
 ```json
 {
@@ -770,14 +770,14 @@ For easier debugging, create `.vscode/launch.json`:
 }
 ```
 
-Then:
-1. Scale down the deployed operator first
-2. Set breakpoints by clicking in the gutter
-3. Press F5 to start debugging
-4. In a terminal, create a Database to trigger the breakpoint
-5. VS Code will stop at your breakpoint
+Затем:
+1. Сначала уменьшите масштаб развёрнутого оператора
+2. Установите точки останова, кликнув на полосе слева
+3. Нажмите F5, чтобы начать отладку
+4. В терминале создайте Database, чтобы сработала точка останова
+5. VS Code остановится на вашей точке останова
 
-### Task 4.6: Useful Delve Commands
+### Задача 4.6: полезные команды Delve
 
 ```
 break <file>:<line>  - Set breakpoint
@@ -791,14 +791,14 @@ goroutines           - List all goroutines
 quit (q)             - Exit debugger
 ```
 
-**Common Issues:**
-- `no such file or directory: tls.crt` → Set `ENABLE_WEBHOOKS=false`
-- `Timeout: failed waiting for Informer to sync` → Check kubeconfig and cluster connectivity
-- Breakpoint never hits → Create a Database resource to trigger reconciliation
+**Распространённые проблемы:**
+- `no such file or directory: tls.crt` → установите `ENABLE_WEBHOOKS=false`
+- `Timeout: failed waiting for Informer to sync` → проверьте kubeconfig и связь с кластером
+- Точка останова не срабатывает → создайте ресурс Database, чтобы запустить согласование
 
-## Exercise 5: Full Observability Verification
+## Упражнение 5: полная проверка наблюдаемости
 
-### Task 5.1: Deploy and Create Test Resource
+### Задача 5.1: разверните и создайте тестовый ресурс
 
 ```bash
 cd ~/postgres-operator
@@ -840,7 +840,7 @@ spec:
 EOF
 ```
 
-### Task 5.2: Verify All Observability Features
+### Задача 5.2: проверьте все возможности наблюдаемости
 
 ```bash
 echo "=== 1. Checking Logs ==="
@@ -875,48 +875,48 @@ curl -k -H "Authorization: Bearer $TOKEN" https://localhost:8443/metrics 2>/dev/
 pkill -f "port-forward.*8443"
 ```
 
-### Task 5.3: Cleanup
+### Задача 5.3: очистка
 
 ```bash
 kubectl delete database observability-test
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Verified existing structured logging works
-- Added custom Prometheus metrics for reconciliation tracking
-- Added Kubernetes event emission for user visibility
-- Learned to use Delve debugger for troubleshooting
-- Verified all observability features work together
+В этой лабораторной вы:
+- Проверили, что существующее структурированное логирование работает
+- Добавили пользовательские метрики Prometheus для отслеживания согласования
+- Добавили генерацию событий Kubernetes для видимости пользователю
+- Научились использовать отладчик Delve для устранения неполадок
+- Проверили, что все возможности наблюдаемости работают вместе
 
-## Key Learnings
+## Ключевые уроки
 
-1. **Structured logging** - Already configured by Kubebuilder; use `log.FromContext(ctx)` with key-value pairs
-2. **Custom metrics** - Register with `metrics.Registry.MustRegister()` in an `init()` function
-3. **Event Recorder** - Add to reconciler struct, get from manager with `mgr.GetEventRecorderFor()`
-4. **Events are user-facing** - Use `Normal` for success, `Warning` for errors
-5. **Update tests** - When adding fields to reconciler struct, update test files too
-6. **Delve debugging** - Use `ENABLE_WEBHOOKS=false` for local debugging
-7. **Secure metrics** - Modern Kubebuilder uses HTTPS with auth on port 8443; use ServiceAccount token to access
-8. **Disable secure metrics for dev** - Add `--metrics-secure=false` flag for easier local testing
+1. **Структурированное логирование** — уже настроено Kubebuilder; используйте `log.FromContext(ctx)` с парами «ключ-значение»
+2. **Пользовательские метрики** — регистрируйте через `metrics.Registry.MustRegister()` в функции `init()`
+3. **Event Recorder** — добавьте в структуру реконсайлера, получайте от менеджера через `mgr.GetEventRecorderFor()`
+4. **События видны пользователю** — используйте `Normal` для успеха, `Warning` для ошибок
+5. **Обновляйте тесты** — при добавлении полей в структуру реконсайлера обновляйте и тестовые файлы
+6. **Отладка Delve** — используйте `ENABLE_WEBHOOKS=false` для локальной отладки
+7. **Защищённые метрики** — современный Kubebuilder использует HTTPS с аутентификацией на порту 8443; используйте токен ServiceAccount для доступа
+8. **Отключайте защищённые метрики для разработки** — добавьте флаг `--metrics-secure=false` для более простого локального тестирования
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Metrics RBAC Binding](../solutions/metrics_reader_role_binding.yaml) - ClusterRoleBinding for metrics access
-- [RBAC Kustomization](../solutions/rbac_kustomization.yaml) - Updated kustomization with metrics binding
-- [Metrics Implementation](../solutions/metrics.go) - Custom Prometheus metrics
-- [Observability Examples](../solutions/observability.go) - Logging and events patterns
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Metrics RBAC Binding](../solutions/metrics_reader_role_binding.yaml) — ClusterRoleBinding для доступа к метрикам
+- [RBAC Kustomization](../solutions/rbac_kustomization.yaml) — обновлённый kustomization с привязкой метрик
+- [Metrics Implementation](../solutions/metrics.go) — пользовательские метрики Prometheus
+- [Observability Examples](../solutions/observability.go) — паттерны логирования и событий
 
-## Congratulations!
+## Поздравляем!
 
-You've completed Module 6! You now understand:
-- Testing fundamentals and strategies
-- Unit testing with envtest
-- Integration testing with real clusters
-- Debugging and observability
+Вы завершили Модуль 6! Теперь вы понимаете:
+- Основы и стратегии тестирования
+- Модульное тестирование с envtest
+- Интеграционное тестирование с реальными кластерами
+- Отладку и наблюдаемость
 
-In Module 7, you'll learn about production deployment and best practices!
+В Модуле 7 вы изучите развёртывание в продакшене и лучшие практики!
 
-**Navigation:** [← Previous Lab: Integration Testing](lab-03-integration-testing.md) | [Related Lesson](../lessons/04-debugging-observability.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущая лабораторная: Интеграционное тестирование](lab-03-integration-testing.md) | [Связанный урок](../lessons/04-debugging-observability.md) | [Обзор модуля](../README.md)

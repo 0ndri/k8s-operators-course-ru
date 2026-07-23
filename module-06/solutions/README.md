@@ -1,34 +1,34 @@
-# Module 6 Solutions
+# Решения Модуля 6
 
-This directory contains complete, working solutions for Module 6 labs.
+Этот каталог содержит полные рабочие решения для лабораторных Модуля 6.
 
-## Files
+## Файлы
 
-### Testing (Labs 1-3)
-- [**suite_test.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/suite_test.go): Complete test suite setup with envtest
-- [**database_controller_test.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/database_controller_test.go): Complete unit test examples
-- [**integration_test.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/integration_test.go): Complete integration test examples
+### Тестирование (Лабораторные 1–3)
+- [**suite_test.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/suite_test.go): полная настройка набора тестов с envtest
+- [**database_controller_test.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/database_controller_test.go): полные примеры модульных тестов
+- [**integration_test.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/integration_test.go): полные примеры интеграционных тестов
 
-### Observability (Lab 4)
-- [**metrics.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/metrics.go): Custom Prometheus metrics
-- [**observability.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/observability.go): Patterns for structured logging and event emission
-- [**metrics_reader_role_binding.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/metrics_reader_role_binding.yaml): RBAC binding for metrics access
-- [**rbac_kustomization.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/rbac_kustomization.yaml): Updated kustomization including metrics binding
+### Наблюдаемость (Лабораторная 4)
+- [**metrics.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/metrics.go): пользовательские метрики Prometheus
+- [**observability.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/observability.go): паттерны структурированного логирования и генерации событий
+- [**metrics_reader_role_binding.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/metrics_reader_role_binding.yaml): RBAC-привязка для доступа к метрикам
+- [**rbac_kustomization.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-06/solutions/rbac_kustomization.yaml): обновлённый kustomization, включающий привязку метрик
 
-## Usage
+## Использование
 
-These solutions can be used as:
-- Reference when writing your own tests
-- Starting point if you get stuck
-- Examples of testing best practices
+Эти решения можно использовать как:
+- Справочный материал при написании собственных тестов
+- Отправную точку, если вы застряли
+- Примеры лучших практик тестирования
 
-## Integration
+## Интеграция
 
-To use these solutions in your operator:
+Чтобы использовать эти решения в вашем операторе:
 
-### 1. For unit tests (envtest)
+### 1. Для модульных тестов (envtest)
 
-Copy the suite and test files to your controller directory:
+Скопируйте файлы набора и тестов в каталог контроллера:
 
 ```bash
 # Copy suite_test.go to internal/controller/suite_test.go
@@ -43,12 +43,12 @@ make test
 # Or: ginkgo -v ./internal/controller/...
 ```
 
-### 2. For integration tests (real cluster)
+### 2. Для интеграционных тестов (реальный кластер)
 
-Integration tests require:
-- A running Kubernetes cluster (kind, minikube, etc.)
-- Your operator deployed to the cluster
-- **CRD types registered with the scheme** (critical!)
+Интеграционные тесты требуют:
+- Запущенного кластера Kubernetes (kind, minikube и т. д.)
+- Развёрнутого в кластере оператора
+- **Типы CRD, зарегистрированные в схеме** (критически важно!)
 
 ```bash
 # Create integration test directory
@@ -70,7 +70,7 @@ ginkgo -v ./test/integration
 ginkgo -v -skip="webhook" ./test/integration
 ```
 
-### 3. For observability
+### 3. Для наблюдаемости
 
 ```bash
 # Step 1: Add RBAC for metrics access
@@ -92,11 +92,11 @@ cd ~/postgres-operator
 make deploy IMG=<your-image>
 ```
 
-## Key Points
+## Ключевые моменты
 
-### Scheme Registration (Integration Tests)
+### Регистрация в схеме (интеграционные тесты)
 
-Integration tests **must** register custom types with the scheme:
+Интеграционные тесты **обязаны** регистрировать пользовательские типы в схеме:
 
 ```go
 // In BeforeSuite
@@ -107,11 +107,11 @@ Expect(err).NotTo(HaveOccurred())
 k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
 ```
 
-Without this, you'll get: `no kind is registered for the type v1.Database`
+Без этого вы получите: `no kind is registered for the type v1.Database`
 
-### Use k8sClient.Scheme() in Unit Tests
+### Используйте k8sClient.Scheme() в модульных тестах
 
-When creating a reconciler in unit tests, use:
+При создании реконсайлера в модульных тестах используйте:
 
 ```go
 reconciler := &DatabaseReconciler{
@@ -120,9 +120,9 @@ reconciler := &DatabaseReconciler{
 }
 ```
 
-### Pointer Helpers
+### Помощники указателей
 
-Use `k8s.io/utils/ptr` for pointer helpers:
+Используйте `k8s.io/utils/ptr` для помощников указателей:
 
 ```go
 import "k8s.io/utils/ptr"
@@ -130,7 +130,7 @@ import "k8s.io/utils/ptr"
 Replicas: ptr.To(int32(1))
 ```
 
-## Testing Commands
+## Команды тестирования
 
 ```bash
 # Run unit tests (envtest)
@@ -155,13 +155,13 @@ kubectl port-forward -n postgres-operator-system deployment/postgres-operator-co
 curl http://localhost:8080/metrics | grep database_
 ```
 
-## Notes
+## Примечания
 
-- These are complete, working examples
-- They follow best practices from the lessons
-- Tests use Ginkgo/Gomega for BDD-style structure
-- Unit tests use envtest for lightweight Kubernetes API
-- Integration tests run against real clusters
-- Metrics use Prometheus client library
-- Logging uses structured logging (zap)
-- Events use Kubernetes event recorder
+- Это полные рабочие примеры
+- Они следуют лучшим практикам из уроков
+- Тесты используют Ginkgo/Gomega для структуры в стиле BDD
+- Модульные тесты используют envtest для легковесного API Kubernetes
+- Интеграционные тесты выполняются на реальных кластерах
+- Метрики используют клиентскую библиотеку Prometheus
+- Логирование использует структурированное логирование (zap)
+- События используют регистратор событий Kubernetes

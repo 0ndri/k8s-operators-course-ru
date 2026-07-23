@@ -2,22 +2,22 @@
 layout: default
 title: "06.4 Debugging Observability"
 nav_order: 4
-parent: "Module 6: Testing & Debugging"
-grand_parent: Modules
+parent: "Модуль 6: Тестирование и отладка"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 6.4: Debugging and Observability
+# Урок 6.4: Отладка и наблюдаемость
 
-**Navigation:** [← Previous: Integration Testing](03-integration-testing.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущий: Интеграционное тестирование](03-integration-testing.md) | [Обзор модуля](../README.md)
 
-## Introduction
+## Введение
 
-Even with comprehensive tests, operators can fail in production. Debugging and observability are essential for understanding what's happening, diagnosing issues, and ensuring operators run smoothly. This lesson covers debugging techniques and adding observability to operators.
+Даже при исчерпывающих тестах операторы могут давать сбои в продакшене. Отладка и наблюдаемость необходимы для понимания того, что происходит, диагностики проблем и обеспечения бесперебойной работы операторов. Этот урок охватывает приёмы отладки и добавление наблюдаемости в операторы.
 
-## Debugging Workflow
+## Рабочий процесс отладки
 
-Here's a typical debugging workflow:
+Вот типичный рабочий процесс отладки:
 
 ```mermaid
 flowchart TD
@@ -33,9 +33,9 @@ flowchart TD
     style FIX fill:#90EE90
 ```
 
-## Debugging with Delve
+## Отладка с Delve
 
-### Setting Up Delve
+### Настройка Delve
 
 ```bash
 # Install Delve
@@ -45,7 +45,7 @@ go install github.com/go-delve/delve/cmd/dlv@latest
 dlv debug ./cmd/manager/main.go
 ```
 
-### Using Delve
+### Использование Delve
 
 ```mermaid
 sequenceDiagram
@@ -64,7 +64,7 @@ sequenceDiagram
     Dev->>Delve: Continue
 ```
 
-### Example: Debugging Reconcile
+### Пример: отладка Reconcile
 
 ```go
 // Set breakpoint in Reconcile function
@@ -84,9 +84,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Structured Logging
+## Структурированное логирование
 
-### Adding Structured Logs
+### Добавление структурированных логов
 
 ```go
 import (
@@ -114,7 +114,7 @@ func main() {
 }
 ```
 
-### Log Levels
+### Уровни логирования
 
 ```mermaid
 graph TB
@@ -129,9 +129,9 @@ graph TB
     style ERROR fill:#FFB6C1
 ```
 
-## Metrics with Prometheus
+## Метрики с Prometheus
 
-### Exposing Metrics
+### Экспонирование метрик
 
 ```go
 import (
@@ -177,9 +177,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Kubernetes Events
+## События Kubernetes
 
-### Emitting Events
+### Генерация событий
 
 ```go
 import (
@@ -203,7 +203,7 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-### Event Flow
+### Поток событий
 
 ```mermaid
 graph LR
@@ -216,7 +216,7 @@ graph LR
     style EVENT fill:#90EE90
 ```
 
-## Observability Stack
+## Стек наблюдаемости
 
 ```mermaid
 graph TB
@@ -236,9 +236,9 @@ graph TB
     style METRICS fill:#90EE90
 ```
 
-## Common Debugging Scenarios
+## Распространённые сценарии отладки
 
-### Scenario 1: Reconcile Not Triggering
+### Сценарий 1: Reconcile не запускается
 
 ```go
 // Check if controller is running
@@ -254,7 +254,7 @@ kubectl get database test-db
 kubectl get events --field-selector involvedObject.name=test-db
 ```
 
-### Scenario 2: Resource Not Created
+### Сценарий 2: ресурс не создаётся
 
 ```go
 // Add detailed logging
@@ -274,7 +274,7 @@ if err := r.Create(ctx, statefulSet); err != nil {
 }
 ```
 
-### Scenario 3: Status Not Updating
+### Сценарий 3: статус не обновляется
 
 ```go
 // Verify status update
@@ -292,58 +292,58 @@ if err := r.Status().Update(ctx, db); err != nil {
 log.Info("Status updated successfully")
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Delve** enables debugging operators with breakpoints
-- **Structured logging** provides context and traceability
-- **Metrics** expose operational data to Prometheus
-- **Events** communicate state changes to users
-- **Observability stack** combines logs, metrics, events, traces
-- **Debug systematically** using logs, metrics, and events
-- **Add observability** from the start
-- **Use appropriate log levels** (Debug, Info, Warn, Error)
+- **Delve** позволяет отлаживать операторы с точками останова
+- **Структурированное логирование** обеспечивает контекст и трассируемость
+- **Метрики** экспонируют операционные данные в Prometheus
+- **События** сообщают пользователям об изменениях состояния
+- **Стек наблюдаемости** объединяет логи, метрики, события, трассировки
+- **Отлаживайте систематически**, используя логи, метрики и события
+- **Добавляйте наблюдаемость** с самого начала
+- **Используйте подходящие уровни логирования** (Debug, Info, Warn, Error)
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When debugging and adding observability:
-- Use Delve for local debugging
-- Add structured logging throughout
-- Expose metrics for monitoring
-- Emit events for user feedback
-- Use appropriate log levels
-- Debug systematically
-- Add observability early
-- Monitor in production
+При отладке и добавлении наблюдаемости:
+- Используйте Delve для локальной отладки
+- Добавляйте структурированное логирование повсюду
+- Экспонируйте метрики для мониторинга
+- Генерируйте события для обратной связи с пользователем
+- Используйте подходящие уровни логирования
+- Отлаживайте систематически
+- Добавляйте наблюдаемость на раннем этапе
+- Ведите мониторинг в продакшене
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 6.4: Adding Observability](../labs/lab-04-debugging-observability.md) - Hands-on exercises for this lesson
+- [Лабораторная 6.4: Добавление наблюдаемости](../labs/lab-04-debugging-observability.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Delve Debugger](https://github.com/go-delve/delve)
-- [Prometheus Metrics](https://prometheus.io/docs/concepts/metric_types/)
-- [Kubernetes Events](https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/event-v1/)
+### Официальная документация
+- [Отладчик Delve](https://github.com/go-delve/delve)
+- [Метрики Prometheus](https://prometheus.io/docs/concepts/metric_types/)
+- [События Kubernetes](https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/event-v1/)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 11: Debugging
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 11: Observability
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 11: Debugging
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 11: Observability
 - [Observability Engineering](https://www.oreilly.com/library/view/observability-engineering/9781492076438/)
 
-### Related Topics
-- [Logging Best Practices](https://www.cncf.io/blog/2023/07/03/kubernetes-logging-best-practices/)
-- [Prometheus Best Practices](https://prometheus.io/docs/practices/)
+### Смежные темы
+- [Лучшие практики логирования](https://www.cncf.io/blog/2023/07/03/kubernetes-logging-best-practices/)
+- [Лучшие практики Prometheus](https://prometheus.io/docs/practices/)
 - [OpenTelemetry](https://opentelemetry.io/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Congratulations! You've completed Module 6. You now understand:
-- Testing fundamentals and strategies
-- Unit testing with envtest
-- Integration testing with real clusters
-- Debugging and observability
+Поздравляем! Вы завершили Модуль 6. Теперь вы понимаете:
+- Основы и стратегии тестирования
+- Модульное тестирование с envtest
+- Интеграционное тестирование с реальными кластерами
+- Отладку и наблюдаемость
 
-In [Module 7](../../module-07/README.md), you'll learn about production deployment and best practices.
+В [Модуле 7](../../module-07/README.md) вы изучите развёртывание в продакшене и лучшие практики.
 
-**Navigation:** [← Previous: Integration Testing](03-integration-testing.md) | [Module Overview](../README.md) | [Next: Module 7 →](../../module-07/README.md)
+**Навигация:** [← Предыдущий: Интеграционное тестирование](03-integration-testing.md) | [Обзор модуля](../README.md) | [Далее: Модуль 7 →](../../module-07/README.md)

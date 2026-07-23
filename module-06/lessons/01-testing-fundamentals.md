@@ -2,22 +2,22 @@
 layout: default
 title: "06.1 Testing Fundamentals"
 nav_order: 1
-parent: "Module 6: Testing & Debugging"
-grand_parent: Modules
+parent: "Модуль 6: Тестирование и отладка"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 6.1: Testing Fundamentals
+# Урок 6.1: Основы тестирования
 
-**Navigation:** [Module Overview](../README.md) | [Next Lesson: Unit Testing with envtest →](02-unit-testing-envtest.md)
+**Навигация:** [Обзор модуля](../README.md) | [Следующий урок: Модульное тестирование с envtest →](02-unit-testing-envtest.md)
 
-## Introduction
+## Введение
 
-Testing operators is crucial for reliability and confidence in production. Operators manage critical infrastructure, so comprehensive testing is essential. This lesson covers testing fundamentals, testing strategies, and the tools you'll use to test Kubernetes operators.
+Тестирование операторов критически важно для надёжности и уверенности в продакшене. Операторы управляют критически важной инфраструктурой, поэтому исчерпывающее тестирование необходимо. Этот урок охватывает основы тестирования, стратегии тестирования и инструменты, которые вы будете использовать для тестирования операторов Kubernetes.
 
-## Why Test Operators?
+## Зачем тестировать операторы?
 
-Operators manage critical resources:
+Операторы управляют критически важными ресурсами:
 
 ```mermaid
 graph TB
@@ -36,14 +36,14 @@ graph TB
     style TESTING fill:#90EE90
 ```
 
-**Benefits:**
-- Catch bugs before production
-- Ensure correctness of reconciliation
-- Validate edge cases
-- Enable safe refactoring
-- Document expected behavior
+**Преимущества:**
+- Ловить баги до продакшена
+- Обеспечивать корректность согласования
+- Проверять граничные случаи
+- Обеспечивать безопасный рефакторинг
+- Документировать ожидаемое поведение
 
-## Testing Pyramid for Operators
+## Пирамида тестирования для операторов
 
 ```mermaid
 graph TB
@@ -67,11 +67,11 @@ graph TB
     style E2E fill:#FFB6C1
 ```
 
-## Testing Strategies
+## Стратегии тестирования
 
-### Strategy 1: Unit Testing
+### Стратегия 1: модульное тестирование
 
-Test individual functions and logic:
+Тестируйте отдельные функции и логику:
 
 ```mermaid
 flowchart LR
@@ -82,15 +82,15 @@ flowchart LR
     style UNIT fill:#90EE90
 ```
 
-**Use for:**
-- Reconciliation logic
-- Helper functions
-- Validation logic
-- Transformation functions
+**Используйте для:**
+- Логики согласования
+- Вспомогательных функций
+- Логики валидации
+- Функций преобразования
 
-### Strategy 2: Integration Testing
+### Стратегия 2: интеграционное тестирование
 
-Test with real Kubernetes API:
+Тестируйте с реальным API Kubernetes:
 
 ```mermaid
 flowchart LR
@@ -102,15 +102,15 @@ flowchart LR
     style INTEGRATION fill:#FFE4B5
 ```
 
-**Use for:**
-- End-to-end workflows
-- Resource creation/updates
-- Webhook behavior
-- Controller interactions
+**Используйте для:**
+- Сквозных (end-to-end) рабочих процессов
+- Создания/обновления ресурсов
+- Поведения вебхуков
+- Взаимодействия контроллеров
 
-### Strategy 3: End-to-End Testing
+### Стратегия 3: сквозное тестирование (E2E)
 
-Test complete scenarios:
+Тестируйте полные сценарии:
 
 ```mermaid
 flowchart LR
@@ -122,17 +122,17 @@ flowchart LR
     style E2E fill:#FFB6C1
 ```
 
-**Use for:**
-- Complete user workflows
-- Production-like scenarios
-- Performance testing
-- Regression testing
+**Используйте для:**
+- Полных пользовательских рабочих процессов
+- Сценариев, приближенных к продакшену
+- Тестирования производительности
+- Регрессионного тестирования
 
-## Testing Tools
+## Инструменты тестирования
 
 ### envtest
 
-**Purpose:** Lightweight Kubernetes API server for unit testing
+**Назначение:** легковесный API-сервер Kubernetes для модульного тестирования
 
 ```mermaid
 graph TB
@@ -147,15 +147,15 @@ graph TB
     style ENVTEST fill:#90EE90
 ```
 
-**Features:**
-- No full cluster needed
-- Fast test execution
-- Isolated test environment
-- Real Kubernetes API
+**Возможности:**
+- Не нужен полноценный кластер
+- Быстрое выполнение тестов
+- Изолированная тестовая среда
+- Реальный API Kubernetes
 
-### Ginkgo and Gomega
+### Ginkgo и Gomega
 
-**Purpose:** BDD-style testing framework
+**Назначение:** фреймворк тестирования в стиле BDD
 
 ```mermaid
 graph TB
@@ -168,15 +168,15 @@ graph TB
     style GINKGO fill:#90EE90
 ```
 
-**Features:**
-- Descriptive test structure
-- Rich assertion library
-- Parallel test execution
-- Test organization
+**Возможности:**
+- Описательная структура тестов
+- Богатая библиотека утверждений (assertions)
+- Параллельное выполнение тестов
+- Организация тестов
 
-### Delve Debugger
+### Отладчик Delve
 
-**Purpose:** Go debugger for operators
+**Назначение:** Go-отладчик для операторов
 
 ```mermaid
 graph TB
@@ -189,15 +189,15 @@ graph TB
     style DELVE fill:#FFB6C1
 ```
 
-**Features:**
-- Set breakpoints
-- Inspect variables
-- Step through code
-- Debug running operators
+**Возможности:**
+- Установка точек останова (breakpoints)
+- Просмотр переменных
+- Пошаговое выполнение кода
+- Отладка запущенных операторов
 
-## Test Structure
+## Структура теста
 
-### Basic Test Structure
+### Базовая структура теста
 
 ```go
 func TestReconcile(t *testing.T) {
@@ -207,7 +207,7 @@ func TestReconcile(t *testing.T) {
 }
 ```
 
-### Table-Driven Tests
+### Тесты, управляемые таблицей (table-driven)
 
 ```go
 func TestReconcile(t *testing.T) {
@@ -234,7 +234,7 @@ func TestReconcile(t *testing.T) {
 }
 ```
 
-## Test Coverage Goals
+## Цели по покрытию тестами
 
 ```mermaid
 graph LR
@@ -252,58 +252,58 @@ graph LR
     style CRITICAL fill:#FFB6C1
 ```
 
-**Targets:**
-- Overall: 80%+ coverage
-- Critical paths: 100% coverage
-- Edge cases: All covered
-- Error paths: All tested
+**Целевые показатели:**
+- Общее: покрытие 80%+
+- Критические пути: покрытие 100%
+- Граничные случаи: все покрыты
+- Пути ошибок: все протестированы
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Testing is essential** for operator reliability
-- **Unit tests** are fast and test logic
-- **Integration tests** test with real Kubernetes API
-- **E2E tests** test complete scenarios
-- **envtest** provides lightweight Kubernetes API
-- **Ginkgo/Gomega** provide BDD-style testing
-- **Delve** enables debugging operators
-- **Table-driven tests** organize test cases
-- **Aim for 80%+ coverage** with 100% on critical paths
+- **Тестирование необходимо** для надёжности оператора
+- **Модульные тесты** быстрые и проверяют логику
+- **Интеграционные тесты** тестируют с реальным API Kubernetes
+- **E2E-тесты** тестируют полные сценарии
+- **envtest** предоставляет легковесный API Kubernetes
+- **Ginkgo/Gomega** обеспечивают тестирование в стиле BDD
+- **Delve** позволяет отлаживать операторы
+- **Тесты, управляемые таблицей**, организуют тестовые случаи
+- **Стремитесь к покрытию 80%+** со 100% на критических путях
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When testing operators:
-- Write unit tests for all logic
-- Use integration tests for workflows
-- Test error cases and edge cases
-- Use table-driven tests for multiple scenarios
-- Aim for high coverage
-- Test in isolation when possible
-- Use real Kubernetes API for integration tests
+При тестировании операторов:
+- Пишите модульные тесты для всей логики
+- Используйте интеграционные тесты для рабочих процессов
+- Тестируйте случаи ошибок и граничные случаи
+- Используйте тесты, управляемые таблицей, для множества сценариев
+- Стремитесь к высокому покрытию
+- Тестируйте в изоляции, когда это возможно
+- Используйте реальный API Kubernetes для интеграционных тестов
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 6.1: Setting Up Testing Environment](../labs/lab-01-testing-fundamentals.md) - Hands-on exercises for this lesson
+- [Лабораторная 6.1: Настройка среды тестирования](../labs/lab-01-testing-fundamentals.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Testing in Kubebuilder](https://book.kubebuilder.io/cronjob-tutorial/writing-tests.html)
+### Официальная документация
+- [Тестирование в Kubebuilder](https://book.kubebuilder.io/cronjob-tutorial/writing-tests.html)
 - [envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest)
-- [Ginkgo Testing Framework](https://onsi.github.io/ginkgo/)
+- [Фреймворк тестирования Ginkgo](https://onsi.github.io/ginkgo/)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 10: Testing
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 10: Testing
-- [Go Testing Best Practices](https://golang.org/doc/effective_go#testing)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 10: Testing
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 10: Testing
+- [Лучшие практики тестирования на Go](https://golang.org/doc/effective_go#testing)
 
-### Related Topics
-- [Test-Driven Development](https://en.wikipedia.org/wiki/Test-driven_development)
-- [Table-Driven Tests in Go](https://go.dev/wiki/TableDrivenTests)
-- [Mocking in Go](https://github.com/golang/mock)
+### Смежные темы
+- [Разработка через тестирование (TDD)](https://en.wikipedia.org/wiki/Test-driven_development)
+- [Тесты, управляемые таблицей, в Go](https://go.dev/wiki/TableDrivenTests)
+- [Мокирование в Go](https://github.com/golang/mock)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand testing fundamentals, let's set up envtest and write unit tests.
+Теперь, когда вы понимаете основы тестирования, давайте настроим envtest и напишем модульные тесты.
 
-**Navigation:** [← Module Overview](../README.md) | [Next: Unit Testing with envtest →](02-unit-testing-envtest.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Далее: Модульное тестирование с envtest →](02-unit-testing-envtest.md)

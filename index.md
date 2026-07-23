@@ -9,11 +9,13 @@ mermaid: true
 
 # Разработка операторов Kubernetes
 
+{: .note }
+Данный проект является переводом оригинального курса [Piyush Jajoo](https://github.com/piyushjajoo), доступного по ссылке [k8s-operators-course](https://github.com/piyushjajoo/k8s-operators-course). Благодарим автора за проделанную работу!
+
 Полноценный практический и бесплатный курс по созданию готовых к продакшену операторов Kubernetes с помощью Kubebuilder.
 {: .fs-6 .fw-300 }
 
 [Начать]({{ site.baseurl }}/modules){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
-[Смотреть на GitHub](https://github.com/piyushjajoo/k8s-operators-course){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
 
