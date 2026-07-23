@@ -1,112 +1,111 @@
 ---
 layout: default
-title: "Module 4: Advanced Reconciliation"
+title: "Модуль 4: Продвинутое согласование"
 nav_order: 4
-parent: Modules
+parent: Модули
 has_children: true
 has_toc: false
 permalink: /module-04/
 mermaid: true
 ---
 
-# Module 4: Advanced Reconciliation Patterns
+# Модуль 4: Продвинутые паттерны согласования
 
-## Overview
+## Обзор
 
-Now that you can build basic operators ([Module 3](../module-03/README.md)), it's time to learn advanced patterns that make operators production-ready. This module covers status management, finalizers, watching, and sophisticated reconciliation patterns that handle real-world complexity.
+Теперь, когда вы умеете создавать базовые операторы ([Модуль 3](../module-03/README.md)), пришло время изучить продвинутые паттерны, которые делают операторы готовыми к продакшену. Этот модуль охватывает управление статусом, финализаторы, отслеживание и совершенные паттерны согласования, справляющиеся со сложностью реального мира.
 
-**Duration:** 6-7 hours  
-**Prerequisites:** 
-- Completion of [Module 1: Kubernetes Architecture Deep Dive](../module-01/README.md)
-- Completion of [Module 2: Introduction to Operators](../module-02/README.md)
-- Completion of [Module 3: Building Custom Controllers](../module-03/README.md)
-- Understanding of basic reconciliation patterns
+**Продолжительность:** 6–7 часов  
+**Предварительные требования:** 
+- Завершение [Модуля 1: Глубокое погружение в архитектуру Kubernetes](../module-01/README.md)
+- Завершение [Модуля 2: Введение в операторы](../module-02/README.md)
+- Завершение [Модуля 3: Создание кастомных контроллеров](../module-03/README.md)
+- Понимание базовых паттернов согласования
 
-## Learning Objectives
+## Цели обучения
 
-By the end of this module, you will:
+К концу этого модуля вы:
 
-- Implement proper status management with conditions
-- Use finalizers for graceful resource cleanup
-- Set up watches and indexes for efficient controllers
-- Implement multi-phase reconciliation and state machines
-- Handle external dependencies and ensure idempotency
+- Реализуете корректное управление статусом с помощью условий (conditions)
+- Будете использовать финализаторы для аккуратной очистки ресурсов
+- Настроите отслеживание и индексы для эффективных контроллеров
+- Реализуете многофазное согласование и конечные автоматы (state machines)
+- Научитесь обрабатывать внешние зависимости и обеспечивать идемпотентность
 
-## Module Structure
+## Структура модуля
 
-1. **[Lesson 4.1: Conditions and Status Management](lessons/01-conditions-status.md)**
-   - [Lab 4.1: Implementing Status Conditions](labs/lab-01-conditions-status.md)
+1. **[Урок 4.1: Условия и управление статусом](lessons/01-conditions-status.md)**
+   - [Лабораторная 4.1: Реализация условий статуса](labs/lab-01-conditions-status.md)
 
-2. **[Lesson 4.2: Finalizers and Cleanup](lessons/02-finalizers-cleanup.md)**
-   - [Lab 4.2: Implementing Finalizers](labs/lab-02-finalizers-cleanup.md)
+2. **[Урок 4.2: Финализаторы и очистка](lessons/02-finalizers-cleanup.md)**
+   - [Лабораторная 4.2: Реализация финализаторов](labs/lab-02-finalizers-cleanup.md)
 
-3. **[Lesson 4.3: Watching and Indexing](lessons/03-watching-indexing.md)**
-   - [Lab 4.3: Setting Up Watches and Indexes](labs/lab-03-watching-indexing.md)
+3. **[Урок 4.3: Отслеживание и индексирование](lessons/03-watching-indexing.md)**
+   - [Лабораторная 4.3: Настройка отслеживания и индексов](labs/lab-03-watching-indexing.md)
 
-4. **[Lesson 4.4: Advanced Patterns](lessons/04-advanced-patterns.md)**
-   - [Lab 4.4: Multi-Phase Reconciliation](labs/lab-04-advanced-patterns.md)
+4. **[Урок 4.4: Продвинутые паттерны](lessons/04-advanced-patterns.md)**
+   - [Лабораторная 4.4: Многофазное согласование](labs/lab-04-advanced-patterns.md)
 
-## Prerequisites Check
+## Проверка предварительных требований
 
-Before starting, ensure you've completed:
+Перед началом убедитесь, что вы завершили:
 
-- ✅ [Module 3](../module-03/README.md): Built a PostgreSQL operator
-- ✅ Understand basic reconciliation from [Lesson 3.3](../module-03/lessons/03-reconciliation-logic.md)
-- ✅ Can implement controllers from [Lesson 3.1](../module-03/lessons/01-controller-runtime.md)
-- ✅ Understand API design from [Lesson 3.2](../module-03/lessons/02-designing-api.md)
+- ✅ [Модуль 3](../module-03/README.md): создали оператор PostgreSQL
+- ✅ Понимаете базовое согласование из [Урока 3.3](../module-03/lessons/03-reconciliation-logic.md)
+- ✅ Умеете реализовывать контроллеры из [Урока 3.1](../module-03/lessons/01-controller-runtime.md)
+- ✅ Понимаете проектирование API из [Урока 3.2](../module-03/lessons/02-designing-api.md)
 
-If you haven't completed Module 3, start with [Module 3: Building Custom Controllers](../module-03/README.md).
+Если вы не завершили Модуль 3, начните с [Модуля 3: Создание кастомных контроллеров](../module-03/README.md).
 
-## What You'll Build
+## Что вы создадите
 
-Throughout this module, you'll enhance your PostgreSQL operator from Module 3 with:
+На протяжении этого модуля вы усовершенствуете свой оператор PostgreSQL из Модуля 3, добавив:
 
-- Proper status conditions (Ready, Progressing, Failed)
-- Finalizers for graceful cleanup
-- Watches for dependent resources
-- Multi-phase deployment patterns
-- State machine for complex workflows
+- Корректные условия статуса (Ready, Progressing, Failed)
+- Финализаторы для аккуратной очистки
+- Отслеживание зависимых ресурсов
+- Паттерны многофазного развёртывания
+- Конечный автомат для сложных рабочих процессов
 
-## Setup
+## Настройка
 
-Before starting this module:
+Перед началом этого модуля:
 
-1. **Have your PostgreSQL operator from Module 3:**
-   - You should have a working database operator
-   - It should create StatefulSets and Services
-   - Basic reconciliation should be working
+1. **Подготовьте свой оператор PostgreSQL из Модуля 3:**
+   - У вас должен быть рабочий оператор базы данных
+   - Он должен создавать StatefulSet и Service
+   - Базовое согласование должно работать
 
-2. **Ensure development environment is ready:**
+2. **Убедитесь, что среда разработки готова:**
    ```bash
    ./scripts/setup-dev-environment.sh
    ```
 
-3. **Have a kind cluster running:**
+3. **Запущенный кластер kind:**
    ```bash
    ./scripts/setup-kind-cluster.sh
    ```
 
-## Hands-on Labs
+## Практические лабораторные работы
 
-Each lesson includes hands-on exercises that enhance your operator.
+Каждый урок включает практические упражнения, которые совершенствуют ваш оператор.
 
-- [Lab 4.1: Implementing Status Conditions](labs/lab-01-conditions-status.md)
-- [Lab 4.2: Implementing Finalizers](labs/lab-02-finalizers-cleanup.md)
-- [Lab 4.3: Setting Up Watches and Indexes](labs/lab-03-watching-indexing.md)
-- [Lab 4.4: Multi-Phase Reconciliation](labs/lab-04-advanced-patterns.md)
+- [Лабораторная 4.1: Реализация условий статуса](labs/lab-01-conditions-status.md)
+- [Лабораторная 4.2: Реализация финализаторов](labs/lab-02-finalizers-cleanup.md)
+- [Лабораторная 4.3: Настройка отслеживания и индексов](labs/lab-03-watching-indexing.md)
+- [Лабораторная 4.4: Многофазное согласование](labs/lab-04-advanced-patterns.md)
 
-## Solutions
+## Решения
 
-Complete working solutions for all labs are available in the [solutions directory](solutions/):
-- [Lab 4.1 Solutions](solutions/conditions-helpers.go) - Condition helper functions
-- [Lab 4.2 Solutions](solutions/finalizer-handler.go) - Finalizer implementation
-- [Lab 4.3 Solutions](solutions/watch-setup.go) - Watch setup examples
-- [Lab 4.4 Solutions](solutions/state-machine-controller.go) - Multi-phase reconciliation with state machine
+Полные рабочие решения для всех лабораторных доступны в [каталоге решений](solutions/):
+- [Решения лабораторной 4.1](solutions/conditions-helpers.go) — вспомогательные функции для условий
+- [Решения лабораторной 4.2](solutions/finalizer-handler.go) — реализация финализатора
+- [Решения лабораторной 4.3](solutions/watch-setup.go) — примеры настройки отслеживания
+- [Решения лабораторной 4.4](solutions/state-machine-controller.go) — многофазное согласование с конечным автоматом
 
 
-## Navigation
+## Навигация
 
-- [← Previous: Module 3 - Building Custom Controllers](../module-03/README.md)
-- [Course Overview](../README.md)
-- [Next: Module 5 - Webhooks and Admission Control →](../module-05/README.md)
-
+- [← Предыдущий: Модуль 3 — Создание кастомных контроллеров](../module-03/README.md)
+- [Обзор курса](../README.md)
+- [Далее: Модуль 5 — Вебхуки и контроль допуска →](../module-05/README.md)

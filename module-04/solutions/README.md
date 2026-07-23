@@ -1,35 +1,35 @@
-# Module 4 Solutions
+# Решения Модуля 4
 
-This directory contains complete, working solutions for Module 4 labs.
+Этот каталог содержит полные рабочие решения для лабораторных Модуля 4.
 
-## Files
+## Файлы
 
-- [**conditions-helpers.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-04/solutions/conditions-helpers.go): Helper functions for managing conditions
-- [**finalizer-handler.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-04/solutions/finalizer-handler.go): Complete finalizer implementation
-- [**watch-setup.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-04/solutions/watch-setup.go): Watch setup examples
-- [**state-machine-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-04/solutions/state-machine-controller.go): Complete multi-phase reconciliation with state machine
+- [**conditions-helpers.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-04/solutions/conditions-helpers.go): вспомогательные функции для управления условиями
+- [**finalizer-handler.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-04/solutions/finalizer-handler.go): полная реализация финализатора
+- [**watch-setup.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-04/solutions/watch-setup.go): примеры настройки отслеживания
+- [**state-machine-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-04/solutions/state-machine-controller.go): полное многофазное согласование с конечным автоматом
 
-## Usage
+## Использование
 
-These solutions can be used as:
-- Reference when adding conditions to your operator
-- Starting point for finalizer implementation
-- Examples of watch patterns
-- Template for implementing state machine reconciliation
+Эти решения можно использовать как:
+- Справочный материал при добавлении условий в ваш оператор
+- Отправную точку для реализации финализатора
+- Примеры паттернов отслеживания
+- Шаблон для реализации согласования на основе конечного автомата
 
-## Integration
+## Интеграция
 
-To use these solutions:
+Чтобы использовать эти решения:
 
-1. Add condition helpers to your controller
-2. Integrate finalizer handler into Reconcile function
-3. Update SetupWithManager with watch configuration
-4. Update your Database status type to include Conditions
-5. **For state machine**: Replace your main Reconcile function to call `reconcileWithStateMachine`
+1. Добавьте вспомогательные функции для условий в ваш контроллер
+2. Интегрируйте обработчик финализатора в функцию Reconcile
+3. Обновите SetupWithManager конфигурацией отслеживания
+4. Обновите тип status вашего Database, добавив Conditions
+5. **Для конечного автомата**: замените основную функцию Reconcile так, чтобы она вызывала `reconcileWithStateMachine`
 
-## State Machine (Lab 4)
+## Конечный автомат (Лабораторная 4)
 
-The state machine implementation provides multi-phase reconciliation with the following state flow:
+Реализация конечного автомата обеспечивает многофазное согласование со следующим потоком состояний:
 
 ```
 Pending → Provisioning → Configuring → Deploying → Verifying → Ready
@@ -37,34 +37,33 @@ Pending → Provisioning → Configuring → Deploying → Verifying → Ready
                                                            Failed (on error)
 ```
 
-### Prerequisites for State Machine
+### Предварительные требования для конечного автомата
 
-1. **Update API Types** - Edit `api/v1/database_types.go` and update the Phase field enum:
+1. **Обновите типы API** — отредактируйте `api/v1/database_types.go` и обновите enum поля Phase:
    ```go
    // +kubebuilder:validation:Enum=Pending;Provisioning;Configuring;Deploying;Verifying;Ready;Failed
    Phase string `json:"phase,omitempty"`
    ```
 
-2. **Regenerate and reinstall CRD**:
+2. **Перегенерируйте и переустановите CRD**:
    ```bash
    make manifests
    make install
    ```
 
-3. **Update Reconcile function** - The main `Reconcile` function must call `reconcileWithStateMachine(ctx, db)` 
-   instead of directly calling resource reconciliation functions.
+3. **Обновите функцию Reconcile** — основная функция `Reconcile` должна вызывать `reconcileWithStateMachine(ctx, db)` 
+   вместо прямого вызова функций согласования ресурсов.
 
-> **Note:** If you skip step 1-2, you'll see validation errors like:
+> **Примечание:** если вы пропустите шаги 1–2, вы увидите ошибки валидации вроде:
 > `phase: Unsupported value: "Provisioning": supported values: "Pending", "Creating", "Ready", "Failed"`
 >
-> If you skip step 3, you'll only see `Pending → Creating → Ready` transitions.
+> Если вы пропустите шаг 3, вы увидите только переходы `Pending → Creating → Ready`.
 
-## Notes
+## Примечания
 
-- These are complete, working examples
-- Conditions follow Kubernetes standards
-- Finalizers handle cleanup gracefully
-- Watches are properly configured
-- State machine handles all phases including error recovery
-- Ready for Module 5 webhooks
-
+- Это полные рабочие примеры
+- Условия следуют стандартам Kubernetes
+- Финализаторы аккуратно обрабатывают очистку
+- Отслеживание настроено корректно
+- Конечный автомат обрабатывает все фазы, включая восстановление после ошибок
+- Готовы к вебхукам из Модуля 5

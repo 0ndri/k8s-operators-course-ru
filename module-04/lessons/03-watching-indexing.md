@@ -2,22 +2,22 @@
 layout: default
 title: "04.3 Watching Indexing"
 nav_order: 3
-parent: "Module 4: Advanced Reconciliation"
-grand_parent: Modules
+parent: "Модуль 4: Продвинутое согласование"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 4.3: Watching and Indexing
+# Урок 4.3: Отслеживание и индексирование
 
-**Navigation:** [← Previous: Finalizers and Cleanup](02-finalizers-cleanup.md) | [Module Overview](../README.md) | [Next: Advanced Patterns →](04-advanced-patterns.md)
+**Навигация:** [← Предыдущий: Финализаторы и очистка](02-finalizers-cleanup.md) | [Обзор модуля](../README.md) | [Далее: Продвинутые паттерны →](04-advanced-patterns.md)
 
-## Introduction
+## Введение
 
-In [Module 3](../../module-03/README.md), you learned basic reconciliation. Now let's optimize controllers by watching dependent resources and using indexes for efficient lookups. This makes controllers more reactive and performant.
+В [Модуле 3](../../module-03/README.md) вы изучили базовое согласование. Теперь оптимизируем контроллеры, отслеживая зависимые ресурсы и используя индексы для эффективного поиска. Это делает контроллеры более реактивными и производительными.
 
-## Watching Dependent Resources
+## Отслеживание зависимых ресурсов
 
-Controllers can watch resources they don't own:
+Контроллеры могут отслеживать ресурсы, которыми они не владеют:
 
 ```mermaid
 graph TB
@@ -42,9 +42,9 @@ graph TB
     style RECONCILE fill:#90EE90
 ```
 
-## Watch Setup Flow
+## Процесс настройки отслеживания
 
-Here's how watches are set up:
+Вот как настраивается отслеживание:
 
 ```mermaid
 sequenceDiagram
@@ -61,9 +61,9 @@ sequenceDiagram
     Controller->>Controller: Reconcile
 ```
 
-## Setting Up Watches
+## Настройка отслеживания
 
-### Watch Owned Resources
+### Отслеживание подчинённых ресурсов
 
 ```go
 func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -75,9 +75,9 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-When owned resources change, the owner is reconciled automatically.
+Когда подчинённые ресурсы меняются, владелец согласовывается автоматически.
 
-### Watch Non-Owned Resources
+### Отслеживание неподчинённых ресурсов
 
 ```go
 func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -117,9 +117,9 @@ func (r *DatabaseReconciler) findDatabasesForSecret(ctx context.Context, secret 
 }
 ```
 
-## Indexes for Efficient Lookups
+## Индексы для эффективного поиска
 
-Indexes allow fast lookups without listing all resources:
+Индексы позволяют быстро искать без перечисления всех ресурсов:
 
 ```mermaid
 graph TB
@@ -137,11 +137,11 @@ graph TB
     style FAST fill:#FFB6C1
 ```
 
-## Setting Up Indexes
+## Настройка индексов
 
-Indexes allow efficient lookups by field values without scanning all objects.
+Индексы позволяют эффективно искать по значениям полей без сканирования всех объектов.
 
-### Step 1: Define Index Function
+### Шаг 1: определите функцию индекса
 
 ```go
 // Index function: extract the image field from Database objects
@@ -158,7 +158,7 @@ func indexDatabaseImage(obj client.Object) []string {
 }
 ```
 
-### Step 2: Register Index
+### Шаг 2: зарегистрируйте индекс
 
 ```go
 func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -178,7 +178,7 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-### Step 3: Use Index in Queries
+### Шаг 3: используйте индекс в запросах
 
 ```go
 // Find all Databases using a specific PostgreSQL image
@@ -189,9 +189,9 @@ err := r.List(ctx, databases, client.MatchingFields{
 // This query is O(1) with index vs O(n) without
 ```
 
-## Cross-Namespace Watching
+## Отслеживание между пространствами имён
 
-Watch resources across namespaces:
+Отслеживайте ресурсы в разных пространствах имён:
 
 ```mermaid
 graph TB
@@ -213,7 +213,7 @@ graph TB
     style RECONCILE fill:#90EE90
 ```
 
-### Cluster-Scoped Watching
+### Отслеживание в масштабе кластера
 
 ```go
 func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -244,11 +244,11 @@ func (r *DatabaseReconciler) findDatabasesForNamespace(ctx context.Context, name
 }
 ```
 
-## Event Handling
+## Обработка событий
 
-Handle different event types with predicates to filter which events trigger reconciliation:
+Обрабатывайте разные типы событий с помощью предикатов (predicates), чтобы фильтровать, какие события запускают согласование:
 
-> **Important:** When filtering StatefulSet updates, include both spec changes (Generation) AND status changes (ReadyReplicas). Otherwise your controller won't react to pods becoming ready!
+> **Важно:** при фильтрации обновлений StatefulSet включайте как изменения spec (Generation), ТАК И изменения status (ReadyReplicas). Иначе ваш контроллер не отреагирует на готовность подов!
 
 ```go
 func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -273,9 +273,9 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-## Performance Considerations
+## Соображения производительности
 
-### When to Use Indexes
+### Когда использовать индексы
 
 ```mermaid
 flowchart TD
@@ -290,57 +290,57 @@ flowchart TD
     style INDEX fill:#90EE90
 ```
 
-**Use indexes when:**
-- Querying many resources frequently
-- Need fast lookups
-- Resources scale to hundreds/thousands
+**Используйте индексы, когда:**
+- Часто запрашиваете много ресурсов
+- Нужен быстрый поиск
+- Ресурсы масштабируются до сотен/тысяч
 
-**Use List when:**
-- Few resources
-- Infrequent queries
-- Simple filtering
+**Используйте List, когда:**
+- Ресурсов немного
+- Запросы нечастые
+- Простая фильтрация
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Watch owned resources** with `Owns()`
-- **Watch non-owned resources** with `Watches()`
-- **Indexes** enable fast lookups
-- **Cross-namespace watching** for cluster-scoped controllers
-- **Event predicates** filter which events trigger reconciliation
-- **Performance** improves with proper watching and indexing
+- **Отслеживайте подчинённые ресурсы** с помощью `Owns()`
+- **Отслеживайте неподчинённые ресурсы** с помощью `Watches()`
+- **Индексы** обеспечивают быстрый поиск
+- **Отслеживание между пространствами имён** для контроллеров в масштабе кластера
+- **Предикаты событий** фильтруют, какие события запускают согласование
+- **Производительность** улучшается при правильном отслеживании и индексировании
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When setting up watches:
-- Watch resources that affect your Custom Resource
-- Use indexes for frequent queries
-- Filter events with predicates
-- Watch across namespaces if needed
-- Balance performance with complexity
+При настройке отслеживания:
+- Отслеживайте ресурсы, влияющие на ваш пользовательский ресурс
+- Используйте индексы для частых запросов
+- Фильтруйте события с помощью предикатов
+- При необходимости отслеживайте между пространствами имён
+- Балансируйте производительность и сложность
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 4.3: Setting Up Watches and Indexes](../labs/lab-03-watching-indexing.md) - Hands-on exercises for this lesson
+- [Лабораторная 4.3: Настройка отслеживания и индексов](../labs/lab-03-watching-indexing.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Informers](https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go)
-- [Field Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/)
-- [Indexers](https://pkg.go.dev/k8s.io/client-go/tools/cache#Indexer)
+### Официальная документация
+- [Информеры](https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go)
+- [Селекторы полей](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/)
+- [Индексаторы](https://pkg.go.dev/k8s.io/client-go/tools/cache#Indexer)
 
-### Further Reading
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 4: Working with Client Libraries
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 7: Advanced Patterns
-- [client-go Informers](https://github.com/kubernetes/client-go/tree/master/examples/workqueue)
+### Дополнительное чтение
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 4: Working with Client Libraries
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 7: Advanced Patterns
+- [Информеры client-go](https://github.com/kubernetes/client-go/tree/master/examples/workqueue)
 
-### Related Topics
-- [Informer Pattern](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/controllers.md)
-- [Workqueue Pattern](https://github.com/kubernetes/client-go/blob/master/util/workqueue/)
-- [Controller Performance](https://kubernetes.io/docs/concepts/architecture/controller/#controller-performance)
+### Смежные темы
+- [Паттерн информера](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/controllers.md)
+- [Паттерн Workqueue](https://github.com/kubernetes/client-go/blob/master/util/workqueue/)
+- [Производительность контроллера](https://kubernetes.io/docs/concepts/architecture/controller/#controller-performance)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand watching and indexing, let's learn advanced patterns like multi-phase reconciliation and state machines.
+Теперь, когда вы понимаете отслеживание и индексирование, давайте изучим продвинутые паттерны, такие как многофазное согласование и конечные автоматы.
 
-**Navigation:** [← Previous: Finalizers and Cleanup](02-finalizers-cleanup.md) | [Module Overview](../README.md) | [Next: Advanced Patterns →](04-advanced-patterns.md)
+**Навигация:** [← Предыдущий: Финализаторы и очистка](02-finalizers-cleanup.md) | [Обзор модуля](../README.md) | [Далее: Продвинутые паттерны →](04-advanced-patterns.md)

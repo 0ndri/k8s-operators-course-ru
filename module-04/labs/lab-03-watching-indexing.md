@@ -2,34 +2,34 @@
 layout: default
 title: "Lab 04.3: Watching Indexing"
 nav_order: 13
-parent: "Module 4: Advanced Reconciliation"
-grand_parent: Modules
+parent: "Модуль 4: Продвинутое согласование"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 4.3: Setting Up Watches and Indexes
+# Лабораторная 4.3: Настройка отслеживания и индексов
 
-**Related Lesson:** [Lesson 4.3: Watching and Indexing](../lessons/03-watching-indexing.md)  
-**Navigation:** [← Previous Lab: Finalizers](lab-02-finalizers-cleanup.md) | [Module Overview](../README.md) | [Next Lab: Advanced Patterns →](lab-04-advanced-patterns.md)
+**Связанный урок:** [Урок 4.3: Отслеживание и индексирование](../lessons/03-watching-indexing.md)  
+**Навигация:** [← Предыдущая лабораторная: Финализаторы](lab-02-finalizers-cleanup.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Продвинутые паттерны →](lab-04-advanced-patterns.md)
 
-## Objectives
+## Цели
 
-- Set up watches for dependent resources
-- Create indexes for efficient lookups
-- Handle watch events
-- Test watch behavior
+- Настроить отслеживание зависимых ресурсов
+- Создать индексы для эффективного поиска
+- Обрабатывать события отслеживания
+- Протестировать поведение отслеживания
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 4.2](lab-02-finalizers-cleanup.md)
-- Database operator with finalizers
-- Understanding of watching patterns
+- Завершение [Лабораторной 4.2](lab-02-finalizers-cleanup.md)
+- Оператор Database с финализаторами
+- Понимание паттернов отслеживания
 
-## Exercise 1: Watch Owned Resources
+## Упражнение 1: отслеживание подчинённых ресурсов
 
-### Task 1.1: Update SetupWithManager
+### Задача 1.1: обновите SetupWithManager
 
-We already have modifed `SetupWithManager` to watch owned resources:
+Мы уже изменили `SetupWithManager`, чтобы отслеживать подчинённые ресурсы:
 
 ```go
 func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -42,7 +42,7 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-### Task 1.2: Test Watch Behavior
+### Задача 1.2: протестируйте поведение отслеживания
 
 ```bash
 # Install and run operator
@@ -76,11 +76,11 @@ kubectl get statefulset test-db
 kubectl delete database test-db
 ```
 
-## Exercise 2: Watch Non-Owned Resources
+## Упражнение 2: отслеживание неподчинённых ресурсов
 
-### Task 2.1: Watch Secrets
+### Задача 2.1: отслеживание Secret
 
-Add watch for Secrets that Databases reference:
+Добавьте отслеживание Secret, на которые ссылаются Database:
 
 ```go
 import (
@@ -124,7 +124,7 @@ func (r *DatabaseReconciler) findDatabasesForSecret(ctx context.Context, secret 
 }
 ```
 
-### Task 2.2: Test Secret Watch
+### Задача 2.2: протестируйте отслеживание Secret
 
 ```bash
 # Install and run operator
@@ -152,13 +152,13 @@ kubectl patch secret test-db-credentials --type merge -p '{"data":{"password":"n
 # Watch operator logs - should reconcile Database
 ```
 
-## Exercise 3: Create Indexes
+## Упражнение 3: создание индексов
 
-Indexes allow efficient lookups of resources by field values without scanning all objects.
+Индексы позволяют эффективно искать ресурсы по значениям полей без сканирования всех объектов.
 
-### Task 3.1: Set Up Index
+### Задача 3.1: настройте индекс
 
-Add an index for the `image` field to quickly find all Databases using a specific PostgreSQL version:
+Добавьте индекс для поля `image`, чтобы быстро находить все Database, использующие конкретную версию PostgreSQL:
 
 ```go
 func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -193,9 +193,9 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-### Task 3.2: Use Index in Query
+### Задача 3.2: используйте индекс в запросе
 
-Use the index to efficiently find all Databases using a specific image:
+Используйте индекс, чтобы эффективно находить все Database, использующие конкретный образ:
 
 ```go
 // findDatabasesByImage finds all Databases using a specific PostgreSQL image
@@ -213,7 +213,7 @@ func (r *DatabaseReconciler) findDatabasesByImage(ctx context.Context, image str
 }
 ```
 
-### Task 3.3: Test Index Usage
+### Задача 3.3: протестируйте использование индекса
 
 ```bash
 # Install and run operator
@@ -263,15 +263,15 @@ EOF
 # doesn't require scanning every Database object
 ```
 
-> **Note:** Indexes are particularly useful when you have many resources and need to find subsets quickly. Without an index, `List()` with field matching would need to scan all objects.
+> **Примечание:** индексы особенно полезны, когда у вас много ресурсов и нужно быстро находить подмножества. Без индекса `List()` с сопоставлением по полям пришлось бы сканировать все объекты.
 
-## Exercise 4: Event Predicates
+## Упражнение 4: предикаты событий
 
-### Task 4.1: Add Predicates
+### Задача 4.1: добавьте предикаты
 
-Filter events to only reconcile on important changes. 
+Фильтруйте события, чтобы согласовывать только при важных изменениях.
 
-> **Important:** When filtering StatefulSet updates, you must include **both** spec changes (Generation) AND status changes (ReadyReplicas). Otherwise, the Database will never become Ready because status updates will be filtered out!
+> **Важно:** при фильтрации обновлений StatefulSet вы должны включать **как** изменения spec (Generation), ТАК И изменения status (ReadyReplicas). Иначе Database никогда не станет Ready, потому что обновления status будут отфильтрованы!
 
 ```go
 import (
@@ -308,9 +308,9 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-## Exercise 5: Test Watch Performance
+## Упражнение 5: тестирование производительности отслеживания
 
-### Task 5.1: Create Multiple Resources
+### Задача 5.1: создайте несколько ресурсов
 
 ```bash
 # Install and run operator
@@ -335,7 +335,7 @@ EOF
 done
 ```
 
-### Task 5.2: Observe Watch Behavior
+### Задача 5.2: понаблюдайте за поведением отслеживания
 
 ```bash
 # Watch operator logs
@@ -347,38 +347,38 @@ kubectl patch database db-5 --type merge -p '{"spec":{"replicas":2}}'
 # Only db-5 should be reconciled
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete all test resources
 kubectl delete databases --all
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Set up watches for owned resources
-- Watched non-owned resources
-- Created indexes for efficient lookups
-- Added event predicates
-- Tested watch performance
+В этой лабораторной вы:
+- Настроили отслеживание подчинённых ресурсов
+- Отследили неподчинённые ресурсы
+- Создали индексы для эффективного поиска
+- Добавили предикаты событий
+- Протестировали производительность отслеживания
 
-## Key Learnings
+## Ключевые уроки
 
-1. Watch owned resources with `Owns()`
-2. Watch non-owned resources with `Watches()`
-3. Indexes enable fast lookups
-4. Event predicates filter events
-5. Watches make controllers reactive
-6. Proper watching improves performance
+1. Отслеживайте подчинённые ресурсы с помощью `Owns()`
+2. Отслеживайте неподчинённые ресурсы с помощью `Watches()`
+3. Индексы обеспечивают быстрый поиск
+4. Предикаты событий фильтруют события
+5. Отслеживание делает контроллеры реактивными
+6. Правильное отслеживание повышает производительность
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Watch Setup](../solutions/watch-setup.go) - Examples of setting up watches for owned and non-owned resources
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Watch Setup](../solutions/watch-setup.go) — примеры настройки отслеживания подчинённых и неподчинённых ресурсов
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's implement advanced patterns like multi-phase reconciliation!
+Теперь давайте реализуем продвинутые паттерны, такие как многофазное согласование!
 
-**Navigation:** [← Previous Lab: Finalizers](lab-02-finalizers-cleanup.md) | [Related Lesson](../lessons/03-watching-indexing.md) | [Next Lab: Advanced Patterns →](lab-04-advanced-patterns.md)
+**Навигация:** [← Предыдущая лабораторная: Финализаторы](lab-02-finalizers-cleanup.md) | [Связанный урок](../lessons/03-watching-indexing.md) | [Следующая лабораторная: Продвинутые паттерны →](lab-04-advanced-patterns.md)

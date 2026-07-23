@@ -2,22 +2,22 @@
 layout: default
 title: "04.1 Conditions Status"
 nav_order: 1
-parent: "Module 4: Advanced Reconciliation"
-grand_parent: Modules
+parent: "Модуль 4: Продвинутое согласование"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 4.1: Conditions and Status Management
+# Урок 4.1: Условия и управление статусом
 
-**Navigation:** [Module Overview](../README.md) | [Next Lesson: Finalizers and Cleanup →](02-finalizers-cleanup.md)
+**Навигация:** [Обзор модуля](../README.md) | [Следующий урок: Финализаторы и очистка →](02-finalizers-cleanup.md)
 
-## Introduction
+## Введение
 
-In [Module 3](../../module-03/README.md), you learned basic status updates. Now let's implement proper status management using **conditions** - the Kubernetes-standard way to report resource state. Conditions provide structured, machine-readable status that both humans and automation can understand.
+В [Модуле 3](../../module-03/README.md) вы изучили базовые обновления статуса. Теперь реализуем корректное управление статусом с помощью **условий (conditions)** — стандартного для Kubernetes способа сообщать о состоянии ресурса. Условия предоставляют структурированный, машиночитаемый статус, понятный как людям, так и автоматике.
 
-## What are Conditions?
+## Что такое условия (conditions)?
 
-Conditions are structured status information that follows a standard pattern:
+Условия — это структурированная информация о статусе, следующая стандартному паттерну:
 
 ```mermaid
 graph TB
@@ -33,7 +33,7 @@ graph TB
     style STATUS fill:#90EE90
 ```
 
-### Condition Structure
+### Структура условия
 
 ```go
 type Condition struct {
@@ -46,9 +46,9 @@ type Condition struct {
 }
 ```
 
-## Common Condition Types
+## Распространённые типы условий
 
-Kubernetes defines standard condition types:
+Kubernetes определяет стандартные типы условий:
 
 ```mermaid
 graph LR
@@ -67,14 +67,14 @@ graph LR
     style PROGRESSING fill:#FFB6C1
 ```
 
-- **Ready**: Resource is ready to serve traffic/work
-- **Progressing**: Work is actively being done
-- **Degraded**: Resource is working but in degraded state
-- **Stalled**: Progress has stopped
+- **Ready**: ресурс готов обслуживать трафик/нагрузку
+- **Progressing**: работа активно выполняется
+- **Degraded**: ресурс работает, но в ухудшенном состоянии
+- **Stalled**: прогресс остановился
 
-## Status Subresource
+## Подресурс status
 
-Remember from [Module 1](../../module-01/lessons/04-custom-resources.md) and [Module 3](../../module-03/lessons/02-designing-api.md): status is a subresource.
+Вспомните из [Модуля 1](../../module-01/lessons/04-custom-resources.md) и [Модуля 3](../../module-03/lessons/02-designing-api.md): status — это подресурс.
 
 ```mermaid
 graph LR
@@ -92,9 +92,9 @@ graph LR
     style CONDITIONS fill:#90EE90
 ```
 
-## Condition Lifecycle
+## Жизненный цикл условия
 
-Conditions transition through states:
+Условия переходят между состояниями:
 
 ```mermaid
 stateDiagram-v2
@@ -107,9 +107,9 @@ stateDiagram-v2
     False --> [*]
 ```
 
-## Implementing Conditions
+## Реализация условий
 
-### Step 1: Add Conditions to Status
+### Шаг 1: добавьте условия в status
 
 ```go
 // DatabaseStatus defines the observed state of Database
@@ -125,7 +125,7 @@ type DatabaseStatus struct {
 }
 ```
 
-### Step 2: Helper Functions
+### Шаг 2: вспомогательные функции
 
 ```go
 import (
@@ -153,7 +153,7 @@ func (r *DatabaseReconciler) getCondition(db *databasev1.Database, conditionType
 }
 ```
 
-### Step 3: Update Conditions in Reconcile
+### Шаг 3: обновляйте условия в Reconcile
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -188,19 +188,19 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Status Update Strategies
+## Стратегии обновления статуса
 
-### Strategy 1: Update on Every Reconcile
+### Стратегия 1: обновление при каждом согласовании
 
 ```go
 // Update status every time
 return ctrl.Result{}, r.Status().Update(ctx, db)
 ```
 
-**Pros:** Always current  
-**Cons:** Can cause conflicts with rapid updates
+**Плюсы:** всегда актуально  
+**Минусы:** может вызывать конфликты при частых обновлениях
 
-### Strategy 2: Update Only on Changes
+### Стратегия 2: обновление только при изменениях
 
 ```go
 // Only update if conditions changed
@@ -209,10 +209,10 @@ if conditionsChanged {
 }
 ```
 
-**Pros:** Reduces conflicts  
-**Cons:** More complex logic
+**Плюсы:** снижает число конфликтов  
+**Минусы:** более сложная логика
 
-### Strategy 3: Periodic Updates
+### Стратегия 3: периодические обновления
 
 ```go
 // Update status periodically
@@ -221,12 +221,12 @@ if time.Since(lastStatusUpdate) > 30*time.Second {
 }
 ```
 
-**Pros:** Reduces API calls  
-**Cons:** Status may be slightly stale
+**Плюсы:** сокращает число вызовов API  
+**Минусы:** статус может быть слегка устаревшим
 
-## Condition State Machine
+## Конечный автомат условий
 
-For complex resources, use a state machine:
+Для сложных ресурсов используйте конечный автомат (state machine):
 
 ```mermaid
 stateDiagram-v2
@@ -242,9 +242,9 @@ stateDiagram-v2
     Deleting --> [*]
 ```
 
-## Reporting Progress
+## Сообщение о прогрессе
 
-Use Progressing condition to show progress:
+Используйте условие Progressing, чтобы показывать прогресс:
 
 ```go
 // During creation
@@ -257,9 +257,9 @@ r.setCondition(db, "Progressing", metav1.ConditionTrue, "WaitingForPods", "Waiti
 r.setCondition(db, "Progressing", metav1.ConditionFalse, "ReconciliationComplete", "Reconciliation complete")
 ```
 
-## Error Reporting
+## Сообщение об ошибках
 
-Report errors with conditions:
+Сообщайте об ошибках с помощью условий:
 
 ```go
 if err != nil {
@@ -269,50 +269,50 @@ if err != nil {
 }
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Conditions** provide structured, standard status reporting
-- Use **standard condition types** (Ready, Progressing, etc.)
-- **LastTransitionTime** tracks when status changed
-- **ObservedGeneration** tracks which spec generation status applies to
-- Update conditions based on **actual resource state**
-- Use **state machines** for complex workflows
-- **Report progress** with Progressing condition
-- **Report errors** clearly with conditions
+- **Условия** предоставляют структурированное, стандартное сообщение о статусе
+- Используйте **стандартные типы условий** (Ready, Progressing и т. д.)
+- **LastTransitionTime** отслеживает, когда изменился статус
+- **ObservedGeneration** отслеживает, к какому поколению spec относится статус
+- Обновляйте условия на основе **фактического состояния ресурса**
+- Используйте **конечные автоматы** для сложных рабочих процессов
+- **Сообщайте о прогрессе** с помощью условия Progressing
+- **Чётко сообщайте об ошибках** с помощью условий
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When implementing conditions:
-- Use `meta.SetStatusCondition` for updates
-- Track observed generation
-- Update on state changes
-- Use standard condition types
-- Provide clear reasons and messages
-- Handle conflicts gracefully
+При реализации условий:
+- Используйте `meta.SetStatusCondition` для обновлений
+- Отслеживайте наблюдаемое поколение (observed generation)
+- Обновляйте при изменениях состояния
+- Используйте стандартные типы условий
+- Указывайте понятные причины и сообщения
+- Аккуратно обрабатывайте конфликты
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 4.1: Implementing Status Conditions](../labs/lab-01-conditions-status.md) - Hands-on exercises for this lesson
+- [Лабораторная 4.1: Реализация условий статуса](../labs/lab-01-conditions-status.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Resource Status](https://kubernetes.io/docs/concepts/architecture/controller/#status)
-- [Conditions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties)
-- [Status Subresource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#status-subresource)
+### Официальная документация
+- [Статус ресурса](https://kubernetes.io/docs/concepts/architecture/controller/#status)
+- [Условия](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties)
+- [Подресурс status](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#status-subresource)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 5: Status and Conditions
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 6: Status Management
-- [Kubernetes API Conventions - Status](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 5: Status and Conditions
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 6: Status Management
+- [Соглашения об API Kubernetes — Status](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status)
 
-### Related Topics
-- [Condition Types](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties)
-- [Status Best Practices](https://sdk.operatorframework.io/docs/best-practices/best-practices/#status)
-- [Observed Generation Pattern](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#generation-and-observedgeneration)
+### Смежные темы
+- [Типы условий](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties)
+- [Лучшие практики Status](https://sdk.operatorframework.io/docs/best-practices/best-practices/#status)
+- [Паттерн Observed Generation](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#generation-and-observedgeneration)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand status management, let's learn about finalizers for graceful cleanup.
+Теперь, когда вы понимаете управление статусом, давайте изучим финализаторы для аккуратной очистки.
 
-**Navigation:** [← Module Overview](../README.md) | [Next: Finalizers and Cleanup →](02-finalizers-cleanup.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Далее: Финализаторы и очистка →](02-finalizers-cleanup.md)

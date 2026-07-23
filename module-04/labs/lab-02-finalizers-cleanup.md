@@ -2,34 +2,34 @@
 layout: default
 title: "Lab 04.2: Finalizers Cleanup"
 nav_order: 12
-parent: "Module 4: Advanced Reconciliation"
-grand_parent: Modules
+parent: "Модуль 4: Продвинутое согласование"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 4.2: Implementing Finalizers
+# Лабораторная 4.2: Реализация финализаторов
 
-**Related Lesson:** [Lesson 4.2: Finalizers and Cleanup](../lessons/02-finalizers-cleanup.md)  
-**Navigation:** [← Previous Lab: Conditions](lab-01-conditions-status.md) | [Module Overview](../README.md) | [Next Lab: Watching →](lab-03-watching-indexing.md)
+**Связанный урок:** [Урок 4.2: Финализаторы и очистка](../lessons/02-finalizers-cleanup.md)  
+**Навигация:** [← Предыдущая лабораторная: Условия](lab-01-conditions-status.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Отслеживание →](lab-03-watching-indexing.md)
 
-## Objectives
+## Цели
 
-- Add finalizers to Database operator
-- Implement cleanup logic
-- Handle graceful deletion
-- Test cleanup scenarios
+- Добавить финализаторы в оператор Database
+- Реализовать логику очистки
+- Обработать аккуратное удаление
+- Протестировать сценарии очистки
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 4.1](lab-01-conditions-status.md)
-- Database operator with conditions
-- Understanding of finalizers
+- Завершение [Лабораторной 4.1](lab-01-conditions-status.md)
+- Оператор Database с условиями
+- Понимание финализаторов
 
-## Exercise 1: Add Finalizer on Creation
+## Упражнение 1: добавление финализатора при создании
 
-### Task 1.1: Add Finalizer Logic
+### Задача 1.1: добавьте логику финализатора
 
-Modify `Reconcile` function to add finalizer:
+Измените функцию `Reconcile`, чтобы добавить финализатор:
 
 ```go
 import (
@@ -68,11 +68,11 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Exercise 2: Implement Cleanup Logic
+## Упражнение 2: реализация логики очистки
 
-### Task 2.1: Create Cleanup Function
+### Задача 2.1: создайте функцию очистки
 
-Add cleanup function:
+Добавьте функцию очистки:
 
 ```go
 func (r *DatabaseReconciler) handleDeletion(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -105,7 +105,7 @@ func (r *DatabaseReconciler) handleDeletion(ctx context.Context, db *databasev1.
 }
 ```
 
-### Task 2.2: Implement Cleanup
+### Задача 2.2: реализуйте очистку
 
 ```go
 func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *databasev1.Database) error {
@@ -175,11 +175,11 @@ func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *d
 }
 ```
 
-> **Important:** The cleanup function must **explicitly delete** child resources. While owner references enable automatic garbage collection when a parent is deleted, finalizers prevent the parent from being deleted until cleanup completes. This creates a deadlock if you only wait for resources to disappear - you must actively delete them.
+> **Важно:** функция очистки должна **явно удалять** дочерние ресурсы. Хотя ссылки-владельцы включают автоматическую сборку мусора при удалении родителя, финализаторы не дают удалить родителя, пока не завершится очистка. Это создаёт взаимоблокировку, если вы просто ждёте исчезновения ресурсов, — их нужно активно удалять.
 
-## Exercise 3: Test Finalizers
+## Упражнение 3: тестирование финализаторов
 
-### Task 3.1: Install and Run
+### Задача 3.1: установите и запустите
 
 ```bash
 # Install CRD
@@ -189,7 +189,7 @@ make install
 make run
 ```
 
-### Task 3.2: Create Database
+### Задача 3.2: создайте Database
 
 ```bash
 # Create Database
@@ -211,7 +211,7 @@ EOF
 kubectl get database test-db -o jsonpath='{.metadata.finalizers}'
 ```
 
-### Task 3.3: Delete Database
+### Задача 3.3: удалите Database
 
 ```bash
 # Delete Database
@@ -226,7 +226,7 @@ kubectl get database test-db
 # Watch operator logs - should see cleanup
 ```
 
-### Task 3.4: Verify Cleanup
+### Задача 3.4: проверьте очистку
 
 ```bash
 # Watch finalizer removal
@@ -236,11 +236,11 @@ watch -n 1 'kubectl get database test-db -o jsonpath="{.metadata.finalizers}"'
 kubectl get database test-db
 ```
 
-## Exercise 4: Test Cleanup Failure
+## Упражнение 4: тестирование сбоя очистки
 
-### Task 4.1: Simulate Cleanup Failure
+### Задача 4.1: имитируйте сбой очистки
 
-Temporarily modify cleanup to always fail:
+Временно измените очистку, чтобы она всегда завершалась ошибкой:
 
 ```go
 func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *databasev1.Database) error {
@@ -248,7 +248,7 @@ func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *d
 }
 ```
 
-Re-run following commands to use the simulated failure code -
+Перезапустите следующие команды, чтобы использовать код с имитацией сбоя:
 
 ```bash
 # Install CRD
@@ -258,7 +258,7 @@ make install
 make run
 ```
 
-### Task 4.2: Test Behavior
+### Задача 4.2: протестируйте поведение
 
 ```bash
 # Create and delete Database
@@ -286,15 +286,15 @@ kubectl get database test-db
 kubectl get database test-db -o jsonpath='{.status.conditions}' | jq .
 ```
 
-**Revert the simulated failure code and re-run the operator, the database should get cleaned up properly.**
+**Верните исходный код очистки и перезапустите оператор — база данных должна корректно очиститься.**
 
-## Exercise 5: Understand Idempotent Cleanup
+## Упражнение 5: понимание идемпотентной очистки
 
-**Idempotent** means the cleanup can be called multiple times with the same result - it won't fail or cause issues if resources are already deleted.
+**Идемпотентная** означает, что очистку можно вызывать несколько раз с одним и тем же результатом — она не завершится ошибкой и не вызовет проблем, если ресурсы уже удалены.
 
-### Task 5.1: Review the Idempotent Patterns
+### Задача 5.1: разберите паттерны идемпотентности
 
-Our `cleanupExternalResources` function from Task 2.2 is already idempotent! Here's why:
+Наша функция `cleanupExternalResources` из Задачи 2.2 уже идемпотентна! Вот почему:
 
 ```go
 func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *databasev1.Database) error {
@@ -328,15 +328,15 @@ func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *d
 }
 ```
 
-**Key idempotency patterns used:**
+**Используемые ключевые паттерны идемпотентности:**
 
-1. **Check before delete**: Use `Get()` to check if resource exists before attempting delete
-2. **Ignore NotFound on delete**: `!errors.IsNotFound(err)` - if already deleted, that's fine
-3. **Treat NotFound as success**: If resource doesn't exist, cleanup for that resource is complete
+1. **Проверка перед удалением**: используйте `Get()`, чтобы проверить существование ресурса перед попыткой удаления
+2. **Игнорирование NotFound при удалении**: `!errors.IsNotFound(err)` — если уже удалён, это нормально
+3. **NotFound как успех**: если ресурс не существует, очистка для этого ресурса завершена
 
-### Task 5.2: Test Idempotency
+### Задача 5.2: протестируйте идемпотентность
 
-Run the cleanup multiple times to verify idempotency:
+Запустите очистку несколько раз, чтобы проверить идемпотентность:
 
 ```bash
 # Create a Database
@@ -364,9 +364,9 @@ kubectl delete database idempotent-test
 # You'll see logs like "Cleanup completed" without errors
 ```
 
-### Task 5.3: Non-Idempotent Anti-Pattern (Don't Do This!)
+### Задача 5.3: неидемпотентный антипаттерн (не делайте так!)
 
-Here's what a **non-idempotent** cleanup looks like - avoid this:
+Вот как выглядит **неидемпотентная** очистка — избегайте этого:
 
 ```go
 // BAD: Non-idempotent cleanup - will fail on second call
@@ -387,41 +387,41 @@ func (r *DatabaseReconciler) badCleanup(ctx context.Context, db *databasev1.Data
 }
 ```
 
-The problem: If the controller restarts mid-cleanup or the reconcile loop runs again, this will fail because the StatefulSet is already deleted.
+Проблема: если контроллер перезапустится в середине очистки или цикл reconcile выполнится снова, это завершится ошибкой, потому что StatefulSet уже удалён.
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete any remaining resources
 kubectl delete databases --all
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Added finalizers to Database operator
-- Implemented cleanup logic
-- Handled graceful deletion
-- Tested cleanup scenarios
-- Made cleanup idempotent
+В этой лабораторной вы:
+- Добавили финализаторы в оператор Database
+- Реализовали логику очистки
+- Обработали аккуратное удаление
+- Протестировали сценарии очистки
+- Сделали очистку идемпотентной
 
-## Key Learnings
+## Ключевые уроки
 
-1. Finalizers prevent deletion until cleanup is complete
-2. Add finalizer early in reconciliation
-3. Check DeletionTimestamp to detect deletion
-4. **Explicitly delete child resources** - don't rely on owner reference cascade during finalizer cleanup (this causes a deadlock)
-5. Perform cleanup before removing finalizer
-6. Make cleanup idempotent
-7. Handle cleanup failures gracefully
+1. Финализаторы предотвращают удаление, пока не завершится очистка
+2. Добавляйте финализатор в начале согласования
+3. Проверяйте DeletionTimestamp для обнаружения удаления
+4. **Явно удаляйте дочерние ресурсы** — не полагайтесь на каскад ссылок-владельцев во время очистки финализатором (это вызывает взаимоблокировку)
+5. Выполняйте очистку до удаления финализатора
+6. Делайте очистку идемпотентной
+7. Аккуратно обрабатывайте сбои очистки
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Finalizer Handler](../solutions/finalizer-handler.go) - Complete finalizer implementation with cleanup logic
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Finalizer Handler](../solutions/finalizer-handler.go) — полная реализация финализатора с логикой очистки
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's set up watches and indexes for efficient controllers!
+Теперь давайте настроим отслеживание и индексы для эффективных контроллеров!
 
-**Navigation:** [← Previous Lab: Conditions](lab-01-conditions-status.md) | [Related Lesson](../lessons/02-finalizers-cleanup.md) | [Next Lab: Watching →](lab-03-watching-indexing.md)
+**Навигация:** [← Предыдущая лабораторная: Условия](lab-01-conditions-status.md) | [Связанный урок](../lessons/02-finalizers-cleanup.md) | [Следующая лабораторная: Отслеживание →](lab-03-watching-indexing.md)

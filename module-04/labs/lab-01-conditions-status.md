@@ -2,34 +2,34 @@
 layout: default
 title: "Lab 04.1: Conditions Status"
 nav_order: 11
-parent: "Module 4: Advanced Reconciliation"
-grand_parent: Modules
+parent: "Модуль 4: Продвинутое согласование"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 4.1: Implementing Status Conditions
+# Лабораторная 4.1: Реализация условий статуса
 
-**Related Lesson:** [Lesson 4.1: Conditions and Status Management](../lessons/01-conditions-status.md)  
-**Navigation:** [Module Overview](../README.md) | [Next Lab: Finalizers →](lab-02-finalizers-cleanup.md)
+**Связанный урок:** [Урок 4.1: Условия и управление статусом](../lessons/01-conditions-status.md)  
+**Навигация:** [Обзор модуля](../README.md) | [Следующая лабораторная: Финализаторы →](lab-02-finalizers-cleanup.md)
 
-## Objectives
+## Цели
 
-- Add conditions to your Database operator
-- Implement condition helper functions
-- Update conditions based on resource state
-- Observe condition transitions
+- Добавить условия (conditions) в ваш оператор Database
+- Реализовать вспомогательные функции для условий
+- Обновлять условия на основе состояния ресурса
+- Наблюдать за переходами условий
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Module 3](../../module-03/README.md)
-- PostgreSQL operator from Module 3
-- Understanding of status management
+- Завершение [Модуля 3](../../module-03/README.md)
+- Оператор PostgreSQL из Модуля 3
+- Понимание управления статусом
 
-## Exercise 1: Add Conditions to Status
+## Упражнение 1: добавление условий в status
 
-### Task 1.1: Update Status Type
+### Задача 1.1: обновите тип Status
 
-Edit `api/v1/database_types.go`:
+Отредактируйте `api/v1/database_types.go`:
 
 ```go
 // DatabaseStatus defines the observed state of Database
@@ -55,7 +55,7 @@ type DatabaseStatus struct {
 }
 ```
 
-### Task 1.2: Regenerate Code
+### Задача 1.2: перегенерируйте код
 
 ```bash
 # Regenerate code
@@ -63,11 +63,11 @@ make generate
 make manifests
 ```
 
-## Exercise 2: Implement Condition Helpers
+## Упражнение 2: реализация вспомогательных функций для условий
 
-### Task 2.1: Add Helper Functions
+### Задача 2.1: добавьте вспомогательные функции
 
-Add to `internal/controller/database_controller.go`:
+Добавьте в `internal/controller/database_controller.go`:
 
 ```go
 import (
@@ -95,11 +95,11 @@ func (r *DatabaseReconciler) getCondition(db *databasev1.Database, conditionType
 }
 ```
 
-## Exercise 3: Update Reconciliation Logic
+## Упражнение 3: обновление логики согласования
 
-### Task 3.1: Add Conditions to Reconcile
+### Задача 3.1: добавьте условия в Reconcile
 
-Modify your `reconcileStatefulSet` and `updateStatus` function as below:
+Измените свои функции `reconcileStatefulSet` и `updateStatus`, как показано ниже:
 
 ```go
 func (r *DatabaseReconciler) reconcileStatefulSet(ctx context.Context, db *databasev1.Database) error {
@@ -150,9 +150,9 @@ func (r *DatabaseReconciler) updateStatus(ctx context.Context, db *databasev1.Da
 }
 ```
 
-## Exercise 4: Test Conditions
+## Упражнение 4: тестирование условий
 
-### Task 4.1: Install and Run
+### Задача 4.1: установите и запустите
 
 ```bash
 # Install CRD
@@ -162,7 +162,7 @@ make install
 make run
 ```
 
-### Task 4.2: Create Database
+### Задача 4.2: создайте Database
 
 ```bash
 # Create Database
@@ -181,7 +181,7 @@ spec:
 EOF
 ```
 
-### Task 4.3: Observe Conditions
+### Задача 4.3: понаблюдайте за условиями
 
 ```bash
 # Watch conditions
@@ -191,9 +191,9 @@ kubectl get database test-db -o jsonpath='{.status.conditions}' | jq '.'
 watch -n 1 'kubectl get database test-db -o jsonpath="{.status.conditions[?(@.type==\"Ready\")]}"'
 ```
 
-## Exercise 5: Test Condition Transitions
+## Упражнение 5: тестирование переходов условий
 
-### Task 5.1: Scale Database
+### Задача 5.1: масштабируйте базу данных
 
 ```bash
 # Scale up
@@ -203,7 +203,7 @@ kubectl patch database test-db --type merge -p '{"spec":{"replicas":3}}'
 kubectl get database test-db -o jsonpath='{.status.conditions[?(@.type=="Progressing")]}'
 ```
 
-### Task 5.2: Check Observed Generation
+### Задача 5.2: проверьте наблюдаемое поколение
 
 ```bash
 # Get generation
@@ -215,38 +215,38 @@ kubectl get database test-db -o jsonpath='{.status.conditions[0].observedGenerat
 # They should match when reconciliation is complete
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete Database
 kubectl delete database test-db
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Added conditions to Database status
-- Implemented condition helper functions
-- Updated conditions in reconciliation
-- Observed condition transitions
-- Tested condition updates
+В этой лабораторной вы:
+- Добавили условия в статус Database
+- Реализовали вспомогательные функции для условий
+- Обновили условия в согласовании
+- Наблюдали за переходами условий
+- Протестировали обновления условий
 
-## Key Learnings
+## Ключевые уроки
 
-1. Conditions provide structured status reporting
-2. Use meta.SetStatusCondition for updates
-3. Track observed generation
-4. Update conditions based on actual state
-5. Conditions transition through states
-6. Standard condition types improve UX
+1. Условия предоставляют структурированное сообщение о статусе
+2. Используйте meta.SetStatusCondition для обновлений
+3. Отслеживайте наблюдаемое поколение
+4. Обновляйте условия на основе фактического состояния
+5. Условия переходят между состояниями
+6. Стандартные типы условий улучшают UX
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Condition Helpers](../solutions/conditions-helpers.go) - Helper functions for managing conditions
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Condition Helpers](../solutions/conditions-helpers.go) — вспомогательные функции для управления условиями
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's implement finalizers for graceful cleanup!
+Теперь давайте реализуем финализаторы для аккуратной очистки!
 
-**Navigation:** [← Module Overview](../README.md) | [Related Lesson](../lessons/01-conditions-status.md) | [Next Lab: Finalizers →](lab-02-finalizers-cleanup.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Связанный урок](../lessons/01-conditions-status.md) | [Следующая лабораторная: Финализаторы →](lab-02-finalizers-cleanup.md)
