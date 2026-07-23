@@ -2,33 +2,33 @@
 layout: default
 title: "Lab 02.4: First Operator"
 nav_order: 14
-parent: "Module 2: Introduction to Operators"
-grand_parent: Modules
+parent: "Модуль 2: Введение в операторы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 2.4: Building Hello World Operator
+# Лабораторная 2.4: Создание оператора Hello World
 
-**Related Lesson:** [Lesson 2.4: Your First Operator](../lessons/04-first-operator.md)  
-**Navigation:** [← Previous Lab: Dev Environment](lab-03-dev-environment.md) | [Module Overview](../README.md)
+**Связанный урок:** [Урок 2.4: Ваш первый оператор](../lessons/04-first-operator.md)  
+**Навигация:** [← Предыдущая лабораторная: Среда разработки](lab-03-dev-environment.md) | [Обзор модуля](../README.md)
 
-## Objectives
+## Цели
 
-- Build your first complete operator
-- Understand operator project structure
-- Run operator locally
-- Create and manage Custom Resources
-- Observe reconciliation in action
+- Создать свой первый полноценный оператор
+- Понять структуру проекта оператора
+- Запустить оператор локально
+- Создавать пользовательскими ресурсами и управлять ими
+- Наблюдать за согласованием в действии
 
-## Prerequisites
+## Предварительные требования
 
-- Complete development environment from [Lab 2.3](lab-03-dev-environment.md)
-- Kind cluster running
-- Understanding of CRDs from [Module 1](../../module-01/README.md)
+- Полноценная среда разработки из [Лабораторной 2.3](lab-03-dev-environment.md)
+- Запущенный кластер kind
+- Понимание CRD из [Модуля 1](../../module-01/README.md)
 
-## Exercise 1: Initialize Project
+## Упражнение 1: инициализация проекта
 
-### Task 1.1: Create Project Directory
+### Задача 1.1: создайте каталог проекта
 
 ```bash
 # Create project directory
@@ -39,18 +39,18 @@ cd ~/hello-world-operator
 git init
 ```
 
-### Task 1.2: Initialize Kubebuilder Project
+### Задача 1.2: инициализируйте проект Kubebuilder
 
 ```bash
 # Initialize kubebuilder project
 kubebuilder init --domain example.com --repo github.com/example/hello-world-operator
 ```
 
-**Observe:**
-- What files were created?
-- What's the project structure?
+**Обратите внимание:**
+- Какие файлы были созданы?
+- Какова структура проекта?
 
-### Task 1.3: Verify Project Structure
+### Задача 1.3: проверьте структуру проекта
 
 ```bash
 # List files
@@ -63,20 +63,20 @@ head -20 main.go
 head -30 Makefile
 ```
 
-## Exercise 2: Create API
+## Упражнение 2: создание API
 
-### Task 2.1: Create HelloWorld API
+### Задача 2.1: создайте API HelloWorld
 
 ```bash
 # Create API
 kubebuilder create api --group hello --version v1 --kind HelloWorld
 ```
 
-When prompted:
+При запросах:
 - Create Resource [y/n]: **y**
 - Create Controller [y/n]: **y**
 
-### Task 2.2: Examine Generated Files
+### Задача 2.2: изучите сгенерированные файлы
 
 ```bash
 # Check API types
@@ -86,11 +86,11 @@ cat api/v1/helloworld_types.go
 cat internal/controller/helloworld_controller.go
 ```
 
-## Exercise 3: Define API Types
+## Упражнение 3: определение типов API
 
-### Task 3.1: Edit API Types
+### Задача 3.1: отредактируйте типы API
 
-Edit `api/v1/helloworld_types.go`:
+Отредактируйте `api/v1/helloworld_types.go`:
 
 ```go
 package v1
@@ -152,7 +152,7 @@ func init() {
 }
 ```
 
-### Task 3.2: Generate Code
+### Задача 3.2: сгенерируйте код
 
 ```bash
 # Generate code
@@ -162,7 +162,7 @@ make generate
 make manifests
 ```
 
-### Task 3.3: Verify CRD
+### Задача 3.3: проверьте CRD
 
 ```bash
 # Check CRD was generated
@@ -172,11 +172,11 @@ ls -la config/crd/bases/
 cat config/crd/bases/hello.example.com_helloworlds.yaml | head -50
 ```
 
-## Exercise 4: Implement Controller
+## Упражнение 4: реализация контроллера
 
-### Task 4.1: Edit Controller
+### Задача 4.1: отредактируйте контроллер
 
-Edit `internal/controller/helloworld_controller.go`:
+Отредактируйте `internal/controller/helloworld_controller.go`:
 
 ```go
 package controller
@@ -299,16 +299,16 @@ func (r *HelloWorldReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-### Task 4.2: Regenerate Manifests
+### Задача 4.2: перегенерируйте манифесты
 
 ```bash
 # Regenerate RBAC (controller has new permissions)
 make manifests
 ```
 
-## Exercise 5: Install and Run Operator
+## Упражнение 5: установка и запуск оператора
 
-### Task 5.1: Install CRD
+### Задача 5.1: установите CRD
 
 ```bash
 # Install CRD to cluster
@@ -321,23 +321,23 @@ kubectl get crd helloworlds.hello.example.com
 kubectl get crd helloworlds.hello.example.com -o yaml | head -30
 ```
 
-### Task 5.2: Run Operator Locally
+### Задача 5.2: запустите оператор локально
 
-In one terminal, run the operator:
+В одном терминале запустите оператор:
 
 ```bash
 # Run operator (connects to kind cluster)
 make run
 ```
 
-**Observe:**
-- Operator starts up
-- Logs show it's ready
-- It's watching for HelloWorld resources
+**Обратите внимание:**
+- Оператор запускается
+- Логи показывают, что он готов
+- Он отслеживает ресурсы HelloWorld
 
-### Task 5.3: Create HelloWorld Resource
+### Задача 5.3: создайте ресурс HelloWorld
 
-In another terminal, create a HelloWorld:
+В другом терминале создайте HelloWorld:
 
 ```bash
 # Create HelloWorld resource
@@ -352,9 +352,9 @@ spec:
 EOF
 ```
 
-### Task 5.4: Observe Reconciliation
+### Задача 5.4: наблюдайте за согласованием
 
-Watch what happens:
+Посмотрите, что происходит:
 
 ```bash
 # Check HelloWorld resource
@@ -373,9 +373,9 @@ kubectl get configmap hello-example-config -o jsonpath='{.data}'
 # You should see reconciliation logs
 ```
 
-## Exercise 6: Test Updates
+## Упражнение 6: тестирование обновлений
 
-### Task 6.1: Update HelloWorld
+### Задача 6.1: обновите HelloWorld
 
 ```bash
 # Update the message
@@ -386,16 +386,16 @@ kubectl patch helloworld hello-example --type merge -p '{"spec":{"message":"Upda
 kubectl get configmap hello-example-config -o jsonpath='{.data.message}'
 ```
 
-### Task 6.2: Verify Status Updates
+### Задача 6.2: проверьте обновления статуса
 
 ```bash
 # Check status was updated
 kubectl get helloworld hello-example -o jsonpath='{.status}'
 ```
 
-## Exercise 7: Test Deletion
+## Упражнение 7: тестирование удаления
 
-### Task 7.1: Delete HelloWorld
+### Задача 7.1: удалите HelloWorld
 
 ```bash
 # Delete HelloWorld
@@ -405,11 +405,11 @@ kubectl delete helloworld hello-example
 kubectl get configmap hello-example-config
 ```
 
-**Expected:** ConfigMap should be automatically deleted (owner reference from [Module 1](../../module-01/lessons/03-controller-pattern.md))
+**Ожидается:** ConfigMap должен быть автоматически удалён (ссылка-владелец из [Модуля 1](../../module-01/lessons/03-controller-pattern.md))
 
-## Exercise 8: Create Multiple Resources
+## Упражнение 8: создание нескольких ресурсов
 
-### Task 8.1: Create Multiple HelloWorlds
+### Задача 8.1: создайте несколько HelloWorld
 
 ```bash
 # Create multiple HelloWorld resources
@@ -432,7 +432,7 @@ spec:
 EOF
 ```
 
-### Task 8.2: Verify All Resources
+### Задача 8.2: проверьте все ресурсы
 
 ```bash
 # List all HelloWorlds
@@ -442,7 +442,7 @@ kubectl get helloworlds
 kubectl get configmaps | grep hello
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete all HelloWorld resources
@@ -454,46 +454,46 @@ make uninstall
 # Stop operator (Ctrl+C in the terminal running make run)
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Created a complete operator project
-- Defined Custom Resource types
-- Implemented reconciliation logic
-- Ran operator locally
-- Created and managed Custom Resources
-- Observed reconciliation in action
-- Tested updates and deletions
+В этой лабораторной вы:
+- Создали полноценный проект оператора
+- Определили типы пользовательского ресурса
+- Реализовали логику согласования
+- Запустили оператор локально
+- Создавали пользовательскими ресурсами и управляли ими
+- Наблюдали за согласованием в действии
+- Протестировали обновления и удаления
 
-## Key Learnings
+## Ключевые уроки
 
-1. Kubebuilder scaffolds complete operator projects
-2. You define API types (spec and status)
-3. You implement the Reconcile function
-4. Operator follows reconciliation pattern from Module 1
-5. Owner references manage resource lifecycle
-6. Status updates reflect actual state
-7. Operators run locally but connect to cluster
+1. Kubebuilder генерирует каркас полноценных проектов операторов
+2. Вы определяете типы API (spec и status)
+3. Вы реализуете функцию Reconcile
+4. Оператор следует паттерну согласования из Модуля 1
+5. Ссылки-владельцы управляют жизненным циклом ресурсов
+6. Обновления статуса отражают фактическое состояние
+7. Операторы запускаются локально, но подключаются к кластеру
 
-## Congratulations!
+## Поздравляем!
 
-You've built your first operator! This demonstrates:
-- ✅ CRD creation and management
-- ✅ Controller implementation
-- ✅ Reconciliation pattern
-- ✅ Resource creation and updates
-- ✅ Status management
-- ✅ Owner references
+Вы создали свой первый оператор! Это демонстрирует:
+- ✅ Создание CRD и управление ими
+- ✅ Реализацию контроллера
+- ✅ Паттерн согласования
+- ✅ Создание и обновление ресурсов
+- ✅ Управление статусом
+- ✅ Ссылки-владельцы
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [main.go](../solutions/hello-world-operator-main.go) - Complete operator entry point
-- [Controller](../solutions/hello-world-controller.go) - Complete controller implementation
-- [API Types](../solutions/hello-world-types.go) - Complete API type definitions
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [main.go](../solutions/hello-world-operator-main.go) — полная точка входа оператора
+- [Контроллер](../solutions/hello-world-controller.go) — полная реализация контроллера
+- [Типы API](../solutions/hello-world-types.go) — полные определения типов API
 
-## Next Steps
+## Дальнейшие шаги
 
-In Module 3, you'll learn to build more sophisticated controllers with advanced patterns!
+В Модуле 3 вы научитесь создавать более совершенные контроллеры с продвинутыми паттернами!
 
-**Navigation:** [← Previous Lab: Dev Environment](lab-03-dev-environment.md) | [Related Lesson](../lessons/04-first-operator.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущая лабораторная: Среда разработки](lab-03-dev-environment.md) | [Связанный урок](../lessons/04-first-operator.md) | [Обзор модуля](../README.md)

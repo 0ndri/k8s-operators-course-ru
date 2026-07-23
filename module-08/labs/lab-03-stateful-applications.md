@@ -2,36 +2,36 @@
 layout: default
 title: "Lab 08.3: Stateful Applications"
 nav_order: 13
-parent: "Module 8: Advanced Topics"
-grand_parent: Modules
+parent: "Модуль 8: Продвинутые темы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 8.3: Managing Stateful Applications
+# Лабораторная 8.3: Управление stateful-приложениями
 
-**Related Lesson:** [Lesson 8.3: Stateful Application Management](../lessons/03-stateful-applications.md)  
-**Navigation:** [← Previous Lab: Operator Composition](lab-02-operator-composition.md) | [Module Overview](../README.md) | [Next Lab: Final Project →](lab-04-final-project.md)
+**Связанный урок:** [Урок 8.3: Управление stateful-приложениями](../lessons/03-stateful-applications.md)  
+**Навигация:** [← Предыдущая лабораторная: Композиция операторов](lab-02-operator-composition.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Финальный проект →](lab-04-final-project.md)
 
-## Objectives
+## Цели
 
-- Implement backup functionality
-- Add restore capability
-- Handle rolling updates
-- Ensure data consistency
+- Реализовать функциональность резервного копирования
+- Добавить возможность восстановления
+- Обрабатывать скользящие обновления
+- Обеспечить согласованность данных
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 8.2](lab-02-operator-composition.md)
-- Database operator with Backup controller deployed
-- Understanding of StatefulSets
+- Завершение [Лабораторной 8.2](lab-02-operator-composition.md)
+- Оператор Database с развёрнутым контроллером Backup
+- Понимание StatefulSet
 
-## Exercise 1: Implement Backup Functionality
+## Упражнение 1: реализация функциональности резервного копирования
 
-In Lab 8.2, we created a basic Backup controller. Now we'll add the actual backup logic.
+В Лабораторной 8.2 мы создали базовый контроллер Backup. Теперь добавим фактическую логику резервного копирования.
 
-### Task 1.1: Create Backup Package
+### Задача 1.1: создайте пакет резервного копирования
 
-Create a new package for backup operations. Copy the complete implementation from the solutions file:
+Создайте новый пакет для операций резервного копирования. Скопируйте полную реализацию из файла решений:
 
 ```bash
 # Create the backup package directory
@@ -41,27 +41,27 @@ mkdir -p internal/backup
 cp path/to/solutions/backup.go internal/backup/backup.go
 ```
 
-Or, if you prefer to type it yourself, copy from:
+Или, если предпочитаете набрать сами, скопируйте из:
 **[solutions/backup.go](../solutions/backup.go)**
 
-The backup package includes:
-- `PerformBackup()` - Executes pg_dump and saves to storage
-- `saveToStorage()` - Uploads backup to S3/PVC
-- `PerformScheduledBackup()` - Handles scheduled backups
+Пакет резервного копирования включает:
+- `PerformBackup()` — выполняет pg_dump и сохраняет в хранилище
+- `saveToStorage()` — загружает резервную копию в S3/PVC
+- `PerformScheduledBackup()` — обрабатывает запланированные резервные копии
 
-> **Important:** The backup implementation uses `pg_dump` which requires PostgreSQL client tools to be installed in your operator container. You'll need to update your Dockerfile to include the `postgresql-client` package. See Task 1.2 below.
+> **Важно:** реализация резервного копирования использует `pg_dump`, который требует установки клиентских инструментов PostgreSQL в контейнере вашего оператора. Вам нужно обновить Dockerfile, чтобы включить пакет `postgresql-client`. См. Задачу 1.2 ниже.
 
-### Task 1.2: Update Dockerfile for PostgreSQL Client Tools
+### Задача 1.2: обновите Dockerfile для клиентских инструментов PostgreSQL
 
-> **Important Security Note:** In [Module 7](../../module-07/labs/lab-01-packaging-distribution.md), we recommended using distroless images for maximum security. However, distroless images don't include package managers, making it impossible to install PostgreSQL client tools (`pg_dump`, `psql`) directly.
+> **Важное замечание о безопасности:** в [Модуле 7](../../module-07/labs/lab-01-packaging-distribution.md) мы рекомендовали использовать distroless-образы для максимальной безопасности. Однако distroless-образы не включают менеджеры пакетов, что делает невозможной прямую установку клиентских инструментов PostgreSQL (`pg_dump`, `psql`).
 
-**For this course (learning purposes):** We'll take a pragmatic shortcut and use a minimal Debian base image to include PostgreSQL client tools. This makes the lab simpler and allows you to focus on learning backup/restore functionality.
+**Для этого курса (в учебных целях):** мы пойдём на прагматичное упрощение и используем минимальный базовый образ Debian, чтобы включить клиентские инструменты PostgreSQL. Это делает лабораторную проще и позволяет сосредоточиться на изучении функциональности резервного копирования/восстановления.
 
-**For production:** See the production-ready alternatives below that maintain security while providing the necessary tools.
+**Для продакшена:** см. готовые к продакшену альтернативы ниже, которые сохраняют безопасность и при этом предоставляют необходимые инструменты.
 
-#### Option A: Minimal Debian Base (Course Shortcut)
+#### Вариант A: минимальный базовый образ Debian (упрощение для курса)
 
-For this course, update your `Dockerfile` to use a minimal Debian base image. Reference the example in [solutions/Dockerfile](../solutions/Dockerfile):
+Для этого курса обновите ваш `Dockerfile`, чтобы использовать минимальный базовый образ Debian. Пример см. в [solutions/Dockerfile](../solutions/Dockerfile):
 
 ```dockerfile
 # Runtime stage - use minimal Debian base instead of distroless
@@ -90,13 +90,13 @@ USER 65532:65532
 ENTRYPOINT ["/manager"]
 ```
 
-#### Option B: Production-Ready Approaches (Recommended)
+#### Вариант B: готовые к продакшену подходы (рекомендуется)
 
-For production environments, maintain security by using distroless images and one of these patterns:
+Для продакшен-сред сохраняйте безопасность, используя distroless-образы и один из этих паттернов:
 
-**1. Sidecar Container Pattern**
+**1. Паттерн sidecar-контейнера**
 
-Keep your operator using distroless, and use a sidecar container with PostgreSQL tools:
+Оставьте ваш оператор на distroless и используйте sidecar-контейнер с инструментами PostgreSQL:
 
 ```yaml
 # In your operator Deployment
@@ -116,7 +116,7 @@ spec:
           mountPath: /backups
 ```
 
-Then modify your backup code to exec into the sidecar container:
+Затем измените код резервного копирования, чтобы выполнять команды внутри sidecar-контейнера:
 
 ```go
 // Execute pg_dump in sidecar container
@@ -124,9 +124,9 @@ cmd := exec.CommandContext(ctx, "kubectl", "exec", "-i", podName,
     "-c", "postgres-client", "--", "pg_dump", ...)
 ```
 
-**2. Kubernetes Jobs Pattern**
+**2. Паттерн Kubernetes Jobs**
 
-Create Kubernetes Jobs with PostgreSQL client tools for each backup:
+Создавайте Kubernetes Jobs с клиентскими инструментами PostgreSQL для каждого резервного копирования:
 
 ```go
 job := &batchv1.Job{
@@ -144,17 +144,17 @@ job := &batchv1.Job{
 }
 ```
 
-**3. Separate Backup Operator**
+**3. Отдельный оператор резервного копирования**
 
-Create a dedicated backup operator that includes PostgreSQL tools, keeping your main operator distroless.
+Создайте выделенный оператор резервного копирования, включающий инструменты PostgreSQL, оставив основной оператор на distroless.
 
-**4. Init Container Pattern**
+**4. Паттерн init-контейнера**
 
-Use an init container to prepare backup tools, then use a shared volume.
+Используйте init-контейнер для подготовки инструментов резервного копирования, затем используйте общий том.
 
-> **For this course:** We'll use Option A (Debian base) to keep things simple. In production, choose one of the Option B approaches based on your security requirements and operational preferences.
+> **Для этого курса:** мы используем Вариант A (база Debian), чтобы упростить дело. В продакшене выберите один из подходов Варианта B в зависимости от ваших требований к безопасности и операционных предпочтений.
 
-**Key backup logic:**
+**Ключевая логика резервного копирования:**
 
 ```go
 func PerformBackup(ctx context.Context, k8sClient client.Client, db *databasev1.Database) (string, error) {
@@ -205,13 +205,13 @@ func PerformBackup(ctx context.Context, k8sClient client.Client, db *databasev1.
 }
 ```
 
-### Task 1.3: Integrate with Backup Controller
+### Задача 1.3: интегрируйте с контроллером Backup
 
-Update `internal/controller/backup_controller.go` to use the backup package. The Backup controller from Lab 8.2 has a `createBackup` method that currently simulates the backup. Replace it with a call to the actual backup package.
+Обновите `internal/controller/backup_controller.go`, чтобы использовать пакет резервного копирования. Контроллер Backup из Лабораторной 8.2 имеет метод `createBackup`, который сейчас имитирует резервное копирование. Замените его вызовом фактического пакета резервного копирования.
 
-**Current state (from Lab 8.2):**
+**Текущее состояние (из Лабораторной 8.2):**
 
-The `createBackup` method in your Backup controller currently looks like this:
+Метод `createBackup` в вашем контроллере Backup сейчас выглядит так:
 
 ```go
 func (r *BackupReconciler) createBackup(ctx context.Context, db *databasev1.Database, backup *databasev1.Backup) (string, error) {
@@ -233,9 +233,9 @@ func (r *BackupReconciler) createBackup(ctx context.Context, db *databasev1.Data
 }
 ```
 
-**Updated state:**
+**Обновлённое состояние:**
 
-Replace the `createBackup` method to use the backup package:
+Замените метод `createBackup`, чтобы использовать пакет резервного копирования:
 
 ```go
 import (
@@ -257,11 +257,11 @@ func (r *BackupReconciler) createBackup(ctx context.Context, db *databasev1.Data
 }
 ```
 
-> **Important:** We use the package alias `backupPkg` because the function parameter `backup *databasev1.Backup` would shadow the package name `backup`. Without the alias, Go would try to call `backup.PerformBackup()` on the Backup resource variable instead of the backup package, causing a compile error: `backup.PerformBackup undefined`.
+> **Важно:** мы используем псевдоним пакета `backupPkg`, потому что параметр функции `backup *databasev1.Backup` затенил бы имя пакета `backup`. Без псевдонима Go попытался бы вызвать `backup.PerformBackup()` на переменной ресурса Backup вместо пакета резервного копирования, вызвав ошибку компиляции: `backup.PerformBackup undefined`.
 
-**How it works:**
+**Как это работает:**
 
-The `performBackup` method in your controller already handles status updates correctly. It calls `createBackup` and updates the Backup status based on the result:
+Метод `performBackup` в вашем контроллере уже корректно обрабатывает обновления статуса. Он вызывает `createBackup` и обновляет статус Backup на основе результата:
 
 ```go
 func (r *BackupReconciler) performBackup(ctx context.Context, db *databasev1.Database, backup *databasev1.Backup) (ctrl.Result, error) {
@@ -282,15 +282,15 @@ func (r *BackupReconciler) performBackup(ctx context.Context, db *databasev1.Dat
 }
 ```
 
-With this change, `createBackup` will now perform the actual backup using `pg_dump` instead of simulating it.
+С этим изменением `createBackup` теперь будет выполнять фактическое резервное копирование с помощью `pg_dump` вместо его имитации.
 
-**Controller structure:**
-- `performBackup()` - Handles status updates, error handling, and calls `createBackup()`
-- `createBackup()` - Performs the actual backup work (now calls `backupPkg.PerformBackup()`)
+**Структура контроллера:**
+- `performBackup()` — обрабатывает обновления статуса, обработку ошибок и вызывает `createBackup()`
+- `createBackup()` — выполняет фактическую работу по резервному копированию (теперь вызывает `backupPkg.PerformBackup()`)
 
-### Task 1.4: Build, Deploy, and Test Backup Functionality
+### Задача 1.4: соберите, разверните и протестируйте функциональность резервного копирования
 
-Now let's build and test the backup functionality:
+Теперь давайте соберём и протестируем функциональность резервного копирования:
 
 ```bash
 # Generate code and manifests
@@ -320,7 +320,7 @@ kubectl get pods -n postgres-operator-system
 kubectl logs -n postgres-operator-system -l control-plane=controller-manager -f
 ```
 
-> **Using Podman instead of Docker?**
+> **Используете Podman вместо Docker?**
 > 
 > ```bash
 > # Build with podman
@@ -335,11 +335,11 @@ kubectl logs -n postgres-operator-system -l control-plane=controller-manager -f
 > make deploy IMG=localhost/postgres-operator:latest
 > ```
 
-> **Getting `ErrImagePull` or `ImagePullBackOff`?**
+> **Получаете `ErrImagePull` или `ImagePullBackOff`?**
 > 
-> Ensure `imagePullPolicy: IfNotPresent` is set in `config/manager/manager.yaml` and the image name matches what's loaded in kind.
+> Убедитесь, что в `config/manager/manager.yaml` установлено `imagePullPolicy: IfNotPresent` и имя образа совпадает с загруженным в kind.
 
-**Test the backup functionality:**
+**Протестируйте функциональность резервного копирования:**
 
 ```bash
 # Create a Database
@@ -381,7 +381,7 @@ kubectl get backup test-backup -o yaml
 kubectl get backup test-backup -o jsonpath='{.status.backupLocation}'
 ```
 
-**Verify backup was performed:**
+**Убедитесь, что резервное копирование выполнено:**
 
 ```bash
 # Check operator logs for backup activity
@@ -391,11 +391,11 @@ kubectl logs -n postgres-operator-system -l control-plane=controller-manager | g
 kubectl get backup test-backup -o jsonpath='{.status.conditions}'
 ```
 
-## Exercise 2: Implement Restore
+## Упражнение 2: реализация восстановления
 
-### Task 2.1: Scaffold Restore API with Kubebuilder
+### Задача 2.1: сгенерируйте каркас API Restore с помощью Kubebuilder
 
-Use kubebuilder to scaffold a new Restore API (same group as Database and Backup):
+Используйте kubebuilder для генерации каркаса нового API Restore (та же группа, что у Database и Backup):
 
 ```bash
 # Navigate to your operator project
@@ -413,13 +413,13 @@ kubebuilder create api \
 # Create Controller [y/n]: y
 ```
 
-This creates:
-- `api/v1/restore_types.go` - API type definitions
-- `internal/controller/restore_controller.go` - Controller scaffold
+Это создаёт:
+- `api/v1/restore_types.go` — определения типов API
+- `internal/controller/restore_controller.go` — каркас контроллера
 
-### Task 2.2: Define Restore Spec and Status
+### Задача 2.2: определите Spec и Status Restore
 
-Edit `api/v1/restore_types.go` to define the Restore resource:
+Отредактируйте `api/v1/restore_types.go`, чтобы определить ресурс Restore:
 
 ```go
 package v1
@@ -483,9 +483,9 @@ func init() {
 }
 ```
 
-### Task 2.3: Create Restore Package
+### Задача 2.3: создайте пакет восстановления
 
-Create the restore package with the actual restore logic:
+Создайте пакет восстановления с фактической логикой восстановления:
 
 ```bash
 # Create the restore package directory
@@ -495,16 +495,16 @@ mkdir -p internal/restore
 cp path/to/solutions/restore.go internal/restore/restore.go
 ```
 
-Or copy from: **[solutions/restore.go](../solutions/restore.go)**
+Или скопируйте из: **[solutions/restore.go](../solutions/restore.go)**
 
-The restore package includes:
-- `PerformRestore()` - Loads backup and restores to database
-- `loadFromStorage()` - Downloads backup from S3/PVC
-- `stopDatabase()` / `startDatabase()` - Graceful database operations
+Пакет восстановления включает:
+- `PerformRestore()` — загружает резервную копию и восстанавливает в базу данных
+- `loadFromStorage()` — скачивает резервную копию из S3/PVC
+- `stopDatabase()` / `startDatabase()` — аккуратные операции с базой данных
 
-> **Note:** The restore implementation uses `psql` which also requires PostgreSQL client tools. If you haven't already updated your Dockerfile in Task 1.2, make sure to do so now.
+> **Примечание:** реализация восстановления использует `psql`, который также требует клиентских инструментов PostgreSQL. Если вы ещё не обновили Dockerfile в Задаче 1.2, сделайте это сейчас.
 
-**Key restore logic:**
+**Ключевая логика восстановления:**
 
 ```go
 func PerformRestore(ctx context.Context, k8sClient client.Client, db *databasev1.Database, backupLocation string) error {
@@ -555,20 +555,20 @@ func PerformRestore(ctx context.Context, k8sClient client.Client, db *databasev1
 }
 ```
 
-### Task 2.4: Implement Restore Controller
+### Задача 2.4: реализуйте контроллер Restore
 
-Edit `internal/controller/restore_controller.go` to implement the complete reconciliation logic.
+Отредактируйте `internal/controller/restore_controller.go`, чтобы реализовать полную логику согласования.
 
-Copy the complete restore controller implementation from: **[solutions/restore-controller.go](../solutions/restore-controller.go)**
+Скопируйте полную реализацию контроллера восстановления из: **[solutions/restore-controller.go](../solutions/restore-controller.go)**
 
-The restore controller:
-- Waits for Database to be ready
-- Waits for Backup to be completed
-- Calls `restorePkg.PerformRestore()` to perform the actual restore
-- Updates Restore status with phases (Pending → InProgress → Completed/Failed)
-- Sets conditions for observability
+Контроллер восстановления:
+- Ждёт готовности Database
+- Ждёт завершения Backup
+- Вызывает `restorePkg.PerformRestore()` для выполнения фактического восстановления
+- Обновляет статус Restore фазами (Pending → InProgress → Completed/Failed)
+- Устанавливает условия для наблюдаемости
 
-**Key implementation details:**
+**Ключевые детали реализации:**
 
 ```go
 func (r *RestoreReconciler) performRestore(ctx context.Context, db *databasev1.Database, backup *databasev1.Backup, rst *databasev1.Restore) (ctrl.Result, error) {
@@ -595,13 +595,13 @@ func (r *RestoreReconciler) performRestore(ctx context.Context, db *databasev1.D
 }
 ```
 
-**Controller structure:**
-- `Reconcile()` - Main reconciliation loop, validates prerequisites
-- `performRestore()` - Handles status updates, error handling, and calls `restorePkg.PerformRestore()`
+**Структура контроллера:**
+- `Reconcile()` — основной цикл согласования, проверяет предварительные условия
+- `performRestore()` — обрабатывает обновления статуса, обработку ошибок и вызывает `restorePkg.PerformRestore()`
 
-### Task 2.5: Register Restore Controller
+### Задача 2.5: зарегистрируйте контроллер Restore
 
-Ensure the Restore controller is registered in `cmd/main.go`:
+Убедитесь, что контроллер Restore зарегистрирован в `cmd/main.go`:
 
 ```go
 if err = (&controller.RestoreReconciler{
@@ -613,7 +613,7 @@ if err = (&controller.RestoreReconciler{
 }
 ```
 
-### Task 2.6: Generate and Install CRDs
+### Задача 2.6: сгенерируйте и установите CRD
 
 ```bash
 # Generate code and manifests
@@ -627,9 +627,9 @@ make install
 kubectl get crd restores.database.example.com
 ```
 
-### Task 2.7: Build, Deploy, and Test Restore Functionality
+### Задача 2.7: соберите, разверните и протестируйте функциональность восстановления
 
-Now let's build and test the restore functionality:
+Теперь давайте соберём и протестируем функциональность восстановления:
 
 ```bash
 # Generate code and manifests
@@ -659,7 +659,7 @@ kubectl get pods -n postgres-operator-system
 kubectl logs -n postgres-operator-system -l control-plane=controller-manager -f
 ```
 
-> **Using Podman instead of Docker?**
+> **Используете Podman вместо Docker?**
 > 
 > ```bash
 > # Build with podman
@@ -674,11 +674,11 @@ kubectl logs -n postgres-operator-system -l control-plane=controller-manager -f
 > make deploy IMG=localhost/postgres-operator:latest
 > ```
 
-> **Getting `ErrImagePull` or `ImagePullBackOff`?**
+> **Получаете `ErrImagePull` или `ImagePullBackOff`?**
 > 
-> Ensure `imagePullPolicy: IfNotPresent` is set in `config/manager/manager.yaml` and the image name matches what's loaded in kind.
+> Убедитесь, что в `config/manager/manager.yaml` установлено `imagePullPolicy: IfNotPresent` и имя образа совпадает с загруженным в kind.
 
-**Test the restore functionality:**
+**Протестируйте функциональность восстановления:**
 
 ```bash
 # Ensure you have a Database and completed Backup from Task 1.4
@@ -744,7 +744,7 @@ kubectl get restore test-restore -o jsonpath='{.status.phase}'
 echo
 ```
 
-**Verify restore was performed:**
+**Убедитесь, что восстановление выполнено:**
 
 ```bash
 # Check operator logs for restore activity
@@ -759,7 +759,7 @@ kubectl get restore test-restore -o jsonpath='{.status.restoreTime}'
 echo
 ```
 
-**Test error scenarios:**
+**Протестируйте сценарии ошибок:**
 
 ```bash
 # Test with non-existent database
@@ -795,33 +795,33 @@ EOF
 kubectl get restore test-restore-fail-backup -w
 ```
 
-## Exercise 3: Handle Rolling Updates
+## Упражнение 3: обработка скользящих обновлений
 
-Rolling updates allow you to update the database image without downtime. The Database controller already handles basic updates, but this exercise shows advanced patterns.
+Скользящие обновления позволяют обновлять образ базы данных без простоя. Контроллер Database уже обрабатывает базовые обновления, но это упражнение показывает продвинутые паттерны.
 
-### Task 3.1: Review Rolling Update Logic
+### Задача 3.1: изучите логику скользящего обновления
 
-The complete rolling update implementation is in:
+Полная реализация скользящего обновления находится в:
 **[solutions/rolling-update.go](../solutions/rolling-update.go)**
 
-The key functions are:
-- `updateStatefulSet()` - Detects changes and updates StatefulSet
-- `waitForRollingUpdate()` - Waits for all pods to be updated
-- `createStatefulSet()` - Creates new StatefulSet if needed
+Ключевые функции:
+- `updateStatefulSet()` — обнаруживает изменения и обновляет StatefulSet
+- `waitForRollingUpdate()` — ждёт обновления всех подов
+- `createStatefulSet()` — создаёт новый StatefulSet при необходимости
 
-**Step 1: Add the helper functions**
+**Шаг 1: добавьте вспомогательные функции**
 
-Copy the complete implementation from `solutions/rolling-update.go` to `internal/controller/database_controller.go`. The functions handle:
-- Detecting image changes
-- Updating the StatefulSet to trigger rolling updates
-- Waiting for all replicas to be updated and ready
-- Handling replica count changes
+Скопируйте полную реализацию из `solutions/rolling-update.go` в `internal/controller/database_controller.go`. Функции обрабатывают:
+- Обнаружение изменений образа
+- Обновление StatefulSet для запуска скользящих обновлений
+- Ожидание обновления и готовности всех реплик
+- Обработку изменений количества реплик
 
-**Step 2: Integrate into reconciliation logic**
+**Шаг 2: интегрируйте в логику согласования**
 
-Looking at your current `postgres-operator` controller structure, you have a state machine pattern with `handleReady()` that already calls `reconcileStatefulSet()` to handle spec changes. To integrate the rolling update logic with waiting:
+Глядя на текущую структуру контроллера `postgres-operator`, у вас есть паттерн конечного автомата с `handleReady()`, который уже вызывает `reconcileStatefulSet()` для обработки изменений spec. Чтобы интегрировать логику скользящего обновления с ожиданием:
 
-**Current state:** In `handleReady()`, you currently have:
+**Текущее состояние:** в `handleReady()` у вас сейчас есть:
 
 ```go
 func (r *DatabaseReconciler) handleReady(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -836,7 +836,7 @@ func (r *DatabaseReconciler) handleReady(ctx context.Context, db *databasev1.Dat
 }
 ```
 
-**Integration:** Replace the call to `reconcileStatefulSet()` with `updateStatefulSet()` in `handleReady()`:
+**Интеграция:** замените вызов `reconcileStatefulSet()` на `updateStatefulSet()` в `handleReady()`:
 
 ```go
 func (r *DatabaseReconciler) handleReady(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -859,30 +859,30 @@ func (r *DatabaseReconciler) handleReady(ctx context.Context, db *databasev1.Dat
 }
 ```
 
-**Why `handleReady()`?** 
-- The `Ready` state is where ongoing spec changes (like image updates or replica scaling) are handled
-- `handleProvisioning()` should continue using `reconcileStatefulSet()` for initial creation
-- `updateStatefulSet()` will wait for rolling updates to complete, ensuring the database is fully updated before the next reconciliation
+**Почему `handleReady()`?** 
+- Состояние `Ready` — это место, где обрабатываются текущие изменения spec (например, обновления образа или масштабирование реплик)
+- `handleProvisioning()` должен продолжать использовать `reconcileStatefulSet()` для первоначального создания
+- `updateStatefulSet()` будет ждать завершения скользящих обновлений, гарантируя, что база данных полностью обновлена перед следующим согласованием
 
-**Note:** The `updateStatefulSet()` function will:
-- Create the StatefulSet if it doesn't exist (calls `createStatefulSet()`)
-- Detect image changes and trigger rolling updates
-- Wait for all replicas to be updated and ready (via `waitForRollingUpdate()`)
-- Handle replica count changes
+**Примечание:** функция `updateStatefulSet()`:
+- Создаёт StatefulSet, если его не существует (вызывает `createStatefulSet()`)
+- Обнаруживает изменения образа и запускает скользящие обновления
+- Ждёт обновления и готовности всех реплик (через `waitForRollingUpdate()`)
+- Обрабатывает изменения количества реплик
 
-**How it works:**
+**Как это работает:**
 
-1. `updateStatefulSet()` checks if the StatefulSet exists, creates it if not
-2. Compares desired image/replicas with current StatefulSet spec
-3. If different, updates the StatefulSet (triggers Kubernetes rolling update)
-4. Calls `waitForRollingUpdate()` to wait for all pods to be updated and ready
-5. Returns when the rolling update completes or times out
+1. `updateStatefulSet()` проверяет, существует ли StatefulSet, создаёт его, если нет
+2. Сравнивает желаемый образ/реплики с текущим spec StatefulSet
+3. Если отличается, обновляет StatefulSet (запускает скользящее обновление Kubernetes)
+4. Вызывает `waitForRollingUpdate()`, чтобы дождаться обновления и готовности всех подов
+5. Возвращается, когда скользящее обновление завершается или истекает таймаут
 
-> **Note:** The existing Database controller from earlier modules already handles image updates. This exercise shows the explicit waiting pattern for more control. The `waitForRollingUpdate()` function uses `wait.PollImmediate()` to poll the StatefulSet status until all replicas are updated and ready, with a 5-minute timeout.
+> **Примечание:** существующий контроллер Database из предыдущих модулей уже обрабатывает обновления образа. Это упражнение показывает паттерн явного ожидания для большего контроля. Функция `waitForRollingUpdate()` использует `wait.PollImmediate()` для опроса статуса StatefulSet, пока все реплики не будут обновлены и готовы, с таймаутом 5 минут.
 
-### Task 3.2: Test Rolling Updates
+### Задача 3.2: протестируйте скользящие обновления
 
-Build and deploy the updated operator:
+Соберите и разверните обновлённый оператор:
 
 ```bash
 # Ensure code compiles
@@ -902,7 +902,7 @@ kubectl rollout restart deploy -n postgres-operator-system postgres-operator-con
 kubectl rollout status deploy -n postgres-operator-system postgres-operator-controller-manager
 ```
 
-> **Using Podman instead of Docker?**
+> **Используете Podman вместо Docker?**
 > 
 > ```bash
 > # Build with podman
@@ -917,11 +917,11 @@ kubectl rollout status deploy -n postgres-operator-system postgres-operator-cont
 > make deploy IMG=localhost/postgres-operator:latest
 > ```
 
-> **Getting `ErrImagePull` or `ImagePullBackOff`?**
+> **Получаете `ErrImagePull` или `ImagePullBackOff`?**
 > 
-> Ensure `imagePullPolicy: IfNotPresent` is set in `config/manager/manager.yaml` and the image name matches what's loaded in kind.
+> Убедитесь, что в `config/manager/manager.yaml` установлено `imagePullPolicy: IfNotPresent` и имя образа совпадает с загруженным в kind.
 
-**Test rolling update:**
+**Протестируйте скользящее обновление:**
 
 ```bash
 # Create a Database with initial image
@@ -973,7 +973,7 @@ echo
 kubectl logs -n postgres-operator-system -l control-plane=controller-manager | grep -i "rolling\|update"
 ```
 
-**Verify rolling update completed:**
+**Убедитесь, что скользящее обновление завершено:**
 
 ```bash
 # Check StatefulSet status
@@ -987,13 +987,13 @@ echo
 kubectl get pods -l app=database,database=rolling-update-test -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
 ```
 
-## Exercise 4: Ensure Data Consistency
+## Упражнение 4: обеспечение согласованности данных
 
-Data consistency is critical for stateful applications. This exercise shows patterns for verifying consistency.
+Согласованность данных критична для stateful-приложений. Это упражнение показывает паттерны проверки согласованности.
 
-### Task 4.1: Add Consistency Check Functions
+### Задача 4.1: добавьте функции проверки согласованности
 
-Add these helper functions to `internal/controller/database_controller.go`. You'll need to add `os/exec` and `strings` to your imports if they're not already present:
+Добавьте эти вспомогательные функции в `internal/controller/database_controller.go`. Вам нужно добавить `os/exec` и `strings` в импорты, если их там ещё нет:
 
 ```go
 import (
@@ -1004,7 +1004,7 @@ import (
 )
 ```
 
-The other necessary imports (`fmt`, `log`, `client`, `appsv1`) should already be present in your controller file:
+Остальные необходимые импорты (`fmt`, `log`, `client`, `appsv1`) уже должны присутствовать в файле вашего контроллера:
 
 ```go
 func (r *DatabaseReconciler) ensureDataConsistency(ctx context.Context, db *databasev1.Database) error {
@@ -1087,11 +1087,11 @@ func (r *DatabaseReconciler) performConsistencyCheck(ctx context.Context, db *da
 }
 ```
 
-### Task 4.2: Integrate Consistency Check
+### Задача 4.2: интегрируйте проверку согласованности
 
-Looking at your current `postgres-operator` controller, the `handleVerifying()` function currently just transitions to Ready without performing consistency checks. Update it to call `ensureDataConsistency()`:
+Глядя на текущий контроллер `postgres-operator`, функция `handleVerifying()` сейчас просто переходит в Ready без выполнения проверок согласованности. Обновите её, чтобы вызывать `ensureDataConsistency()`:
 
-**Current state:** In `handleVerifying()`, you currently have:
+**Текущее состояние:** в `handleVerifying()` у вас сейчас есть:
 
 ```go
 func (r *DatabaseReconciler) handleVerifying(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -1107,7 +1107,7 @@ func (r *DatabaseReconciler) handleVerifying(ctx context.Context, db *databasev1
 }
 ```
 
-**Integration:** Add the consistency check before transitioning to Ready. **Important:** Set the endpoint before calling `ensureDataConsistency()` since the consistency check needs it:
+**Интеграция:** добавьте проверку согласованности перед переходом в Ready. **Важно:** установите endpoint до вызова `ensureDataConsistency()`, поскольку проверка согласованности его использует:
 
 ```go
 func (r *DatabaseReconciler) handleVerifying(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -1143,15 +1143,15 @@ func (r *DatabaseReconciler) handleVerifying(ctx context.Context, db *databasev1
 }
 ```
 
-**How it works:**
-- `ensureDataConsistency()` checks that all StatefulSet replicas are ready
-- If replicas aren't ready, it returns an error and the function requeues after 5 seconds
-- Once all replicas are ready, it calls `performConsistencyCheck()` for application-specific checks
-- Only when consistency checks pass does the database transition to Ready state
+**Как это работает:**
+- `ensureDataConsistency()` проверяет, что все реплики StatefulSet готовы
+- Если реплики не готовы, она возвращает ошибку, и функция повторяет попытку через 5 секунд
+- Как только все реплики готовы, она вызывает `performConsistencyCheck()` для специфичных для приложения проверок
+- Только когда проверки согласованности проходят, база данных переходит в состояние Ready
 
-### Task 4.3: Test Data Consistency Checks
+### Задача 4.3: протестируйте проверки согласованности данных
 
-Build and deploy the updated operator:
+Соберите и разверните обновлённый оператор:
 
 ```bash
 # Ensure code compiles
@@ -1171,7 +1171,7 @@ kubectl rollout restart deploy -n postgres-operator-system postgres-operator-con
 kubectl rollout status deploy -n postgres-operator-system postgres-operator-controller-manager
 ```
 
-> **Using Podman instead of Docker?**
+> **Используете Podman вместо Docker?**
 > 
 > ```bash
 > # Build with podman
@@ -1186,11 +1186,11 @@ kubectl rollout status deploy -n postgres-operator-system postgres-operator-cont
 > make deploy IMG=localhost/postgres-operator:latest
 > ```
 
-> **Getting `ErrImagePull` or `ImagePullBackOff`?**
+> **Получаете `ErrImagePull` или `ImagePullBackOff`?**
 > 
-> Ensure `imagePullPolicy: IfNotPresent` is set in `config/manager/manager.yaml` and the image name matches what's loaded in kind.
+> Убедитесь, что в `config/manager/manager.yaml` установлено `imagePullPolicy: IfNotPresent` и имя образа совпадает с загруженным в kind.
 
-**Test consistency checks:**
+**Протестируйте проверки согласованности:**
 
 ```bash
 # Create a Database with multiple replicas
@@ -1231,9 +1231,9 @@ kubectl get pods -l app=database,database=consistency-test
 kubectl logs -n postgres-operator-system -l control-plane=controller-manager | grep -i "consistency\|replica"
 ```
 
-**Test consistency check failure scenario:**
+**Протестируйте сценарий сбоя проверки согласованности:**
 
-To test how the operator handles consistency check failures, create a database with multiple replicas and observe the consistency check retries while replicas are starting up:
+Чтобы проверить, как оператор обрабатывает сбои проверки согласованности, создайте базу данных с несколькими репликами и понаблюдайте за повторами проверки согласованности, пока реплики запускаются:
 
 ```bash
 # Create a new database with 3 replicas
@@ -1257,17 +1257,17 @@ kubectl get database consistency-failure-test -w
 kubectl logs -n postgres-operator-system -l control-plane=controller-manager -f | grep -i "consistency\|replica\|accessibility"
 ```
 
-**What to observe:**
+**Что наблюдать:**
 
-1. **During replica startup**: The Database will transition to `Verifying` phase once the StatefulSet starts deploying pods
-2. **Consistency check retries**: You should see logs like:
-   - `"Consistency check failed, retrying"` with error `"not all replicas ready: 1/3"` (or similar)
-   - The controller will retry every 5 seconds (as configured in `handleVerifying`)
-3. **Once all replicas are ready**: The `ensureDataConsistency` check will pass (all replicas ready)
-4. **Database accessibility check**: The `performConsistencyCheck` will run `pg_isready` to verify PostgreSQL is accepting connections
-5. **Final transition**: Once both checks pass, the Database will transition to `Ready` phase
+1. **Во время запуска реплик**: Database перейдёт в фазу `Verifying`, как только StatefulSet начнёт развёртывать поды
+2. **Повторы проверки согласованности**: вы должны увидеть логи вроде:
+   - `"Consistency check failed, retrying"` с ошибкой `"not all replicas ready: 1/3"` (или похожей)
+   - Контроллер будет повторять каждые 5 секунд (как настроено в `handleVerifying`)
+3. **Как только все реплики готовы**: проверка `ensureDataConsistency` пройдёт (все реплики готовы)
+4. **Проверка доступности базы данных**: `performConsistencyCheck` запустит `pg_isready`, чтобы убедиться, что PostgreSQL принимает соединения
+5. **Финальный переход**: как только обе проверки пройдут, Database перейдёт в фазу `Ready`
 
-**Expected log sequence:**
+**Ожидаемая последовательность логов:**
 ```
 INFO    Handling Verifying phase    {"database": "consistency-failure-test"}
 INFO    All replicas ready, checking consistency    {"replicas": 3}
@@ -1275,19 +1275,19 @@ INFO    Database accessibility check passed    {"endpoint": "consistency-failure
 INFO    STATE TRANSITION: Verifying -> Ready    {"database": "consistency-failure-test"}
 ```
 
-**If replicas aren't ready yet:**
+**Если реплики ещё не готовы:**
 ```
 INFO    Consistency check failed, retrying    {"error": "not all replicas ready: 2/3"}
 ```
 
-**Clean up:**
+**Очистка:**
 ```bash
 kubectl delete database consistency-failure-test
 ```
 
-## Cleanup
+## Очистка
 
-Clean up the test resources created during this lab:
+Удалите тестовые ресурсы, созданные во время этой лабораторной:
 
 ```bash
 # Delete restore test resources
@@ -1306,32 +1306,32 @@ kubectl delete database rolling-update-test --ignore-not-found=true
 kubectl delete database consistency-test --ignore-not-found=true
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Created backup package with `pg_dump` integration
-- Scaffolded Restore API using kubebuilder
-- Implemented Restore controller
-- Added rolling update handling patterns
-- Implemented data consistency checks
+В этой лабораторной вы:
+- Создали пакет резервного копирования с интеграцией `pg_dump`
+- Сгенерировали каркас API Restore с помощью kubebuilder
+- Реализовали контроллер Restore
+- Добавили паттерны обработки скользящих обновлений
+- Реализовали проверки согласованности данных
 
-## Key Learnings
+## Ключевые уроки
 
-1. **Use kubebuilder to scaffold new APIs** - `kubebuilder create api` for Restore
-2. **Separate concerns with packages** - `internal/backup/` and `internal/restore/`
-3. **Rolling updates are handled by StatefulSet** - Controller just updates spec
-4. **Wait for updates to complete** - Use `wait.PollImmediate` pattern
-5. **Data consistency is application-specific** - Implement checks for your database
-6. **Coordinate multiple resources** - Restore depends on both Database and Backup
+1. **Используйте kubebuilder для генерации каркаса новых API** — `kubebuilder create api` для Restore
+2. **Разделяйте ответственность с помощью пакетов** — `internal/backup/` и `internal/restore/`
+3. **Скользящие обновления обрабатываются StatefulSet** — контроллер просто обновляет spec
+4. **Ждите завершения обновлений** — используйте паттерн `wait.PollImmediate`
+5. **Согласованность данных специфична для приложения** — реализуйте проверки для вашей базы данных
+6. **Координируйте несколько ресурсов** — Restore зависит и от Database, и от Backup
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Backup Implementation](../solutions/backup.go) - Complete backup functionality with `pg_dump`
-- [Restore Implementation](../solutions/restore.go) - Complete restore functionality with `psql`
-- [Rolling Update](../solutions/rolling-update.go) - Rolling update handling with wait logic
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Backup Implementation](../solutions/backup.go) — полная функциональность резервного копирования с `pg_dump`
+- [Restore Implementation](../solutions/restore.go) — полная функциональность восстановления с `psql`
+- [Rolling Update](../solutions/rolling-update.go) — обработка скользящих обновлений с логикой ожидания
 
-### Using the Solutions
+### Использование решений
 
 ```bash
 # Copy backup package
@@ -1345,8 +1345,8 @@ cp path/to/solutions/restore.go internal/restore/
 # Reference rolling-update.go for Database controller enhancements
 ```
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's build the final project!
+Теперь давайте создадим финальный проект!
 
-**Navigation:** [← Previous Lab: Operator Composition](lab-02-operator-composition.md) | [Related Lesson](../lessons/03-stateful-applications.md) | [Next Lab: Final Project →](lab-04-final-project.md)
+**Навигация:** [← Предыдущая лабораторная: Композиция операторов](lab-02-operator-composition.md) | [Связанный урок](../lessons/03-stateful-applications.md) | [Следующая лабораторная: Финальный проект →](lab-04-final-project.md)

@@ -1,62 +1,64 @@
 ---
 layout: default
-title: Home
+title: Главная
 nav_order: 1
-description: "A comprehensive, hands-on course for building production-ready Kubernetes operators using Kubebuilder"
+description: "Полноценный практический курс по созданию готовых к продакшену операторов Kubernetes с помощью Kubebuilder"
 permalink: /
 mermaid: true
 ---
 
-# Building Kubernetes Operators
+# Разработка операторов Kubernetes
 
-A comprehensive, hands-on and free course for building production-ready Kubernetes operators using Kubebuilder.
+{: .note }
+Данный проект является переводом оригинального курса [Piyush Jajoo](https://github.com/piyushjajoo), доступного по ссылке [k8s-operators-course](https://github.com/piyushjajoo/k8s-operators-course). Благодарим автора за проделанную работу!
+
+Полноценный практический и бесплатный курс по созданию готовых к продакшену операторов Kubernetes с помощью Kubebuilder.
 {: .fs-6 .fw-300 }
 
-[Get Started]({{ site.baseurl }}/modules){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
-[View on GitHub](https://github.com/piyushjajoo/k8s-operators-course){: .btn .fs-5 .mb-4 .mb-md-0 }
+[Начать]({{ site.baseurl }}/modules){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 
 ---
 
-## Course Overview
+## Обзор курса
 
-This free course teaches you how to build Kubernetes operators from the ground up. You'll learn the fundamentals of Kubernetes architecture, the controller pattern, and how to use Kubebuilder to create custom operators that manage complex applications.
+Этот бесплатный курс научит вас создавать операторы Kubernetes с нуля. Вы изучите основы архитектуры Kubernetes, паттерн контроллера (controller pattern) и научитесь использовать Kubebuilder для создания собственных операторов, управляющих сложными приложениями.
 
-| **Duration** | 8 weeks (40-50 hours total) |
-| **Level** | Intermediate to Advanced |
-| **Prerequisites** | Basic Kubernetes knowledge, Go programming fundamentals, understanding of containerization |
-| **License** | Free and open-source - [MIT License](https://github.com/piyushjajoo/k8s-operators-course/blob/main/LICENSE) |
+| **Продолжительность** | 8 недель (всего 40–50 часов) |
+| **Уровень** | от среднего до продвинутого |
+| **Предварительные требования** | базовые знания Kubernetes, основы программирования на Go, понимание контейнеризации |
+| **Лицензия** | бесплатный проект с открытым исходным кодом — [лицензия MIT](https://github.com/piyushjajoo/k8s-operators-course/blob/main/LICENSE) |
 
 ---
 
-## What You'll Learn
+## Чему вы научитесь
 
-| Module | Description |
+| Модуль | Описание |
 |:-------|:------------|
-| **Module 1: Kubernetes Architecture Deep Dive** | Learn how the control plane works, API machinery operates, and understand the controller pattern. |
-| **Module 2: Introduction to Operators** | Understand the operator pattern and build your first operator with Kubebuilder. |
-| **Module 3: Building Custom Controllers** | Master controller-runtime, API design, and reconciliation logic. |
-| **Module 4: Advanced Reconciliation Patterns** | Handle conditions, finalizers, watching, and advanced patterns. |
-| **Module 5: Webhooks and Admission Control** | Implement validating and mutating webhooks. |
-| **Module 6: Testing and Debugging** | Unit testing, integration testing, and observability. |
-| **Module 7: Production Considerations** | Packaging, RBAC, high availability, and performance. |
-| **Module 8: Advanced Topics** | Multi-tenancy, operator composition, and real-world patterns. |
+| **Модуль 1: Глубокое погружение в архитектуру Kubernetes** | Узнайте, как работает управляющий слой (control plane), как функционируют механизмы API, и разберитесь в паттерне контроллера. |
+| **Модуль 2: Введение в операторы** | Разберитесь в паттерне оператора и создайте свой первый оператор с помощью Kubebuilder. |
+| **Модуль 3: Создание кастомных контроллеров** | Освойте controller-runtime, проектирование API и логику согласования (reconciliation). |
+| **Модуль 4: Продвинутые паттерны согласования** | Работа с условиями, финализаторами, отслеживанием и продвинутыми паттернами. |
+| **Модуль 5: Вебхуки и контроль допуска** | Реализация валидирующих и мутирующих вебхуков. |
+| **Модуль 6: Тестирование и отладка** | Модульное тестирование, интеграционное тестирование и наблюдаемость. |
+| **Модуль 7: Подготовка к продакшену** | Упаковка, RBAC, высокая доступность и производительность. |
+| **Модуль 8: Продвинутые темы** | Мультиарендность, композиция операторов и практические паттерны. |
 
 ---
 
-## Learning Approach
+## Подход к обучению
 
-This course emphasizes:
+Этот курс делает упор на:
 
-- **Practical Learning** — Every concept is demonstrated through hands-on exercises
-- **Visual Learning** — Extensive use of Mermaid diagrams for architecture and flows
-- **Progressive Complexity** — Start simple, build to production-ready operators
-- **Real-world Examples** — Build actual operators you can use
+- **Практическое обучение** — каждая концепция демонстрируется через практические упражнения
+- **Наглядность** — активное использование диаграмм Mermaid для архитектуры и процессов
+- **Постепенное усложнение** — начинаем с простого и доходим до готовых к продакшену операторов
+- **Реальные примеры** — вы создаёте настоящие операторы, которые можно использовать
 
 ---
 
-## Prerequisites
+## Предварительные требования
 
-Before starting, ensure you have:
+Перед началом убедитесь, что у вас установлено:
 
 ```bash
 # Required tools
@@ -69,49 +71,48 @@ Kubebuilder 4.7+
 
 ---
 
-## Quick Start
+## Быстрый старт
 
-1. **Clone this repository:**
+1. **Склонируйте этот репозиторий:**
    ```bash
    git clone https://github.com/piyushjajoo/k8s-operators-course.git
    cd k8s-operators-course
    ```
 
-2. **Set up your development environment:**
+2. **Настройте среду разработки:**
    ```bash
    ./scripts/setup-dev-environment.sh
    ```
 
-3. **Create a kind cluster:**
+3. **Создайте кластер kind:**
    ```bash
    ./scripts/setup-kind-cluster.sh
    ```
 
-4. **Start with Module 1:**
-   Navigate to the [Modules]({{ site.baseurl }}/modules) page to begin!
+4. **Начните с Модуля 1:**
+   Перейдите на страницу [Модули]({{ site.baseurl }}/modules), чтобы начать!
 
 ---
 
-## Resources
+## Ресурсы
 
-- [Kubebuilder Documentation](https://book.kubebuilder.io/)
-- [Kubernetes API Documentation](https://kubernetes.io/docs/reference/kubernetes-api/)
-- [Operator Pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
-- [Hello World Operator Code](https://github.com/piyushjajoo/hello-world-operator) — Built following this course
-- [Postgres Operator Code](https://github.com/piyushjajoo/postgres-operator) — Built following this course
-
----
-
-## Share Your Project
-
-If you've completed the course and built an operator, share your project on LinkedIn and tag [Piyush Jajoo](https://www.linkedin.com/in/pjajoo) for feedback! Please consider ⭐ing the project if you found it useful.
+- [Документация Kubebuilder](https://book.kubebuilder.io/)
+- [Документация API Kubernetes](https://kubernetes.io/docs/reference/kubernetes-api/)
+- [Паттерн оператора](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+- [Код оператора Hello World](https://github.com/piyushjajoo/hello-world-operator) — создан по этому курсу
+- [Код оператора Postgres](https://github.com/piyushjajoo/postgres-operator) — создан по этому курсу
 
 ---
 
-## Contributing
+## Поделитесь своим проектом
 
-We welcome contributions! Open an issue for bugs, typos, or feature requests.
+Если вы прошли курс и создали оператор, поделитесь своим проектом в LinkedIn и отметьте [Piyush Jajoo](https://www.linkedin.com/in/pjajoo), чтобы получить обратную связь! Пожалуйста, поставьте проекту ⭐, если он оказался полезным.
+
+---
+
+## Участие в проекте
+
+Мы приветствуем ваш вклад! Открывайте issue для сообщений об ошибках, опечатках или предложений новых тем.
 
 {: .note }
-This course is **free and open-source** under the MIT License.
-
+Этот курс **бесплатен и имеет открытый исходный код**, он распространяется по лицензии MIT.

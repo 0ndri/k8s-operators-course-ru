@@ -1,40 +1,40 @@
-# Module 8 Solutions
+# Решения Модуля 8
 
-This directory contains complete, working solutions for Module 8 labs.
+Этот каталог содержит полные рабочие решения для лабораторных Модуля 8.
 
-## Files
+## Файлы
 
-### Lab 8.1 - Multi-Tenant Operator
-- [**clusterdatabase-types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/clusterdatabase-types.go): ClusterDatabase API type definitions (cluster-scoped)
-- [**clusterdatabase-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/clusterdatabase-controller.go): ClusterDatabase controller implementation
-- [**multi-tenant-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/multi-tenant-controller.go): Multi-tenant patterns and helper functions
+### Лабораторная 8.1 — мультиарендный оператор
+- [**clusterdatabase-types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/clusterdatabase-types.go): определения типов API ClusterDatabase (область действия на кластер)
+- [**clusterdatabase-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/clusterdatabase-controller.go): реализация контроллера ClusterDatabase
+- [**multi-tenant-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/multi-tenant-controller.go): паттерны мультиарендности и вспомогательные функции
 
-### Lab 8.2 - Operator Composition
-- [**backup_types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/backup_types.go): Backup API type definitions
-- [**backup-operator.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/backup-operator.go): Complete backup controller
-- [**operator-coordination.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/operator-coordination.go): Operator coordination examples
+### Лабораторная 8.2 — композиция операторов
+- [**backup_types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/backup_types.go): определения типов API Backup
+- [**backup-operator.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/backup-operator.go): полный контроллер резервного копирования
+- [**operator-coordination.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/operator-coordination.go): примеры координации операторов
 
-### Lab 8.3 - Stateful Application Management
-- [**restore_types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/restore_types.go): Restore API type definitions
-- [**restore-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/restore-controller.go): Complete Restore controller implementation
-- [**backup.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/backup.go): Backup functionality implementation
-- [**restore.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/restore.go): Restore functionality implementation
-- [**rolling-update.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/rolling-update.go): Rolling update handling
-- [**Dockerfile**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/Dockerfile): Dockerfile with PostgreSQL client tools
+### Лабораторная 8.3 — управление stateful-приложениями
+- [**restore_types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/restore_types.go): определения типов API Restore
+- [**restore-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/restore-controller.go): полная реализация контроллера Restore
+- [**backup.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/backup.go): реализация функциональности резервного копирования
+- [**restore.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/restore.go): реализация функциональности восстановления
+- [**rolling-update.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/rolling-update.go): обработка скользящих обновлений
+- [**Dockerfile**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-08/solutions/Dockerfile): Dockerfile с клиентскими инструментами PostgreSQL
 
-## Usage
+## Использование
 
-These solutions can be used as:
-- Reference when building advanced operators
-- Examples of multi-tenancy patterns
-- Operator composition patterns
-- Stateful application management examples
+Эти решения можно использовать как:
+- Справочный материал при создании продвинутых операторов
+- Примеры паттернов мультиарендности
+- Паттерны композиции операторов
+- Примеры управления stateful-приложениями
 
-## Integration
+## Интеграция
 
-### For Multi-Tenancy (Lab 8.1)
+### Для мультиарендности (Лабораторная 8.1)
 
-Use kubebuilder to scaffold the ClusterDatabase API, then reference the solutions:
+Используйте kubebuilder для генерации каркаса API ClusterDatabase, затем обращайтесь к решениям:
 
 ```bash
 # 1. Scaffold the API
@@ -45,16 +45,16 @@ kubebuilder create api --group database --version v1 --kind ClusterDatabase
 # 4. Reference multi-tenant-controller.go for advanced patterns
 ```
 
-Key concepts demonstrated:
-- `+kubebuilder:resource:scope=Cluster` marker for cluster-scoped resources
-- `targetNamespace` field for specifying where to create resources
-- Label-based ownership (since OwnerReferences can't cross scope boundaries)
-- Finalizers for cleanup
-- Quota checking per namespace/tenant
+Демонстрируемые ключевые концепции:
+- Маркер `+kubebuilder:resource:scope=Cluster` для ресурсов области действия на кластер
+- Поле `targetNamespace` для указания, где создавать ресурсы
+- Владение на основе меток (поскольку OwnerReferences не могут пересекать границы областей действия)
+- Финализаторы для очистки
+- Проверка квот для каждого пространства имён/арендатора
 
-### For Operator Composition (Lab 8.2)
+### Для композиции операторов (Лабораторная 8.2)
 
-Use kubebuilder to scaffold the Backup API, then reference the solutions:
+Используйте kubebuilder для генерации каркаса API Backup, затем обращайтесь к решениям:
 
 ```bash
 # 1. Scaffold the API (same group as Database to avoid multi-group setup)
@@ -65,16 +65,16 @@ kubebuilder create api --group database --version v1 --kind Backup --resource --
 # 4. Reference operator-coordination.go for coordination patterns
 ```
 
-Key concepts demonstrated:
-- Same API group (`database`) for related resources - avoids multi-group complexity
-- `DatabaseRef` field references the Database to backup
-- Controller waits for Database to be ready before backing up
-- Status conditions (`BackupReady`) coordinate state between operators
-- Scheduled backups using cron expressions
+Демонстрируемые ключевые концепции:
+- Одна группа API (`database`) для связанных ресурсов — избегает сложности с несколькими группами
+- Поле `DatabaseRef` ссылается на Database для резервного копирования
+- Контроллер ждёт готовности Database перед резервным копированием
+- Условия статуса (`BackupReady`) координируют состояние между операторами
+- Запланированные резервные копии с использованием cron-выражений
 
-### For Stateful Applications (Lab 8.3)
+### Для stateful-приложений (Лабораторная 8.3)
 
-Use kubebuilder to scaffold the Restore API, then reference the solutions:
+Используйте kubebuilder для генерации каркаса API Restore, затем обращайтесь к решениям:
 
 ```bash
 # 1. Scaffold the Restore API (same group as Database and Backup)
@@ -88,29 +88,29 @@ kubebuilder create api --group database --version v1 --kind Restore --resource -
 # 7. Reference rolling-update.go for Database controller enhancements
 ```
 
-Key concepts demonstrated:
-- Backup uses `pg_dump` to create SQL backups
-- Restore uses `psql` to restore from backups
-- Restore controller coordinates with both Database and Backup
-- Rolling updates wait for all replicas to be ready
-- Data consistency checks verify replication status
+Демонстрируемые ключевые концепции:
+- Резервное копирование использует `pg_dump` для создания SQL-резервных копий
+- Восстановление использует `psql` для восстановления из резервных копий
+- Контроллер Restore координируется и с Database, и с Backup
+- Скользящие обновления ждут готовности всех реплик
+- Проверки согласованности данных проверяют статус репликации
 
-**Important:** Since backup/restore uses `pg_dump` and `psql`, you must update your Dockerfile to include PostgreSQL client tools. The default distroless image doesn't include these tools. See the `Dockerfile` solution for an example using `debian:bookworm-slim` with `postgresql-client` installed.
+**Важно:** поскольку резервное копирование/восстановление использует `pg_dump` и `psql`, вы должны обновить Dockerfile, включив клиентские инструменты PostgreSQL. Distroless-образ по умолчанию не включает эти инструменты. Пример с использованием `debian:bookworm-slim` с установленным `postgresql-client` см. в решении `Dockerfile`.
 
-## Comparison: Database vs ClusterDatabase
+## Сравнение: Database против ClusterDatabase
 
-| Feature | Database | ClusterDatabase |
+| Возможность | Database | ClusterDatabase |
 |---------|----------|-----------------|
-| Scope | Namespaced | Cluster |
-| Namespace | Implicit | Explicit (`targetNamespace`) |
-| OwnerReferences | Yes | No (use labels) |
-| Cleanup | Automatic (GC) | Manual (finalizers) |
-| Use case | Team resources | Platform management |
+| Область действия | Namespaced | Cluster |
+| Пространство имён | Неявное | Явное (`targetNamespace`) |
+| OwnerReferences | Да | Нет (используются метки) |
+| Очистка | Автоматическая (GC) | Ручная (финализаторы) |
+| Сценарий использования | Ресурсы команды | Управление платформой |
 
-## Notes
+## Примечания
 
-- These are complete, working examples
-- They demonstrate advanced patterns
-- Ready for production use
-- Follow best practices
-- CRDs are generated by kubebuilder using `make manifests`
+- Это полные рабочие примеры
+- Они демонстрируют продвинутые паттерны
+- Готовы к использованию в продакшене
+- Следуют лучшим практикам
+- CRD генерируются kubebuilder с помощью `make manifests`

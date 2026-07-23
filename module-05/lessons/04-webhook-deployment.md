@@ -2,22 +2,22 @@
 layout: default
 title: "05.4 Webhook Deployment"
 nav_order: 4
-parent: "Module 5: Webhooks & Admission Control"
-grand_parent: Modules
+parent: "Модуль 5: Вебхуки и контроль допуска"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 5.4: Webhook Deployment and Certificates
+# Урок 5.4: Развёртывание вебхуков и сертификаты
 
-**Navigation:** [← Previous: Mutating Webhooks](03-mutating-webhooks.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущий: Мутирующие вебхуки](03-mutating-webhooks.md) | [Обзор модуля](../README.md)
 
-## Introduction
+## Введение
 
-Webhooks require TLS certificates to secure communication with the API server. Managing these certificates can be complex, but kubebuilder and cert-manager make it easier. In this lesson, you'll learn how to deploy webhooks and manage certificates.
+Вебхукам нужны TLS-сертификаты для защиты связи с API-сервером. Управление этими сертификатами может быть сложным, но kubebuilder и cert-manager упрощают его. В этом уроке вы научитесь развёртывать вебхуки и управлять сертификатами.
 
-## Webhook Service Architecture
+## Архитектура сервиса вебхука
 
-Webhooks run as services in your cluster:
+Вебхуки работают как сервисы в вашем кластере:
 
 ```mermaid
 graph TB
@@ -34,9 +34,9 @@ graph TB
     style CERT fill:#90EE90
 ```
 
-## Why Webhooks Require In-Cluster Deployment
+## Почему вебхуки требуют развёртывания в кластере
 
-Unlike controller logic, webhooks cannot easily run locally with `make run`:
+В отличие от логики контроллера, вебхуки нельзя легко запустить локально через `make run`:
 
 ```mermaid
 graph TB
@@ -55,13 +55,13 @@ graph TB
     style SOLUTION fill:#90EE90
 ```
 
-**The issue:** The Kubernetes API server needs to call your webhook over HTTPS. When running locally, the API server (inside the cluster) cannot reach your localhost.
+**Проблема:** API-серверу Kubernetes нужно вызывать ваш вебхук по HTTPS. При локальном запуске API-сервер (внутри кластера) не может достучаться до вашего localhost.
 
-**The solution:** Deploy the operator to the cluster where the API server can reach it.
+**Решение:** разверните оператор в кластере, где API-сервер сможет до него достучаться.
 
-## Certificate Management with cert-manager
+## Управление сертификатами с cert-manager
 
-cert-manager is the recommended solution for webhook certificates:
+cert-manager — рекомендуемое решение для сертификатов вебхуков:
 
 ```mermaid
 sequenceDiagram
@@ -80,9 +80,9 @@ sequenceDiagram
     Note over CertMgr: Auto-renewal handled
 ```
 
-## Setting Up cert-manager
+## Настройка cert-manager
 
-### Step 1: Install cert-manager
+### Шаг 1: установите cert-manager
 
 ```bash
 # Install cert-manager
@@ -94,11 +94,11 @@ kubectl wait --for=condition=Available deployment/cert-manager-webhook -n cert-m
 kubectl wait --for=condition=Available deployment/cert-manager-cainjector -n cert-manager --timeout=120s
 ```
 
-> **Note:** The course's `scripts/setup-kind-cluster.sh` installs cert-manager automatically.
+> **Примечание:** скрипт курса `scripts/setup-kind-cluster.sh` устанавливает cert-manager автоматически.
 
-### Step 2: Kubebuilder Integration
+### Шаг 2: интеграция с Kubebuilder
 
-Kubebuilder projects come pre-configured for cert-manager. Check `config/default/kustomization.yaml`:
+Проекты kubebuilder поставляются предварительно настроенными для cert-manager. Проверьте `config/default/kustomization.yaml`:
 
 ```yaml
 resources:
@@ -109,14 +109,14 @@ resources:
 - ../certmanager  # Enables cert-manager integration
 ```
 
-The `config/certmanager/` directory contains:
-- Certificate resources
-- Issuer configuration
-- CA injection annotations
+Каталог `config/certmanager/` содержит:
+- Ресурсы Certificate
+- Конфигурацию Issuer
+- Аннотации для инъекции CA
 
-## Deploying Webhooks
+## Развёртывание вебхуков
 
-### Step 1: Build the Image
+### Шаг 1: соберите образ
 
 ```bash
 # Build container image
@@ -126,7 +126,7 @@ make docker-build IMG=postgres-operator:latest
 # make docker-build IMG=postgres-operator:latest CONTAINER_TOOL=podman
 ```
 
-### Step 2: Load into Kind
+### Шаг 2: загрузите в kind
 
 ```bash
 # For Docker:
@@ -138,7 +138,7 @@ kind load image-archive /tmp/postgres-operator.tar --name k8s-operators-course
 rm /tmp/postgres-operator.tar
 ```
 
-### Step 3: Deploy
+### Шаг 3: разверните
 
 ```bash
 # Deploy to cluster
@@ -148,9 +148,9 @@ make deploy IMG=postgres-operator:latest
 # make deploy IMG=localhost/postgres-operator:latest
 ```
 
-## What Gets Deployed
+## Что развёртывается
 
-When you run `make deploy`, kustomize creates:
+Когда вы запускаете `make deploy`, kustomize создаёт:
 
 ```mermaid
 graph TB
@@ -169,29 +169,29 @@ graph TB
     style DEPLOY fill:#90EE90
 ```
 
-## Verifying Deployment
+## Проверка развёртывания
 
-### Check Pods
+### Проверьте поды
 
 ```bash
 kubectl get pods -n postgres-operator-system
 ```
 
-### Check Webhooks
+### Проверьте вебхуки
 
 ```bash
 kubectl get validatingwebhookconfigurations
 kubectl get mutatingwebhookconfigurations
 ```
 
-### Check Certificates
+### Проверьте сертификаты
 
 ```bash
 kubectl get certificate -n postgres-operator-system
 kubectl get secret -n postgres-operator-system | grep tls
 ```
 
-## Development Workflow
+## Рабочий процесс разработки
 
 ```mermaid
 graph LR
@@ -205,7 +205,7 @@ graph LR
     style TEST fill:#90EE90
 ```
 
-For rapid iteration:
+Для быстрой итерации:
 
 ```bash
 # After code changes, redeploy
@@ -214,11 +214,11 @@ kind load docker-image postgres-operator:latest --name k8s-operators-course
 kubectl rollout restart deployment/postgres-operator-controller-manager -n postgres-operator-system
 ```
 
-## Troubleshooting Webhooks
+## Устранение неполадок вебхуков
 
-### Common Issues
+### Распространённые проблемы
 
-1. **Certificate not ready:**
+1. **Сертификат не готов:**
    ```bash
    # Check certificate status
    kubectl get certificate -n postgres-operator-system
@@ -228,7 +228,7 @@ kubectl rollout restart deployment/postgres-operator-controller-manager -n postg
    kubectl logs -n cert-manager deployment/cert-manager
    ```
 
-2. **Webhook not called:**
+2. **Вебхук не вызывается:**
    ```bash
    # Check webhook configuration
    kubectl get validatingwebhookconfiguration
@@ -238,7 +238,7 @@ kubectl rollout restart deployment/postgres-operator-controller-manager -n postg
    kubectl get validatingwebhookconfiguration -o yaml | grep caBundle
    ```
 
-3. **Connection refused:**
+3. **Отказ в соединении (connection refused):**
    ```bash
    # Check webhook pod logs
    kubectl logs -n postgres-operator-system deployment/postgres-operator-controller-manager
@@ -247,7 +247,7 @@ kubectl rollout restart deployment/postgres-operator-controller-manager -n postg
    kubectl get endpoints -n postgres-operator-system
    ```
 
-4. **Image pull errors:**
+4. **Ошибки скачивания образа:**
    ```bash
    # Check pod events
    kubectl describe pod -n postgres-operator-system -l control-plane=controller-manager
@@ -255,9 +255,9 @@ kubectl rollout restart deployment/postgres-operator-controller-manager -n postg
    # Ensure imagePullPolicy is IfNotPresent for local images
    ```
 
-## Certificate Rotation
+## Ротация сертификатов
 
-cert-manager handles certificate rotation automatically:
+cert-manager обрабатывает ротацию сертификатов автоматически:
 
 ```mermaid
 graph LR
@@ -270,55 +270,55 @@ graph LR
     style RENEW fill:#90EE90
 ```
 
-Default renewal is 30 days before expiry.
+По умолчанию обновление происходит за 30 дней до истечения срока.
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Webhooks require TLS certificates** for secure communication
-- **Webhooks need in-cluster deployment** - `make run` doesn't work for webhooks
-- **cert-manager** provides automatic certificate management
-- **Kubebuilder projects** come pre-configured for cert-manager
-- Use `make deploy` workflow: build → load → deploy
-- **Certificate rotation** is handled automatically by cert-manager
+- **Вебхукам нужны TLS-сертификаты** для защищённой связи
+- **Вебхуки требуют развёртывания в кластере** — `make run` для вебхуков не работает
+- **cert-manager** обеспечивает автоматическое управление сертификатами
+- **Проекты kubebuilder** поставляются предварительно настроенными для cert-manager
+- Используйте рабочий процесс `make deploy`: сборка → загрузка → развёртывание
+- **Ротация сертификатов** обрабатывается cert-manager автоматически
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When deploying webhooks:
-- Use cert-manager for automatic certificate management
-- Deploy to cluster for webhook testing (not `make run`)
-- Ensure cert-manager is installed before deploying
-- Check certificate status when troubleshooting
-- Use `kubectl rollout restart` for quick redeployments
+При развёртывании вебхуков:
+- Используйте cert-manager для автоматического управления сертификатами
+- Разворачивайте в кластер для тестирования вебхуков (не `make run`)
+- Убедитесь, что cert-manager установлен, перед развёртыванием
+- Проверяйте статус сертификата при устранении неполадок
+- Используйте `kubectl rollout restart` для быстрых повторных развёртываний
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 5.4: Webhook Deployment and Certificates](../labs/lab-04-webhook-deployment.md) - Hands-on exercises for this lesson
+- [Лабораторная 5.4: Развёртывание вебхуков и сертификаты](../labs/lab-04-webhook-deployment.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Webhook Configuration](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-configuration)
+### Официальная документация
+- [Конфигурация вебхука](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-configuration)
 - [cert-manager](https://cert-manager.io/docs/)
-- [TLS in Kubernetes](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/)
+- [TLS в Kubernetes](https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 9: Webhooks
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 9: Admission Control
-- [cert-manager Documentation](https://cert-manager.io/docs/)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 9: Webhooks
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 9: Admission Control
+- [Документация cert-manager](https://cert-manager.io/docs/)
 
-### Related Topics
-- [Webhook Failure Policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy)
-- [Webhook Timeouts](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts)
-- [cert-manager Installation](https://cert-manager.io/docs/installation/)
+### Смежные темы
+- [Политика при сбое вебхука](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy)
+- [Таймауты вебхука](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts)
+- [Установка cert-manager](https://cert-manager.io/docs/installation/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Congratulations! You've completed Module 5. You now understand:
-- Admission control and webhooks
-- Validating webhooks for custom validation
-- Mutating webhooks for defaulting
-- Certificate management and deployment
+Поздравляем! Вы завершили Модуль 5. Теперь вы понимаете:
+- Контроль допуска и вебхуки
+- Валидирующие вебхуки для пользовательской валидации
+- Мутирующие вебхуки для установки значений по умолчанию
+- Управление сертификатами и развёртывание
 
-In [Module 6](../../module-06/README.md), you'll learn about testing and debugging operators.
+В [Модуле 6](../../module-06/README.md) вы изучите тестирование и отладку операторов.
 
-**Navigation:** [← Previous: Mutating Webhooks](03-mutating-webhooks.md) | [Module Overview](../README.md) | [Next: Module 6 →](../../module-06/README.md)
+**Навигация:** [← Предыдущий: Мутирующие вебхуки](03-mutating-webhooks.md) | [Обзор модуля](../README.md) | [Далее: Модуль 6 →](../../module-06/README.md)

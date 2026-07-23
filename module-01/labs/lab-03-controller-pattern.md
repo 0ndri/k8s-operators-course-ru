@@ -2,32 +2,32 @@
 layout: default
 title: "Lab 01.3: Controller Pattern"
 nav_order: 13
-parent: "Module 1: Kubernetes Architecture"
-grand_parent: Modules
+parent: "Модуль 1: Архитектура Kubernetes"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 1.3: Observing Controllers in Action
+# Лабораторная 1.3: Наблюдение за контроллерами в действии
 
-**Related Lesson:** [Lesson 1.3: The Controller Pattern](../lessons/03-controller-pattern.md)  
-**Navigation:** [← Previous Lab: API Machinery](lab-02-api-machinery.md) | [Module Overview](../README.md) | [Next Lab: Custom Resources →](lab-04-custom-resources.md)
+**Связанный урок:** [Урок 1.3: Паттерн контроллера](../lessons/03-controller-pattern.md)  
+**Навигация:** [← Предыдущая лабораторная: Механизмы API](lab-02-api-machinery.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Пользовательские ресурсы →](lab-04-custom-resources.md)
 
-## Objectives
+## Цели
 
-- Observe controller reconciliation in real-time
-- Understand the control loop pattern
-- See declarative vs imperative behavior
-- Test idempotency
-- Understand watch mechanisms
+- Наблюдать за согласованием контроллера в реальном времени
+- Понять паттерн цикла управления (control loop)
+- Увидеть декларативное и императивное поведение
+- Проверить идемпотентность
+- Разобраться в механизмах отслеживания (watch)
 
-## Prerequisites
+## Предварительные требования
 
-- Kind cluster running
-- kubectl configured
+- Запущенный кластер kind
+- Настроенный kubectl
 
-## Exercise 1: Observe Reconciliation Loop
+## Упражнение 1: наблюдение за циклом согласования
 
-### Task 1.1: Create and Watch Deployment
+### Задача 1.1: создайте и понаблюдайте за Deployment
 
 ```bash
 # Create a deployment
@@ -43,12 +43,12 @@ kubectl get replicasets -w
 kubectl get pods -l app=controller-demo -w
 ```
 
-**Observations:**
-1. What was created first?
-2. How long until all resources were ready?
-3. What status fields changed?
+**Наблюдения:**
+1. Что создалось первым?
+2. Сколько времени прошло, пока все ресурсы стали готовы?
+3. Какие поля status менялись?
 
-### Task 1.2: Trace the Reconciliation
+### Задача 1.2: отследите согласование
 
 ```bash
 # Get events to see the flow
@@ -64,9 +64,9 @@ kubectl get replicasets -l app=controller-demo -o yaml | grep -A 10 ownerReferen
 kubectl get pods -l app=controller-demo -o yaml | grep -A 10 ownerReferences
 ```
 
-## Exercise 2: Test Reconciliation
+## Упражнение 2: проверка согласования
 
-### Task 2.1: Manual Pod Deletion
+### Задача 2.1: ручное удаление пода
 
 ```bash
 # Get a pod name
@@ -81,12 +81,12 @@ echo "Watching for pod recreation..."
 kubectl get pods -l app=controller-demo -w
 ```
 
-**Questions:**
-1. How quickly was the pod recreated?
-2. Which controller recreated it?
-3. What does this tell you about the control loop?
+**Вопросы:**
+1. Как быстро под был пересоздан?
+2. Какой контроллер его пересоздал?
+3. Что это говорит вам о цикле управления?
 
-### Task 2.2: Change Desired State
+### Задача 2.2: изменение желаемого состояния
 
 ```bash
 # Scale up
@@ -102,14 +102,14 @@ kubectl scale deployment controller-demo --replicas=1
 kubectl get pods -l app=controller-demo -w
 ```
 
-**Observations:**
-1. How does the controller handle scaling up?
-2. How does it handle scaling down?
-3. What's the order of operations?
+**Наблюдения:**
+1. Как контроллер обрабатывает увеличение масштаба?
+2. Как он обрабатывает уменьшение?
+3. Каков порядок операций?
 
-## Exercise 3: Declarative Behavior
+## Упражнение 3: декларативное поведение
 
-### Task 3.1: Apply Same Resource Multiple Times
+### Задача 3.1: примените один и тот же ресурс несколько раз
 
 ```bash
 # Create a deployment manifest
@@ -149,9 +149,9 @@ kubectl apply -f /tmp/test-deployment.yaml
 kubectl get pods -l app=declarative | wc -l
 ```
 
-**Key Learning:** Applying the same resource multiple times is idempotent - it doesn't create duplicates.
+**Ключевой вывод:** многократное применение одного и того же ресурса идемпотентно — оно не создаёт дубликатов.
 
-### Task 3.2: Modify and Re-apply
+### Задача 3.2: измените и примените заново
 
 ```bash
 # Modify the manifest (change image)
@@ -182,14 +182,14 @@ kubectl apply -f /tmp/test-deployment.yaml
 kubectl get pods -l app=declarative -w
 ```
 
-**Observations:**
-1. What happened when you changed the image?
-2. How did Kubernetes handle the update?
-3. This is declarative - you described what you want, Kubernetes figured out how to achieve it.
+**Наблюдения:**
+1. Что произошло, когда вы изменили образ?
+2. Как Kubernetes обработал обновление?
+3. Это декларативный подход — вы описали, что хотите, а Kubernetes сам определил, как этого достичь.
 
-## Exercise 4: Controller Logs
+## Упражнение 4: логи контроллера
 
-### Task 4.1: View Controller Manager Logs
+### Задача 4.1: просмотрите логи Controller Manager
 
 ```bash
 # View recent logs
@@ -199,7 +199,7 @@ kubectl logs -n kube-system -l component=kube-controller-manager --tail=50
 kubectl logs -n kube-system -l component=kube-controller-manager --tail=100 | grep declarative-test
 ```
 
-### Task 4.2: Watch Logs During Action
+### Задача 4.2: наблюдайте за логами во время действия
 
 ```bash
 # Start watching logs in background
@@ -219,9 +219,9 @@ cat /tmp/controller.log | tail -20
 kill $LOG_PID
 ```
 
-## Exercise 5: Test Idempotency
+## Упражнение 5: проверка идемпотентности
 
-### Task 5.1: Multiple Applies
+### Задача 5.1: многократное применение
 
 ```bash
 # Apply the same deployment 5 times
@@ -241,9 +241,9 @@ kubectl get replicasets -l app=declarative
 kubectl get pods -l app=declarative
 ```
 
-**Expected Result:** Only one deployment, one ReplicaSet, and the correct number of pods.
+**Ожидаемый результат:** только один Deployment, один ReplicaSet и корректное количество подов.
 
-### Task 5.2: Verify Idempotency
+### Задача 5.2: подтвердите идемпотентность
 
 ```bash
 # Get current state
@@ -259,9 +259,9 @@ kubectl get deployment declarative-test -o yaml > /tmp/after.yaml
 diff /tmp/before.yaml /tmp/after.yaml
 ```
 
-## Exercise 6: Watch Mechanism
+## Упражнение 6: механизм отслеживания
 
-### Task 6.1: Use kubectl watch
+### Задача 6.1: используйте kubectl watch
 
 ```bash
 # Watch deployments
@@ -272,11 +272,11 @@ kubectl scale deployment declarative-test --replicas=2
 kubectl scale deployment declarative-test --replicas=4
 ```
 
-**Observations:**
-1. How quickly do you see updates?
-2. What information is shown in the watch output?
+**Наблюдения:**
+1. Как быстро вы видите обновления?
+2. Какая информация отображается в выводе watch?
 
-### Task 6.2: Observe Event Stream
+### Задача 6.2: наблюдайте за потоком событий
 
 ```bash
 # Watch events
@@ -287,9 +287,9 @@ kubectl scale deployment declarative-test --replicas=1
 kubectl label deployment declarative-test env=test
 ```
 
-## Exercise 7: Status Updates
+## Упражнение 7: обновления статуса
 
-### Task 7.1: Monitor Status Changes
+### Задача 7.1: отслеживайте изменения статуса
 
 ```bash
 # Watch status fields
@@ -300,7 +300,7 @@ kubectl scale deployment declarative-test --replicas=0
 kubectl scale deployment declarative-test --replicas=3
 ```
 
-### Task 7.2: Compare Spec vs Status
+### Задача 7.2: сравните spec и status
 
 ```bash
 # Get desired vs actual
@@ -311,7 +311,7 @@ echo "Ready replicas: $(kubectl get deployment declarative-test -o jsonpath='{.s
 # The controller continuously works to make actual match desired
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete deployments
@@ -322,22 +322,22 @@ kubectl delete deployment declarative-test
 rm -f /tmp/test-deployment.yaml /tmp/before.yaml /tmp/after.yaml /tmp/controller.log
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Observed controller reconciliation in real-time
-- Tested declarative behavior
-- Verified idempotency
-- Understood the control loop pattern
-- Monitored status updates
+В этой лабораторной вы:
+- Наблюдали за согласованием контроллера в реальном времени
+- Проверили декларативное поведение
+- Подтвердили идемпотентность
+- Разобрались в паттерне цикла управления
+- Отслеживали обновления статуса
 
-## Key Learnings
+## Ключевые уроки
 
-1. Controllers continuously reconcile desired vs actual state
-2. Reconciliation happens automatically when state changes
-3. Kubernetes uses a declarative model - describe what you want
-4. Operations are idempotent - safe to repeat
-5. Status fields reflect actual state, updated by controllers
-6. Watch mechanisms provide real-time updates
+1. Контроллеры непрерывно согласовывают желаемое и фактическое состояние
+2. Согласование происходит автоматически при изменении состояния
+3. Kubernetes использует декларативную модель — описывайте, что вы хотите
+4. Операции идемпотентны — их безопасно повторять
+5. Поля status отражают фактическое состояние и обновляются контроллерами
+6. Механизмы отслеживания обеспечивают обновления в реальном времени
 
-**Navigation:** [← Previous Lab: API Machinery](lab-02-api-machinery.md) | [Related Lesson](../lessons/03-controller-pattern.md) | [Next Lab: Custom Resources →](lab-04-custom-resources.md)
+**Навигация:** [← Предыдущая лабораторная: Механизмы API](lab-02-api-machinery.md) | [Связанный урок](../lessons/03-controller-pattern.md) | [Следующая лабораторная: Пользовательские ресурсы →](lab-04-custom-resources.md)

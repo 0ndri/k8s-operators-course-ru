@@ -2,51 +2,51 @@
 layout: default
 title: "03.2 Designing Api"
 nav_order: 2
-parent: "Module 3: Building Custom Controllers"
-grand_parent: Modules
+parent: "Модуль 3: Создание кастомных контроллеров"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 3.2: Designing Your API
+# Урок 3.2: Проектирование вашего API
 
-**Navigation:** [← Previous: Controller Runtime](01-controller-runtime.md) | [Module Overview](../README.md) | [Next: Reconciliation Logic →](03-reconciliation-logic.md)
+**Навигация:** [← Предыдущий: Controller Runtime](01-controller-runtime.md) | [Обзор модуля](../README.md) | [Далее: Логика согласования →](03-reconciliation-logic.md)
 
-## Introduction
+## Введение
 
-A well-designed API is crucial for a good operator. Your Custom Resource API is what users interact with - it should be intuitive, validated, and follow Kubernetes conventions. In this lesson, you'll learn how to design APIs that are both powerful and user-friendly.
+Хорошо спроектированный API критически важен для качественного оператора. API вашего пользовательского ресурса — это то, с чем взаимодействуют пользователи; он должен быть интуитивным, валидируемым и следовать соглашениям Kubernetes. В этом уроке вы научитесь проектировать API, которые одновременно мощны и удобны для пользователя.
 
-## Theory: API Design Principles
+## Теория: принципы проектирования API
 
-Good API design makes operators intuitive to use and maintain. Following Kubernetes conventions ensures consistency and tool compatibility.
+Хороший дизайн API делает операторы интуитивно понятными в использовании и сопровождении. Следование соглашениям Kubernetes обеспечивает согласованность и совместимость с инструментами.
 
-### Core Concepts
+### Основные концепции
 
-**Spec vs Status Separation:**
-- **Spec**: User-provided desired state (immutable after creation)
-- **Status**: System-managed actual state (read-only for users)
-- Clear separation prevents conflicts and confusion
+**Разделение Spec и Status:**
+- **Spec**: желаемое состояние, задаваемое пользователем (неизменяемое после создания)
+- **Status**: фактическое состояние, управляемое системой (только для чтения для пользователей)
+- Чёткое разделение предотвращает конфликты и путаницу
 
-**API Versioning:**
-- Support multiple API versions simultaneously
-- Enable smooth migrations
-- Follow Kubernetes versioning conventions
+**Версионирование API:**
+- Одновременная поддержка нескольких версий API
+- Обеспечение плавных миграций
+- Следование соглашениям Kubernetes о версионировании
 
-**Validation:**
-- Validate at API level (CRD schema)
-- Provide clear error messages
-- Prevent invalid states early
+**Валидация:**
+- Валидация на уровне API (схема CRD)
+- Понятные сообщения об ошибках
+- Раннее предотвращение некорректных состояний
 
-**Why Good API Design Matters:**
-- **Usability**: Intuitive APIs are easier to use
-- **Maintainability**: Well-designed APIs are easier to evolve
-- **Compatibility**: Following conventions ensures tool compatibility
-- **Reliability**: Validation prevents runtime errors
+**Почему хороший дизайн API важен:**
+- **Удобство использования**: интуитивные API проще в использовании
+- **Сопровождаемость**: хорошо спроектированные API легче развивать
+- **Совместимость**: следование соглашениям обеспечивает совместимость с инструментами
+- **Надёжность**: валидация предотвращает ошибки во время выполнения
 
-Good API design is the foundation of a successful operator.
+Хороший дизайн API — это основа успешного оператора.
 
-## API Design Principles
+## Принципы проектирования API
 
-Good API design follows these principles:
+Хороший дизайн API следует этим принципам:
 
 ```mermaid
 graph TB
@@ -60,9 +60,9 @@ graph TB
     style VALIDATED fill:#FFB6C1
 ```
 
-## Spec vs Status Separation
+## Разделение Spec и Status
 
-Remember from [Module 1](../../module-01/lessons/04-custom-resources.md) and [Module 2](../../module-02/lessons/04-first-operator.md): **Spec** is desired state, **Status** is actual state.
+Вспомните из [Модуля 1](../../module-01/lessons/04-custom-resources.md) и [Модуля 2](../../module-02/lessons/04-first-operator.md): **Spec** — это желаемое состояние, **Status** — фактическое.
 
 ```mermaid
 graph LR
@@ -79,15 +79,15 @@ graph LR
     style STATUS fill:#FFB6C1
 ```
 
-### Spec Guidelines
+### Рекомендации по Spec
 
-**What goes in Spec:**
-- User-configurable settings
-- Desired configuration
-- Resource requirements
-- Deployment settings
+**Что помещается в Spec:**
+- Настраиваемые пользователем параметры
+- Желаемая конфигурация
+- Требования к ресурсам
+- Настройки развёртывания
 
-**Example:**
+**Пример:**
 ```go
 type DatabaseSpec struct {
     // Image is the PostgreSQL image to use
@@ -101,15 +101,15 @@ type DatabaseSpec struct {
 }
 ```
 
-### Status Guidelines
+### Рекомендации по Status
 
-**What goes in Status:**
-- Current state information
-- Progress indicators
-- Conditions
-- Observed generation
+**Что помещается в Status:**
+- Информация о текущем состоянии
+- Индикаторы прогресса
+- Условия (conditions)
+- Наблюдаемое поколение (observed generation)
 
-**Example:**
+**Пример:**
 ```go
 type DatabaseStatus struct {
     // Phase is the current phase
@@ -123,9 +123,9 @@ type DatabaseStatus struct {
 }
 ```
 
-## Naming Conventions
+## Соглашения об именовании
 
-Follow Kubernetes naming conventions:
+Следуйте соглашениям Kubernetes об именовании:
 
 ```mermaid
 graph TB
@@ -147,22 +147,22 @@ graph TB
     style KIND fill:#FFB6C1
 ```
 
-### Resource Naming
+### Именование ресурсов
 
-- **Plural**: `databases` (lowercase, plural)
-- **Singular**: `database` (lowercase, singular)
-- **Kind**: `Database` (PascalCase, singular)
-- **Short name**: `db` (optional, lowercase)
+- **Множественное число (Plural)**: `databases` (в нижнем регистре, множественное число)
+- **Единственное число (Singular)**: `database` (в нижнем регистре, единственное число)
+- **Kind**: `Database` (PascalCase, единственное число)
+- **Короткое имя (Short name)**: `db` (опционально, в нижнем регистре)
 
-### Field Naming
+### Именование полей
 
-- Use **camelCase**: `imageName`, `replicaCount`
-- Be **descriptive**: `postgresImage` not `img`
-- Use **consistent** naming across resources
+- Используйте **camelCase**: `imageName`, `replicaCount`
+- Будьте **описательны**: `postgresImage`, а не `img`
+- Используйте **единообразное** именование для всех ресурсов
 
-## API Versioning
+## Версионирование API
 
-APIs should be versioned properly:
+API должны версионироваться правильно:
 
 ```mermaid
 graph LR
@@ -174,22 +174,22 @@ graph LR
     style STABLE fill:#FFB6C1
 ```
 
-### Version Strategy
+### Стратегия версий
 
-- **v1**: Stable, production-ready
-- **v1beta1**: Beta, may change
-- **v1alpha1**: Alpha, experimental
+- **v1**: стабильная, готова к продакшену
+- **v1beta1**: бета, может меняться
+- **v1alpha1**: альфа, экспериментальная
 
-### Versioning Rules
+### Правила версионирования
 
-1. Start with `v1alpha1` for new APIs
-2. Promote to `v1beta1` when stable
-3. Promote to `v1` when production-ready
-4. Support multiple versions during transition
+1. Начинайте с `v1alpha1` для новых API
+2. Повышайте до `v1beta1`, когда API стабилен
+3. Повышайте до `v1`, когда API готов к продакшену
+4. Поддерживайте несколько версий во время перехода
 
-## Validation with Markers
+## Валидация с помощью маркеров
 
-Kubebuilder markers provide validation:
+Маркеры kubebuilder обеспечивают валидацию:
 
 ```mermaid
 graph TB
@@ -205,36 +205,36 @@ graph TB
     style VALIDATION fill:#FFB6C1
 ```
 
-### Common Validation Markers
+### Распространённые маркеры валидации
 
-**Required Fields:**
+**Обязательные поля:**
 ```go
 // +kubebuilder:validation:Required
 Message string `json:"message"`
 ```
 
-**Numeric Ranges:**
+**Числовые диапазоны:**
 ```go
 // +kubebuilder:validation:Minimum=1
 // +kubebuilder:validation:Maximum=10
 Replicas int32 `json:"replicas"`
 ```
 
-**String Patterns:**
+**Шаблоны строк:**
 ```go
 // +kubebuilder:validation:Pattern=`^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`
 Name string `json:"name"`
 ```
 
-**Enums:**
+**Перечисления (Enums):**
 ```go
 // +kubebuilder:validation:Enum=small;medium;large
 Size string `json:"size"`
 ```
 
-## Default Values
+## Значения по умолчанию
 
-Provide sensible defaults:
+Предоставляйте разумные значения по умолчанию:
 
 ```mermaid
 graph LR
@@ -246,9 +246,9 @@ graph LR
     style APPLY fill:#90EE90
 ```
 
-### Setting Defaults
+### Установка значений по умолчанию
 
-**In Go code:**
+**В коде Go:**
 ```go
 // Set defaults in webhook (Module 5)
 func (r *Database) Default() {
@@ -261,15 +261,15 @@ func (r *Database) Default() {
 }
 ```
 
-**With markers:**
+**С помощью маркеров:**
 ```go
 // +kubebuilder:default="postgres:14"
 Image string `json:"image,omitempty"`
 ```
 
-## Example: Database API Design
+## Пример: проектирование API базы данных
 
-Let's design an API for a PostgreSQL operator:
+Спроектируем API для оператора PostgreSQL:
 
 ```go
 // DatabaseSpec defines the desired state of Database
@@ -319,9 +319,9 @@ type DatabaseStatus struct {
 }
 ```
 
-## Print Columns
+## Столбцы вывода (Print Columns)
 
-Add print columns for better `kubectl get` output:
+Добавьте столбцы вывода для более информативного результата `kubectl get`:
 
 ```go
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
@@ -333,9 +333,9 @@ type Database struct {
 }
 ```
 
-This makes `kubectl get databases` show useful columns!
+Это заставит `kubectl get databases` показывать полезные столбцы!
 
-## API Design Process
+## Процесс проектирования API
 
 ```mermaid
 flowchart TD
@@ -352,50 +352,50 @@ flowchart TD
     style STATUS fill:#FFB6C1
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Spec** = desired state (user writes)
-- **Status** = actual state (controller writes)
-- Follow Kubernetes **naming conventions**
-- Use **proper versioning** (v1alpha1 → v1beta1 → v1)
-- Add **validation markers** for safety
-- Provide **sensible defaults**
-- Add **print columns** for better UX
-- **Document** your API well
+- **Spec** = желаемое состояние (пишет пользователь)
+- **Status** = фактическое состояние (пишет контроллер)
+- Следуйте **соглашениям Kubernetes об именовании**
+- Используйте **правильное версионирование** (v1alpha1 → v1beta1 → v1)
+- Добавляйте **маркеры валидации** для безопасности
+- Предоставляйте **разумные значения по умолчанию**
+- Добавляйте **столбцы вывода** для лучшего UX
+- **Документируйте** свой API как следует
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When designing APIs:
-- Think about user experience
-- Validate everything possible
-- Separate spec and status clearly
-- Version your APIs properly
-- Follow Kubernetes conventions
-- Make it intuitive
+При проектировании API:
+- Думайте об опыте пользователя
+- Валидируйте всё, что возможно
+- Чётко разделяйте spec и status
+- Правильно версионируйте свои API
+- Следуйте соглашениям Kubernetes
+- Делайте API интуитивным
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 3.2: API Design for Database Operator](../labs/lab-02-designing-api.md) - Hands-on exercises for this lesson
+- [Лабораторная 3.2: Проектирование API для оператора базы данных](../labs/lab-02-designing-api.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
-- [CRD Best Practices](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#best-practices)
-- [API Versioning](https://kubernetes.io/docs/reference/using-api/api-concepts/#versioning)
+### Официальная документация
+- [Соглашения об API](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
+- [Лучшие практики CRD](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#best-practices)
+- [Версионирование API](https://kubernetes.io/docs/reference/using-api/api-concepts/#versioning)
 
-### Further Reading
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 3: Custom Resources
-- **Kubernetes: Up and Running** by Kelsey Hightower, Brendan Burns, and Joe Beda - Chapter 15: Extending Kubernetes
-- [Kubernetes API Design Principles](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
+### Дополнительное чтение
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 3: Custom Resources
+- **Kubernetes: Up and Running**, Kelsey Hightower, Brendan Burns и Joe Beda — глава 15: Extending Kubernetes
+- [Принципы проектирования API Kubernetes](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
 
-### Related Topics
-- [OpenAPI Schema](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#specifying-a-structural-schema)
-- [Default Values](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#defaulting)
-- [Validation Rules](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules)
+### Смежные темы
+- [Схема OpenAPI](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#specifying-a-structural-schema)
+- [Значения по умолчанию](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#defaulting)
+- [Правила валидации](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you know how to design APIs, let's implement the reconciliation logic that uses them.
+Теперь, когда вы знаете, как проектировать API, давайте реализуем логику согласования, которая их использует.
 
-**Navigation:** [← Previous: Controller Runtime](01-controller-runtime.md) | [Module Overview](../README.md) | [Next: Reconciliation Logic →](03-reconciliation-logic.md)
+**Навигация:** [← Предыдущий: Controller Runtime](01-controller-runtime.md) | [Обзор модуля](../README.md) | [Далее: Логика согласования →](03-reconciliation-logic.md)

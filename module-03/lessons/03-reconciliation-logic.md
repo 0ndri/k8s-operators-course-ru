@@ -2,54 +2,54 @@
 layout: default
 title: "03.3 Reconciliation Logic"
 nav_order: 3
-parent: "Module 3: Building Custom Controllers"
-grand_parent: Modules
+parent: "Модуль 3: Создание кастомных контроллеров"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 3.3: Implementing Reconciliation Logic
+# Урок 3.3: Реализация логики согласования
 
-**Navigation:** [← Previous: Designing Your API](02-designing-api.md) | [Module Overview](../README.md) | [Next: Working with Client-Go →](04-client-go.md)
+**Навигация:** [← Предыдущий: Проектирование вашего API](02-designing-api.md) | [Обзор модуля](../README.md) | [Далее: Работа с Client-Go →](04-client-go.md)
 
-## Introduction
+## Введение
 
-Now that you understand controller-runtime ([Lesson 3.1](01-controller-runtime.md)) and API design ([Lesson 3.2](02-designing-api.md)), it's time to implement robust reconciliation logic. This is where your operator's business logic lives - the code that makes desired state match actual state.
+Теперь, когда вы понимаете controller-runtime ([Урок 3.1](01-controller-runtime.md)) и проектирование API ([Урок 3.2](02-designing-api.md)), пришло время реализовать надёжную логику согласования. Именно здесь живёт бизнес-логика вашего оператора — код, который приводит фактическое состояние в соответствие с желаемым.
 
-## Theory: Reconciliation Logic
+## Теория: логика согласования
 
-Reconciliation is the process of continuously ensuring actual state matches desired state. It's the heart of every controller and operator.
+Согласование (reconciliation) — это процесс непрерывного обеспечения соответствия фактического состояния желаемому. Это сердце каждого контроллера и оператора.
 
-### Core Concepts
+### Основные концепции
 
-**Reconciliation Loop:**
-- Continuously compares desired vs actual
-- Takes corrective actions when they differ
-- Updates status to reflect current state
-- Runs until desired == actual
+**Цикл согласования:**
+- Непрерывно сравнивает желаемое и фактическое состояние
+- Предпринимает корректирующие действия при расхождении
+- Обновляет статус, отражая текущее состояние
+- Работает, пока желаемое не станет равно фактическому
 
-**Idempotency:**
-- Same input → same output
-- Safe to run multiple times
-- Enables retries and recovery
-- Critical for reliability
+**Идемпотентность:**
+- Тот же вход → тот же выход
+- Безопасно запускать многократно
+- Обеспечивает повторы и восстановление
+- Критична для надёжности
 
-**Owner References:**
-- Link child resources to parent
-- Enable garbage collection
-- Track resource relationships
-- Maintain resource hierarchy
+**Ссылки-владельцы (Owner References):**
+- Связывают дочерние ресурсы с родительским
+- Обеспечивают сборку мусора (garbage collection)
+- Отслеживают связи между ресурсами
+- Поддерживают иерархию ресурсов
 
-**Why Reconciliation Matters:**
-- **Reliability**: Handles failures and retries
-- **Consistency**: Ensures state matches desired
-- **Resilience**: Recovers from partial failures
-- **Simplicity**: Single pattern for all operations
+**Почему согласование важно:**
+- **Надёжность**: обрабатывает сбои и повторы
+- **Согласованность**: обеспечивает соответствие состояния желаемому
+- **Отказоустойчивость**: восстанавливается после частичных сбоев
+- **Простота**: единый паттерн для всех операций
 
-Understanding reconciliation helps you build robust, reliable operators.
+Понимание согласования помогает создавать надёжные и устойчивые операторы.
 
-## Reconciliation Loop Lifecycle
+## Жизненный цикл цикла согласования
 
-The reconciliation loop follows this lifecycle:
+Цикл согласования следует такому жизненному циклу:
 
 ```mermaid
 graph TB
@@ -68,9 +68,9 @@ graph TB
     style CREATE fill:#FFB6C1
 ```
 
-## Reading Cluster State
+## Чтение состояния кластера
 
-First, you need to read the current state:
+Сначала нужно прочитать текущее состояние:
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -98,9 +98,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Creating Resources
+## Создание ресурсов
 
-When resources don't exist, create them:
+Когда ресурсов не существует, создайте их:
 
 ```mermaid
 sequenceDiagram
@@ -123,7 +123,7 @@ sequenceDiagram
     Client-->>Reconcile: Success
 ```
 
-### Creation Pattern
+### Паттерн создания
 
 ```go
 // Check if StatefulSet exists
@@ -152,9 +152,9 @@ if errors.IsNotFound(err) {
 }
 ```
 
-## Updating Resources
+## Обновление ресурсов
 
-When resources exist but differ, update them:
+Когда ресурсы существуют, но отличаются, обновите их:
 
 ```mermaid
 sequenceDiagram
@@ -172,7 +172,7 @@ sequenceDiagram
     API-->>Client: Updated
 ```
 
-### Update Pattern
+### Паттерн обновления
 
 ```go
 // Get current StatefulSet
@@ -198,9 +198,9 @@ if !reflect.DeepEqual(currentStatefulSet.Spec, desiredStatefulSet.Spec) {
 }
 ```
 
-## Owner References
+## Ссылки-владельцы (Owner References)
 
-Owner references ensure resources are deleted when the parent is deleted:
+Ссылки-владельцы гарантируют, что ресурсы удаляются при удалении родителя:
 
 ```mermaid
 graph TB
@@ -217,7 +217,7 @@ graph TB
     style DELETE fill:#FFB6C1
 ```
 
-### Setting Owner References
+### Установка ссылок-владельцев
 
 ```go
 // Set owner reference on child resource
@@ -228,9 +228,9 @@ if err := ctrl.SetControllerReference(db, statefulSet, r.Scheme); err != nil {
 // Now when Database is deleted, StatefulSet is automatically deleted
 ```
 
-## Idempotency
+## Идемпотентность
 
-Reconciliation must be **idempotent** - running it multiple times should have the same effect:
+Согласование должно быть **идемпотентным** — многократный запуск должен давать один и тот же результат:
 
 ```mermaid
 graph LR
@@ -243,7 +243,7 @@ graph LR
     style STATE2 fill:#FFB6C1
 ```
 
-### Ensuring Idempotency
+### Обеспечение идемпотентности
 
 ```go
 // Always check current state before acting
@@ -261,9 +261,9 @@ if errors.IsNotFound(err) {
 }
 ```
 
-## Complete Reconciliation Example
+## Полный пример согласования
 
-Here's a complete reconciliation function for a Database operator:
+Вот полная функция согласования для оператора Database:
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -332,9 +332,9 @@ func (r *DatabaseReconciler) reconcileStatefulSet(ctx context.Context, db *datab
 }
 ```
 
-## Error Handling
+## Обработка ошибок
 
-Handle errors appropriately:
+Обрабатывайте ошибки надлежащим образом:
 
 ```go
 // Transient error - retry
@@ -352,51 +352,51 @@ if isPermanentError(err) {
 return ctrl.Result{RequeueAfter: 5 * time.Second}, err
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Read** current state before acting
-- **Compare** desired vs actual
-- **Create** if missing
-- **Update** if different
-- Use **owner references** for lifecycle
-- Ensure **idempotency**
-- Handle **errors** appropriately
-- **Update status** to reflect state
+- **Читайте** текущее состояние перед действиями
+- **Сравнивайте** желаемое и фактическое
+- **Создавайте**, если отсутствует
+- **Обновляйте**, если отличается
+- Используйте **ссылки-владельцы** для управления жизненным циклом
+- Обеспечивайте **идемпотентность**
+- Обрабатывайте **ошибки** надлежащим образом
+- **Обновляйте статус**, отражая состояние
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When implementing reconciliation:
-- Always check current state first
-- Build desired state from spec
-- Compare before updating
-- Set owner references
-- Make it idempotent
-- Handle errors gracefully
-- Update status
+При реализации согласования:
+- Всегда сначала проверяйте текущее состояние
+- Стройте желаемое состояние из spec
+- Сравнивайте перед обновлением
+- Устанавливайте ссылки-владельцы
+- Делайте согласование идемпотентным
+- Аккуратно обрабатывайте ошибки
+- Обновляйте статус
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 3.3: Building PostgreSQL Operator](../labs/lab-03-reconciliation-logic.md) - Hands-on exercises for this lesson
+- [Лабораторная 3.3: Создание оператора PostgreSQL](../labs/lab-03-reconciliation-logic.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Controller Pattern](https://kubernetes.io/docs/concepts/architecture/controller/)
-- [Owner References](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
-- [Garbage Collection](https://kubernetes.io/docs/concepts/architecture/garbage-collection/)
+### Официальная документация
+- [Паттерн контроллера](https://kubernetes.io/docs/concepts/architecture/controller/)
+- [Ссылки-владельцы](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
+- [Сборка мусора](https://kubernetes.io/docs/concepts/architecture/garbage-collection/)
 
-### Further Reading
-- **Kubernetes: Up and Running** by Kelsey Hightower, Brendan Burns, and Joe Beda - Chapter 4: Common kubectl Commands
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 2: The Kubernetes API
-- [Reconciliation in Kubernetes](https://kubernetes.io/docs/concepts/architecture/controller/#reconciliation)
+### Дополнительное чтение
+- **Kubernetes: Up and Running**, Kelsey Hightower, Brendan Burns и Joe Beda — глава 4: Common kubectl Commands
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 2: The Kubernetes API
+- [Согласование в Kubernetes](https://kubernetes.io/docs/concepts/architecture/controller/#reconciliation)
 
-### Related Topics
-- [Idempotency Patterns](https://kubernetes.io/docs/concepts/architecture/controller/#reconciliation)
-- [Resource Lifecycle](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
-- [Finalizers](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/)
+### Смежные темы
+- [Паттерны идемпотентности](https://kubernetes.io/docs/concepts/architecture/controller/#reconciliation)
+- [Жизненный цикл ресурсов](https://kubernetes.io/docs/concepts/overview/working-with-objects/)
+- [Финализаторы](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand reconciliation logic, let's learn advanced client operations for more sophisticated controllers.
+Теперь, когда вы понимаете логику согласования, давайте изучим продвинутые операции клиента для более совершенных контроллеров.
 
-**Navigation:** [← Previous: Designing Your API](02-designing-api.md) | [Module Overview](../README.md) | [Next: Working with Client-Go →](04-client-go.md)
+**Навигация:** [← Предыдущий: Проектирование вашего API](02-designing-api.md) | [Обзор модуля](../README.md) | [Далее: Работа с Client-Go →](04-client-go.md)

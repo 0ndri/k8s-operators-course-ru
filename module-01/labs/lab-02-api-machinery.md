@@ -2,33 +2,33 @@
 layout: default
 title: "Lab 01.2: Api Machinery"
 nav_order: 12
-parent: "Module 1: Kubernetes Architecture"
-grand_parent: Modules
+parent: "Модуль 1: Архитектура Kubernetes"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 1.2: Working with the Kubernetes API
+# Лабораторная 1.2: Работа с API Kubernetes
 
-**Related Lesson:** [Lesson 1.2: Kubernetes API Machinery](../lessons/02-api-machinery.md)  
-**Navigation:** [← Previous Lab: Control Plane](lab-01-control-plane.md) | [Module Overview](../README.md) | [Next Lab: Controller Pattern →](lab-03-controller-pattern.md)
+**Связанный урок:** [Урок 1.2: Механизмы API Kubernetes](../lessons/02-api-machinery.md)  
+**Навигация:** [← Предыдущая лабораторная: Управляющий слой](lab-01-control-plane.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Паттерн контроллера →](lab-03-controller-pattern.md)
 
-## Objectives
+## Цели
 
-- Understand Kubernetes API structure
-- Discover API groups and versions
-- Make direct API calls
-- Understand resource structure (spec vs status)
-- Work with resource versions
+- Понять структуру API Kubernetes
+- Обнаружить группы и версии API
+- Выполнить прямые вызовы API
+- Разобраться в структуре ресурса (spec против status)
+- Поработать с версиями ресурсов
 
-## Prerequisites
+## Предварительные требования
 
-- Kind cluster running
-- kubectl configured
-- `jq` installed (optional, for JSON parsing)
+- Запущенный кластер kind
+- Настроенный kubectl
+- Установленный `jq` (опционально, для разбора JSON)
 
-## Exercise 1: API Discovery
+## Упражнение 1: обнаружение API
 
-### Task 1.1: Explore API Versions
+### Задача 1.1: исследование версий API
 
 ```bash
 # List all API versions
@@ -44,11 +44,11 @@ kubectl api-versions | grep "^v1$"
 kubectl api-versions | grep "^apps/"
 ```
 
-**Questions:**
-1. How many API groups are there?
-2. What's the difference between `/api/v1` and `/apis/apps/v1`?
+**Вопросы:**
+1. Сколько существует групп API?
+2. В чём разница между `/api/v1` и `/apis/apps/v1`?
 
-### Task 1.2: Discover API Resources
+### Задача 1.2: обнаружение ресурсов API
 
 ```bash
 # List all API resources
@@ -64,7 +64,7 @@ kubectl api-resources --api-group="apps"
 kubectl api-resources -o wide | head -20
 ```
 
-### Task 1.3: Explore API Group Details
+### Задача 1.3: изучение деталей группы API
 
 ```bash
 # Get apps API group information
@@ -77,9 +77,9 @@ kubectl get --raw /apis/apps/v1 | jq '.resources[].name'
 kubectl get --raw /apis/apps/v1 | jq '.resources[] | select(.name == "deployments")'
 ```
 
-## Exercise 2: Resource Structure
+## Упражнение 2: структура ресурса
 
-### Task 2.1: Examine Resource Structure
+### Задача 2.1: изучение структуры ресурса
 
 ```bash
 # Create a simple deployment
@@ -98,12 +98,12 @@ kubectl get deployment test-api -o jsonpath='{.spec}' | jq '.'
 kubectl get deployment test-api -o jsonpath='{.status}' | jq '.'
 ```
 
-**Observations:**
-1. What fields are in `spec`?
-2. What fields are in `status`?
-3. How do they differ?
+**Наблюдения:**
+1. Какие поля находятся в `spec`?
+2. Какие поля находятся в `status`?
+3. Чем они различаются?
 
-### Task 2.2: Compare Spec vs Status
+### Задача 2.2: сравнение spec и status
 
 ```bash
 # Get desired replicas (from spec)
@@ -125,9 +125,9 @@ kubectl get deployment test-api -o jsonpath='{.status.replicas}' && echo " (actu
 kubectl get deployment test-api -o jsonpath='{.status.readyReplicas}' && echo " (ready)"
 ```
 
-## Exercise 3: Direct API Calls
+## Упражнение 3: прямые вызовы API
 
-### Task 3.1: Start kubectl Proxy
+### Задача 3.1: запустите kubectl proxy
 
 ```bash
 # Start proxy
@@ -141,7 +141,7 @@ sleep 2
 curl http://localhost:8001/api/v1
 ```
 
-### Task 3.2: List Resources via API
+### Задача 3.2: получите список ресурсов через API
 
 ```bash
 # List namespaces
@@ -154,7 +154,7 @@ curl -s http://localhost:8001/api/v1/namespaces/default/pods | jq '.items[].meta
 curl -s http://localhost:8001/apis/apps/v1/namespaces/default/deployments | jq '.items[].metadata.name'
 ```
 
-### Task 3.3: Get Specific Resource
+### Задача 3.3: получите конкретный ресурс
 
 ```bash
 # Get the test-api deployment
@@ -163,7 +163,7 @@ curl -s http://localhost:8001/apis/apps/v1/namespaces/default/deployments/test-a
 curl -s http://localhost:8001/apis/apps/v1/namespaces/default/deployments/test-api | jq '.status'
 ```
 
-### Task 3.4: Create Resource via API
+### Задача 3.4: создайте ресурс через API
 
 ```bash
 # Create a pod via API
@@ -188,7 +188,7 @@ curl -X POST http://localhost:8001/api/v1/namespaces/default/pods \
 kubectl get pod api-pod
 ```
 
-### Task 3.5: Update Resource via API
+### Задача 3.5: обновите ресурс через API
 
 ```bash
 # Get current resource version
@@ -210,9 +210,9 @@ curl -X PATCH http://localhost:8001/api/v1/namespaces/default/pods/api-pod \
 kubectl get pod api-pod --show-labels
 ```
 
-## Exercise 4: Resource Versions
+## Упражнение 4: версии ресурсов
 
-### Task 4.1: Understand Resource Version
+### Задача 4.1: разберитесь в версии ресурса
 
 ```bash
 # Get resource version
@@ -227,7 +227,7 @@ kubectl get pod api-pod -o jsonpath='{.metadata.resourceVersion}'
 echo
 ```
 
-### Task 4.2: Optimistic Concurrency
+### Задача 4.2: оптимистичное управление конкурентным доступом
 
 ```bash
 # Get current resource version
@@ -261,9 +261,9 @@ curl -X PATCH http://localhost:8001/api/v1/namespaces/default/pods/api-pod \
   }" | jq '.metadata.labels'
 ```
 
-## Exercise 5: Subresources
+## Упражнение 5: подресурсы
 
-### Task 5.1: Status Subresource
+### Задача 5.1: подресурс status
 
 ```bash
 # Get status subresource
@@ -273,7 +273,7 @@ curl -s http://localhost:8001/api/v1/namespaces/default/pods/api-pod/status | jq
 curl -s http://localhost:8001/apis/apps/v1/namespaces/default/deployments/test-api/scale | jq '.'
 ```
 
-### Task 5.2: Scale via Subresource
+### Задача 5.2: масштабирование через подресурс
 
 ```bash
 # Get current scale
@@ -292,7 +292,7 @@ curl -X PATCH http://localhost:8001/apis/apps/v1/namespaces/default/deployments/
 kubectl get deployment test-api
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Stop proxy
@@ -303,21 +303,21 @@ kubectl delete deployment test-api
 kubectl delete pod api-pod
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Discovered API groups and versions
-- Explored resource structure (spec vs status)
-- Made direct API calls using kubectl proxy
-- Understood resource versions and optimistic concurrency
-- Worked with subresources (status, scale)
+В этой лабораторной вы:
+- Обнаружили группы и версии API
+- Изучили структуру ресурса (spec против status)
+- Выполнили прямые вызовы API с помощью kubectl proxy
+- Разобрались в версиях ресурсов и оптимистичном управлении конкурентным доступом
+- Поработали с подресурсами (status, scale)
 
-## Key Learnings
+## Ключевые уроки
 
-1. Kubernetes API is RESTful and organized into groups
-2. Resources have consistent structure: apiVersion, kind, metadata, spec, status
-3. Spec describes desired state, status describes actual state
-4. Resource versions enable optimistic concurrency control
-5. Subresources provide additional functionality (status, scale, exec, etc.)
+1. API Kubernetes построен по принципам REST и организован в группы
+2. Ресурсы имеют единообразную структуру: apiVersion, kind, metadata, spec, status
+3. Spec описывает желаемое состояние, status — фактическое
+4. Версии ресурсов обеспечивают оптимистичное управление конкурентным доступом
+5. Подресурсы предоставляют дополнительную функциональность (status, scale, exec и т. д.)
 
-**Navigation:** [← Previous Lab: Control Plane](lab-01-control-plane.md) | [Related Lesson](../lessons/02-api-machinery.md) | [Next Lab: Controller Pattern →](lab-03-controller-pattern.md)
+**Навигация:** [← Предыдущая лабораторная: Управляющий слой](lab-01-control-plane.md) | [Связанный урок](../lessons/02-api-machinery.md) | [Следующая лабораторная: Паттерн контроллера →](lab-03-controller-pattern.md)

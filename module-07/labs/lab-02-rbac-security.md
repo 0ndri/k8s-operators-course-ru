@@ -2,38 +2,38 @@
 layout: default
 title: "Lab 07.2: Rbac Security"
 nav_order: 12
-parent: "Module 7: Production Considerations"
-grand_parent: Modules
+parent: "Модуль 7: Подготовка к продакшену"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 7.2: Configuring RBAC
+# Лабораторная 7.2: Настройка RBAC
 
-**Related Lesson:** [Lesson 7.2: RBAC and Security](../lessons/02-rbac-security.md)  
-**Navigation:** [← Previous Lab: Packaging](lab-01-packaging-distribution.md) | [Module Overview](../README.md) | [Next Lab: HA →](lab-03-high-availability.md)
+**Связанный урок:** [Урок 7.2: RBAC и безопасность](../lessons/02-rbac-security.md)  
+**Навигация:** [← Предыдущая лабораторная: Упаковка](lab-01-packaging-distribution.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: HA →](lab-03-high-availability.md)
 
-## Objectives
+## Цели
 
-- Review and optimize RBAC permissions
-- Configure service accounts
-- Apply security best practices
-- Scan images for vulnerabilities
-- Configure Network Policies for operator isolation
+- Проверить и оптимизировать разрешения RBAC
+- Настроить service accounts
+- Применить лучшие практики безопасности
+- Просканировать образы на уязвимости
+- Настроить сетевые политики для изоляции оператора
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 7.1](lab-01-packaging-distribution.md)
-- Operator with generated RBAC
-- Understanding of RBAC concepts
-- Kind cluster created with `scripts/setup-kind-cluster.sh` (includes Calico CNI and Prometheus)
+- Завершение [Лабораторной 7.1](lab-01-packaging-distribution.md)
+- Оператор со сгенерированным RBAC
+- Понимание концепций RBAC
+- Кластер kind, созданный с помощью `scripts/setup-kind-cluster.sh` (включает CNI Calico и Prometheus)
 
-## Exercise 1: Review Generated RBAC
+## Упражнение 1: проверка сгенерированного RBAC
 
-Kubebuilder generates RBAC manifests automatically from markers in your controller code.
+Kubebuilder генерирует манифесты RBAC автоматически из маркеров в коде вашего контроллера.
 
-### Task 1.1: Review RBAC Markers in Controller
+### Задача 1.1: проверьте маркеры RBAC в контроллере
 
-First, examine your controller's RBAC markers:
+Сначала изучите маркеры RBAC вашего контроллера:
 
 ```bash
 # Navigate to your operator project
@@ -43,7 +43,7 @@ cd ~/postgres-operator
 grep -n "// +kubebuilder:rbac" internal/controller/database_controller.go
 ```
 
-You should see markers like:
+Вы должны увидеть маркеры вроде:
 
 ```go
 // +kubebuilder:rbac:groups=database.example.com,resources=databases,verbs=get;list;watch;create;update;patch;delete
@@ -54,7 +54,7 @@ You should see markers like:
 // +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch;create;update;patch;delete
 ```
 
-### Task 1.2: Generate and Review RBAC Manifests
+### Задача 1.2: сгенерируйте и проверьте манифесты RBAC
 
 ```bash
 # Generate RBAC manifests from markers
@@ -70,7 +70,7 @@ cat config/rbac/role_binding.yaml
 cat config/rbac/service_account.yaml
 ```
 
-### Task 1.3: Check for Overly Broad Permissions
+### Задача 1.3: проверьте наличие слишком широких разрешений
 
 ```bash
 # Look for wildcards that might indicate too broad permissions
@@ -79,20 +79,20 @@ grep -E "(verbs: \[\"\*\"\]|resources: \[\"\*\"\]|apiGroups: \[\"\*\"\])" config
 # If any are found, review and restrict the corresponding markers
 ```
 
-## Exercise 2: Optimize RBAC
+## Упражнение 2: оптимизация RBAC
 
-### Task 2.1: Audit Required Permissions
+### Задача 2.1: проаудируйте необходимые разрешения
 
-Review what resources your controller actually accesses:
+Проверьте, к каким ресурсам ваш контроллер действительно обращается:
 
 ```bash
 # Find all r.Get, r.Create, r.Update, r.Delete, r.List calls
 grep -E "r\.(Get|Create|Update|Delete|List|Patch)" internal/controller/database_controller.go
 ```
 
-### Task 2.2: Update RBAC Markers
+### Задача 2.2: обновите маркеры RBAC
 
-Edit your controller to match only the permissions actually needed:
+Отредактируйте контроллер так, чтобы он соответствовал только реально нужным разрешениям:
 
 ```go
 // internal/controller/database_controller.go
@@ -109,7 +109,7 @@ Edit your controller to match only the permissions actually needed:
 // Note: Consider if you need 'update;patch' for all resources
 ```
 
-### Task 2.3: Regenerate RBAC
+### Задача 2.3: перегенерируйте RBAC
 
 ```bash
 # Regenerate with optimized markers
@@ -121,26 +121,26 @@ cat config/rbac/role.yaml
 # Compare rules - they should be minimal
 ```
 
-## Exercise 3: Review Kubebuilder Security Configuration
+## Упражнение 3: проверка конфигурации безопасности Kubebuilder
 
-Kubebuilder generates security configuration by default. Let's review and enhance it.
+Kubebuilder генерирует конфигурацию безопасности по умолчанию. Проверим и улучшим её.
 
-### Task 3.1: Review Generated ServiceAccount
+### Задача 3.1: проверьте сгенерированный ServiceAccount
 
 ```bash
 # Kubebuilder creates ServiceAccount automatically
 cat config/rbac/service_account.yaml
 ```
 
-### Task 3.2: Review Deployment Security Context
+### Задача 3.2: проверьте контекст безопасности развёртывания
 
-Kubebuilder's generated deployment includes security contexts. Review them:
+Сгенерированное развёртывание kubebuilder включает контексты безопасности. Проверьте их:
 
 ```bash
 cat config/manager/manager.yaml
 ```
 
-Look for the security settings:
+Найдите настройки безопасности:
 
 ```yaml
 spec:
@@ -157,9 +157,9 @@ spec:
             - ALL
 ```
 
-### Task 3.3: Enhance Security Context (Optional)
+### Задача 3.3: усильте контекст безопасности (опционально)
 
-Add additional security hardening to `config/manager/manager.yaml`:
+Добавьте дополнительное усиление безопасности в `config/manager/manager.yaml`:
 
 ```yaml
 spec:
@@ -181,9 +181,9 @@ spec:
             - ALL
 ```
 
-## Exercise 4: Security Scanning
+## Упражнение 4: сканирование безопасности
 
-### Task 4.1: Install Trivy
+### Задача 4.1: установите Trivy
 
 ```bash
 # Install Trivy
@@ -192,7 +192,7 @@ brew install trivy  # macOS
 sudo apt-get install trivy  # Linux
 ```
 
-### Task 4.2: Scan Image
+### Задача 4.2: просканируйте образ
 
 ```bash
 # Scan image
@@ -204,9 +204,9 @@ trivy image -f json -o scan-report.json postgres-operator:latest
 # Fix high/critical vulnerabilities
 ```
 
-## Exercise 5: Apply Security Hardening
+## Упражнение 5: применение усиления безопасности
 
-### Task 5.1: Update Dockerfile
+### Задача 5.1: обновите Dockerfile
 
 ```dockerfile
 # Use distroless base
@@ -216,13 +216,13 @@ FROM gcr.io/distroless/static:nonroot
 USER 65532:65532
 ```
 
-## Exercise 5: Enable Network Policies
+## Упражнение 5: включение сетевых политик
 
-Kubebuilder already generates Network Policies for your operator! Let's review and enable them.
+Kubebuilder уже генерирует сетевые политики для вашего оператора! Проверим и включим их.
 
-### Task 5.1: Review Generated Network Policies
+### Задача 5.1: проверьте сгенерированные сетевые политики
 
-Kubebuilder creates network policies in `config/network-policy/`:
+Kubebuilder создаёт сетевые политики в `config/network-policy/`:
 
 ```bash
 cd ~/postgres-operator
@@ -237,19 +237,19 @@ cat config/network-policy/allow-metrics-traffic.yaml
 cat config/network-policy/allow-webhook-traffic.yaml
 ```
 
-**What Kubebuilder generates:**
+**Что генерирует Kubebuilder:**
 
-1. **`allow-metrics-traffic.yaml`** - Controls access to metrics endpoint:
-   - Only allows ingress from namespaces labeled `metrics: enabled`
-   - Restricts to port 8443 (HTTPS metrics)
+1. **`allow-metrics-traffic.yaml`** — контролирует доступ к эндпоинту метрик:
+   - Разрешает ingress только из пространств имён с меткой `metrics: enabled`
+   - Ограничивает портом 8443 (HTTPS-метрики)
 
-2. **`allow-webhook-traffic.yaml`** - Controls access to webhook server:
-   - Only allows ingress from namespaces labeled `webhook: enabled`
-   - Restricts to port 443 (webhook HTTPS)
+2. **`allow-webhook-traffic.yaml`** — контролирует доступ к серверу вебхуков:
+   - Разрешает ingress только из пространств имён с меткой `webhook: enabled`
+   - Ограничивает портом 443 (HTTPS вебхука)
 
-### Task 5.2: Understand the Network Policies
+### Задача 5.2: разберитесь в сетевых политиках
 
-Review the metrics policy:
+Просмотрите политику метрик:
 
 ```yaml
 # config/network-policy/allow-metrics-traffic.yaml
@@ -275,35 +275,35 @@ spec:
           protocol: TCP
 ```
 
-**Key points:**
-- Applies to pods with `control-plane: controller-manager` label
-- Only allows ingress (incoming traffic)
-- Requires source namespace to have `metrics: enabled` label
-- This means Prometheus must run in a labeled namespace to scrape metrics
+**Ключевые моменты:**
+- Применяется к подам с меткой `control-plane: controller-manager`
+- Разрешает только ingress (входящий трафик)
+- Требует, чтобы у пространства имён-источника была метка `metrics: enabled`
+- Это означает, что Prometheus должен работать в помеченном пространстве имён, чтобы собирать метрики
 
-### Task 5.3: Enable Network Policies in Kustomization
+### Задача 5.3: включите сетевые политики в Kustomization
 
-Network policies are commented out by default. Enable them:
+Сетевые политики по умолчанию закомментированы. Включите их:
 
 ```bash
 # View the current kustomization
 cat config/default/kustomization.yaml | grep -A 5 "NETWORK POLICY"
 ```
 
-You'll see:
+Вы увидите:
 ```yaml
 # [NETWORK POLICY] Protect the /metrics endpoint and Webhook Server with NetworkPolicy.
 #- ../network-policy
 ```
 
-Edit `config/default/kustomization.yaml` and uncomment the network-policy line:
+Отредактируйте `config/default/kustomization.yaml` и раскомментируйте строку network-policy:
 
 ```yaml
 # [NETWORK POLICY] Protect the /metrics endpoint and Webhook Server with NetworkPolicy.
 - ../network-policy
 ```
 
-### Task 5.4: Deploy with Network Policies
+### Задача 5.4: разверните с сетевыми политиками
 
 ```bash
 # For Docker: Deploy the operator with network policies enabled
@@ -323,18 +323,18 @@ kubectl get networkpolicy -n postgres-operator-system
 kubectl describe networkpolicy -n postgres-operator-system
 ```
 
-Expected output:
+Ожидаемый вывод:
 ```
 NAME                    POD-SELECTOR                                                    AGE
 allow-metrics-traffic   app.kubernetes.io/name=postgres-operator,control-plane=...     10s
 allow-webhook-traffic   app.kubernetes.io/name=postgres-operator,control-plane=...     10s
 ```
 
-### Task 5.5: Label Namespaces for Access
+### Задача 5.5: пометьте пространства имён метками для доступа
 
-For Prometheus to scrape metrics and webhooks to work, label the appropriate namespaces.
+Чтобы Prometheus мог собирать метрики, а вебхуки работали, пометьте соответствующие пространства имён.
 
-**Note:** If you used the course setup script (`scripts/setup-kind-cluster.sh`), the `monitoring` namespace is already labeled with `metrics=enabled`.
+**Примечание:** если вы использовали скрипт настройки курса (`scripts/setup-kind-cluster.sh`), пространство имён `monitoring` уже помечено меткой `metrics=enabled`.
 
 ```bash
 # Check if monitoring namespace already has the label
@@ -350,18 +350,18 @@ kubectl label namespace default webhook=enabled
 kubectl get namespaces --show-labels | grep -E "(metrics|webhook)"
 ```
 
-### Task 5.6: Enable ServiceMonitor for Prometheus
+### Задача 5.6: включите ServiceMonitor для Prometheus
 
-Kubebuilder generates a `ServiceMonitor` in `config/prometheus/` that tells Prometheus how to scrape your operator's metrics. It's disabled by default.
+Kubebuilder генерирует `ServiceMonitor` в `config/prometheus/`, который указывает Prometheus, как собирать метрики вашего оператора. По умолчанию он отключён.
 
-#### Step 1: Review the Generated ServiceMonitor
+#### Шаг 1: проверьте сгенерированный ServiceMonitor
 
 ```bash
 # View the kubebuilder-generated ServiceMonitor
 cat config/prometheus/monitor.yaml
 ```
 
-You'll see:
+Вы увидите:
 ```yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -380,26 +380,26 @@ spec:
       control-plane: controller-manager
 ```
 
-#### Step 2: Enable the ServiceMonitor
+#### Шаг 2: включите ServiceMonitor
 
-Edit `config/default/kustomization.yaml` and uncomment the prometheus line:
+Отредактируйте `config/default/kustomization.yaml` и раскомментируйте строку prometheus:
 
 ```bash
 # Find the PROMETHEUS section
 grep -n "PROMETHEUS" config/default/kustomization.yaml
 ```
 
-Uncomment `- ../prometheus`:
+Раскомментируйте `- ../prometheus`:
 ```yaml
 # [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.
 - ../prometheus  # <-- Uncomment this line
 ```
 
-#### Step 3: Grant Prometheus RBAC Access to Metrics
+#### Шаг 3: предоставьте Prometheus доступ RBAC к метрикам
 
-**Important:** The operator's metrics endpoint requires authentication AND authorization. By default, only the controller-manager ServiceAccount has access. We need to grant Prometheus access too.
+**Важно:** эндпоинт метрик оператора требует аутентификации И авторизации. По умолчанию доступ есть только у ServiceAccount контроллера-менеджера. Нужно предоставить доступ и Prometheus.
 
-Create `config/rbac/metrics_reader_prometheus_binding.yaml`:
+Создайте `config/rbac/metrics_reader_prometheus_binding.yaml`:
 
 ```yaml
 # config/rbac/metrics_reader_prometheus_binding.yaml
@@ -421,7 +421,7 @@ subjects:
   namespace: monitoring
 ```
 
-Add it to `config/rbac/kustomization.yaml`:
+Добавьте его в `config/rbac/kustomization.yaml`:
 
 ```yaml
 resources:
@@ -438,7 +438,7 @@ resources:
 # ... rest of file
 ```
 
-#### Step 4: Redeploy with ServiceMonitor and RBAC
+#### Шаг 4: переразверните с ServiceMonitor и RBAC
 
 ```bash
 # Regenerate manifests to include the new RBAC binding
@@ -457,20 +457,20 @@ kubectl get servicemonitor -n postgres-operator-system
 kubectl get clusterrolebinding | grep metrics-reader
 ```
 
-Expected output:
+Ожидаемый вывод:
 ```
 NAME                                              AGE
 postgres-operator-metrics-reader-prometheus       10s
 postgres-operator-metrics-reader-rolebinding      10s
 ```
 
-**Note:** The course setup script (`scripts/setup-kind-cluster.sh`) configures Prometheus to discover ServiceMonitors from all namespaces without requiring specific labels. If you're using a different Prometheus installation, you may need to add `release: prometheus` label to your ServiceMonitor.
+**Примечание:** скрипт настройки курса (`scripts/setup-kind-cluster.sh`) настраивает Prometheus на обнаружение ServiceMonitor из всех пространств имён без требования конкретных меток. Если вы используете другую установку Prometheus, возможно, придётся добавить метку `release: prometheus` к вашему ServiceMonitor.
 
-### Task 5.7: Verify Prometheus Can Scrape Metrics
+### Задача 5.7: убедитесь, что Prometheus может собирать метрики
 
-Now let's verify Prometheus is scraping your operator's metrics.
+Теперь давайте убедимся, что Prometheus собирает метрики вашего оператора.
 
-#### Step 1: Start Port-Forward to Prometheus
+#### Шаг 1: запустите port-forward к Prometheus
 
 ```bash
 # Start port-forward in background
@@ -481,21 +481,21 @@ PF_PID=$!
 echo "Port-forward PID: $PF_PID"
 ```
 
-#### Step 2: Open Prometheus UI
+#### Шаг 2: откройте UI Prometheus
 
-Open your browser and go to: **http://localhost:9090**
+Откройте браузер и перейдите по адресу: **http://localhost:9090**
 
-#### Step 3: Check if Your Operator Target is Being Scraped
+#### Шаг 3: проверьте, собирается ли цель вашего оператора
 
-1. In Prometheus UI, click **Status** → **Targets** in the top menu
-2. Look for a target with `serviceMonitor/postgres-operator-system/` in the name
-3. The **State** should show `UP` (green)
+1. В UI Prometheus нажмите **Status** → **Targets** в верхнем меню
+2. Найдите цель с `serviceMonitor/postgres-operator-system/` в имени
+3. **State** должен показывать `UP` (зелёный)
 
-If the target doesn't appear or shows `DOWN`, check:
-- Is the ServiceMonitor deployed? (`kubectl get servicemonitor -n postgres-operator-system`)
-- Is the monitoring namespace labeled? (`kubectl get ns monitoring --show-labels`)
-- Are network policies blocking access?
-- Is Prometheus configured to discover all ServiceMonitors?
+Если цель не появляется или показывает `DOWN`, проверьте:
+- Развёрнут ли ServiceMonitor? (`kubectl get servicemonitor -n postgres-operator-system`)
+- Помечено ли пространство имён monitoring? (`kubectl get ns monitoring --show-labels`)
+- Не блокируют ли доступ сетевые политики?
+- Настроен ли Prometheus на обнаружение всех ServiceMonitor?
 
 ```bash
 # Check if Prometheus discovers all ServiceMonitors (should be empty selector)
@@ -506,31 +506,31 @@ kubectl get prometheus -n monitoring -o jsonpath='{.items[0].spec.serviceMonitor
 # or add 'release: prometheus' label to your ServiceMonitor
 ```
 
-#### Step 4: Query Operator Metrics
+#### Шаг 4: запросите метрики оператора
 
-1. Go back to the main Prometheus page (click **Prometheus** logo or **Graph**)
-2. In the **Expression** input box, type one of these queries:
+1. Вернитесь на главную страницу Prometheus (нажмите логотип **Prometheus** или **Graph**)
+2. В поле ввода **Expression** введите один из этих запросов:
    
    ```promql
    controller_runtime_reconcile_total
    ```
    
-3. Click the **Execute** button (or press Enter)
-4. Click the **Graph** tab to see a time-series visualization
+3. Нажмите кнопку **Execute** (или Enter)
+4. Нажмите вкладку **Graph**, чтобы увидеть визуализацию временны́х рядов
 
-**Common operator metrics to explore:**
+**Распространённые метрики оператора для изучения:**
 
-| Metric | Description |
+| Метрика | Описание |
 |--------|-------------|
-| `controller_runtime_reconcile_total` | Total reconciliations by controller and result |
-| `controller_runtime_reconcile_errors_total` | Total reconciliation errors |
-| `controller_runtime_reconcile_time_seconds` | Time spent in reconciliation |
-| `workqueue_depth` | Current depth of the work queue |
-| `workqueue_adds_total` | Total items added to the queue |
+| `controller_runtime_reconcile_total` | Всего согласований по контроллеру и результату |
+| `controller_runtime_reconcile_errors_total` | Всего ошибок согласования |
+| `controller_runtime_reconcile_time_seconds` | Время, затраченное на согласование |
+| `workqueue_depth` | Текущая глубина рабочей очереди |
+| `workqueue_adds_total` | Всего элементов, добавленных в очередь |
 
-#### Step 5: Example Queries to Try
+#### Шаг 5: примеры запросов для пробы
 
-Paste these into the Prometheus Expression box:
+Вставьте их в поле Expression Prometheus:
 
 ```promql
 # Reconciliation rate per second (last 5 minutes)
@@ -543,18 +543,18 @@ rate(controller_runtime_reconcile_errors_total[5m])
 histogram_quantile(0.99, rate(controller_runtime_reconcile_time_seconds_bucket[5m]))
 ```
 
-#### Step 6: Cleanup Port-Forward
+#### Шаг 6: очистка port-forward
 
 ```bash
 # Stop the port-forward
 pkill -f "port-forward.*9090"
 ```
 
-### Task 5.8: Test Network Policy Enforcement
+### Задача 5.8: протестируйте применение сетевой политики
 
-The course setup script installs **Calico CNI**, which enforces Network Policies. Let's verify it's working.
+Скрипт настройки курса устанавливает **Calico CNI**, который применяет сетевые политики. Проверим, что это работает.
 
-#### Step 1: Verify Calico is Running
+#### Шаг 1: убедитесь, что Calico запущен
 
 ```bash
 # Check Calico pods are running
@@ -565,7 +565,7 @@ kubectl get pods -n kube-system | grep calico
 # calico-node-xxx               1/1     Running
 ```
 
-#### Step 2: Test Access from Unlabeled Namespace
+#### Шаг 2: протестируйте доступ из непомеченного пространства имён
 
 ```bash
 # Create a test namespace WITHOUT the metrics=enabled label
@@ -579,7 +579,7 @@ kubectl run test-curl -n test-netpol --rm -it --image=curlimages/curl --restart=
 # Expected: curl: (28) Connection timed out or similar error
 ```
 
-#### Step 3: Test Access from Labeled Namespace
+#### Шаг 3: протестируйте доступ из помеченного пространства имён
 
 ```bash
 # Label the test namespace to allow metrics access
@@ -592,15 +592,15 @@ kubectl run test-curl2 -n test-netpol --rm -it --image=curlimages/curl --restart
 # Expected: Metrics output (or 401 Unauthorized if auth is required, but connection succeeds)
 ```
 
-#### Step 4: Cleanup
+#### Шаг 4: очистка
 
 ```bash
 kubectl delete namespace test-netpol
 ```
 
-**Key takeaway:** Network Policies enforce that only pods in namespaces with `metrics=enabled` label can access the metrics endpoint. This is defense in depth!
+**Ключевой вывод:** сетевые политики обеспечивают, что только поды в пространствах имён с меткой `metrics=enabled` могут получить доступ к эндпоинту метрик. Это эшелонированная защита!
 
-## Cleanup
+## Очистка
 
 ```bash
 # Undeploy operator (this also removes the network policy)
@@ -613,45 +613,45 @@ kubectl delete networkpolicy controller-manager -n postgres-operator-system
 make uninstall
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Reviewed RBAC markers in kubebuilder controllers
-- Generated and reviewed RBAC manifests with `make manifests`
-- Optimized RBAC permissions using least privilege
-- Reviewed kubebuilder's security configurations
-- Scanned images for vulnerabilities with Trivy
-- Enhanced security hardening with security contexts
-- Enabled kubebuilder-generated Network Policies
-- Labeled namespaces to allow metrics and webhook traffic
-- Enabled ServiceMonitor for Prometheus scraping
-- Verified metrics collection in Prometheus UI
+В этой лабораторной вы:
+- Проверили маркеры RBAC в контроллерах kubebuilder
+- Сгенерировали и проверили манифесты RBAC с помощью `make manifests`
+- Оптимизировали разрешения RBAC по принципу наименьших привилегий
+- Проверили конфигурации безопасности kubebuilder
+- Просканировали образы на уязвимости с помощью Trivy
+- Усилили безопасность с помощью контекстов безопасности
+- Включили сетевые политики, сгенерированные kubebuilder
+- Пометили пространства имён метками для разрешения трафика метрик и вебхуков
+- Включили ServiceMonitor для сбора метрик Prometheus
+- Проверили сбор метрик в UI Prometheus
 
-## Key Learnings
+## Ключевые уроки
 
-1. RBAC is generated from markers via `make manifests`
-2. Review `config/rbac/role.yaml` for generated permissions
-3. Minimize markers to match actual controller needs
-4. Kubebuilder includes security contexts by default
-5. Scan images regularly with Trivy or similar tools
-6. **Kubebuilder generates Network Policies** in `config/network-policy/`
-7. Enable network policies by uncommenting `../network-policy` in kustomization
-8. Label namespaces with `metrics: enabled` or `webhook: enabled` to allow access
-9. **Kubebuilder generates ServiceMonitor** in `config/prometheus/` - enable it!
-10. **Grant Prometheus RBAC access** to the metrics endpoint (Step 3 above)
-11. Use Prometheus UI **Status → Targets** to verify scraping is working
-12. The course setup script configures Prometheus to discover all ServiceMonitors
-13. The distroless base image is already used by kubebuilder
-14. Network Policies require a CNI that supports them (Calico)
+1. RBAC генерируется из маркеров через `make manifests`
+2. Проверяйте `config/rbac/role.yaml` на сгенерированные разрешения
+3. Минимизируйте маркеры под реальные нужды контроллера
+4. Kubebuilder по умолчанию включает контексты безопасности
+5. Регулярно сканируйте образы с помощью Trivy или аналогичных инструментов
+6. **Kubebuilder генерирует сетевые политики** в `config/network-policy/`
+7. Включайте сетевые политики, раскомментировав `../network-policy` в kustomization
+8. Помечайте пространства имён метками `metrics: enabled` или `webhook: enabled` для разрешения доступа
+9. **Kubebuilder генерирует ServiceMonitor** в `config/prometheus/` — включите его!
+10. **Предоставьте Prometheus доступ RBAC** к эндпоинту метрик (шаг 3 выше)
+11. Используйте **Status → Targets** в UI Prometheus, чтобы убедиться, что сбор работает
+12. Скрипт настройки курса настраивает Prometheus на обнаружение всех ServiceMonitor
+13. Базовый образ distroless уже используется kubebuilder
+14. Сетевые политики требуют CNI, который их поддерживает (Calico)
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [RBAC Configuration](../solutions/rbac.yaml) - Optimized RBAC with least privilege
-- [Security Configuration](../solutions/security.yaml) - Security contexts, network policies
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [RBAC Configuration](../solutions/rbac.yaml) — оптимизированный RBAC по принципу наименьших привилегий
+- [Security Configuration](../solutions/security.yaml) — контексты безопасности, сетевые политики
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's implement high availability!
+Теперь давайте реализуем высокую доступность!
 
-**Navigation:** [← Previous Lab: Packaging](lab-01-packaging-distribution.md) | [Related Lesson](../lessons/02-rbac-security.md) | [Next Lab: HA →](lab-03-high-availability.md)
+**Навигация:** [← Предыдущая лабораторная: Упаковка](lab-01-packaging-distribution.md) | [Связанный урок](../lessons/02-rbac-security.md) | [Следующая лабораторная: HA →](lab-03-high-availability.md)

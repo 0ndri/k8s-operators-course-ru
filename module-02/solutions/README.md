@@ -1,36 +1,35 @@
-# Module 2 Solutions
+# Решения Модуля 2
 
-This directory contains complete, working solutions for Module 2 labs.
+Этот каталог содержит полные рабочие решения для лабораторных Модуля 2.
 
-## Files
+## Файлы
 
-- [**hello-world-operator-main.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-02/solutions/hello-world-operator-main.go): Complete main.go for Hello World operator
-- [**hello-world-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-02/solutions/hello-world-controller.go): Complete controller implementation
-- [**hello-world-types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-02/solutions/hello-world-types.go): Complete API type definitions
+- [**hello-world-operator-main.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-02/solutions/hello-world-operator-main.go): полный main.go для оператора Hello World
+- [**hello-world-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-02/solutions/hello-world-controller.go): полная реализация контроллера
+- [**hello-world-types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-02/solutions/hello-world-types.go): полные определения типов API
 
-## Usage
+## Использование
 
-These solutions can be used as:
-- Reference when building your first operator
-- Starting point if you get stuck
-- Examples of kubebuilder patterns
+Эти решения можно использовать как:
+- Справочный материал при создании вашего первого оператора
+- Отправную точку, если вы застряли
+- Примеры паттернов kubebuilder
 
-## Integration
+## Интеграция
 
-To use these solutions:
+Чтобы использовать эти решения:
 
-1. Create a new kubebuilder project: `kubebuilder init --domain example.com --repo github.com/example/hello-world-operator`
-2. Create the API: `kubebuilder create api --group hello --version v1 --kind HelloWorld`
-3. Replace generated files with these solutions
-4. Run `make generate` and `make manifests`
-5. Install CRD: `make install`
-6. Run operator: `make run`
+1. Создайте новый проект kubebuilder: `kubebuilder init --domain example.com --repo github.com/example/hello-world-operator`
+2. Создайте API: `kubebuilder create api --group hello --version v1 --kind HelloWorld`
+3. Замените сгенерированные файлы этими решениями
+4. Запустите `make generate` и `make manifests`
+5. Установите CRD: `make install`
+6. Запустите оператор: `make run`
 
-## Notes
+## Примечания
 
-- These are complete, working examples
-- They follow kubebuilder best practices
-- Owner references are properly set
-- Status updates are implemented
-- Ready for Module 3 enhancements
-
+- Это полные рабочие примеры
+- Они следуют лучшим практикам kubebuilder
+- Ссылки-владельцы установлены корректно
+- Обновления статуса реализованы
+- Готовы к доработкам из Модуля 3

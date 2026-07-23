@@ -1,110 +1,109 @@
 ---
 layout: default
-title: "Module 5: Webhooks & Admission Control"
+title: "Модуль 5: Вебхуки и контроль допуска"
 nav_order: 5
-parent: Modules
+parent: Модули
 has_children: true
 has_toc: false
 permalink: /module-05/
 mermaid: true
 ---
 
-# Module 5: Webhooks and Admission Control
+# Модуль 5: Вебхуки и контроль допуска
 
-## Overview
+## Обзор
 
-Now that you can build sophisticated operators ([Module 4](../module-04/README.md)), it's time to add webhooks for validation and mutation. Webhooks allow you to validate and modify resources before they're stored in etcd, providing powerful control over your Custom Resources.
+Теперь, когда вы умеете создавать совершенные операторы ([Модуль 4](../module-04/README.md)), пришло время добавить вебхуки для валидации и мутации. Вебхуки позволяют валидировать и изменять ресурсы до их сохранения в etcd, обеспечивая мощный контроль над вашими пользовательскими ресурсами.
 
-**Duration:** 5-6 hours  
-**Prerequisites:** 
-- Completion of [Module 1: Kubernetes Architecture Deep Dive](../module-01/README.md)
-- Completion of [Module 2: Introduction to Operators](../module-02/README.md)
-- Completion of [Module 3: Building Custom Controllers](../module-03/README.md)
-- Completion of [Module 4: Advanced Reconciliation Patterns](../module-04/README.md)
-- Understanding of API design and validation
+**Продолжительность:** 5–6 часов  
+**Предварительные требования:** 
+- Завершение [Модуля 1: Глубокое погружение в архитектуру Kubernetes](../module-01/README.md)
+- Завершение [Модуля 2: Введение в операторы](../module-02/README.md)
+- Завершение [Модуля 3: Создание кастомных контроллеров](../module-03/README.md)
+- Завершение [Модуля 4: Продвинутые паттерны согласования](../module-04/README.md)
+- Понимание проектирования API и валидации
 
-## Learning Objectives
+## Цели обучения
 
-By the end of this module, you will:
+К концу этого модуля вы:
 
-- Understand Kubernetes admission control and webhooks
-- Implement validating webhooks for custom validation
-- Implement mutating webhooks for defaulting and mutation
-- Manage webhook certificates and deployment
-- Test webhooks locally and in production
+- Разберётесь в контроле допуска (admission control) Kubernetes и вебхуках
+- Реализуете валидирующие вебхуки для пользовательской валидации
+- Реализуете мутирующие вебхуки для установки значений по умолчанию и мутации
+- Научитесь управлять сертификатами вебхуков и их развёртыванием
+- Протестируете вебхуки локально и в продакшене
 
-## Module Structure
+## Структура модуля
 
-1. **[Lesson 5.1: Kubernetes Admission Control](lessons/01-admission-control.md)**
-   - [Lab 5.1: Exploring Admission Control](labs/lab-01-admission-control.md)
+1. **[Урок 5.1: Контроль допуска в Kubernetes](lessons/01-admission-control.md)**
+   - [Лабораторная 5.1: Исследование контроля допуска](labs/lab-01-admission-control.md)
 
-2. **[Lesson 5.2: Implementing Validating Webhooks](lessons/02-validating-webhooks.md)**
-   - [Lab 5.2: Building Validating Webhook](labs/lab-02-validating-webhooks.md)
+2. **[Урок 5.2: Реализация валидирующих вебхуков](lessons/02-validating-webhooks.md)**
+   - [Лабораторная 5.2: Создание валидирующего вебхука](labs/lab-02-validating-webhooks.md)
 
-3. **[Lesson 5.3: Implementing Mutating Webhooks](lessons/03-mutating-webhooks.md)**
-   - [Lab 5.3: Building Mutating Webhook](labs/lab-03-mutating-webhooks.md)
+3. **[Урок 5.3: Реализация мутирующих вебхуков](lessons/03-mutating-webhooks.md)**
+   - [Лабораторная 5.3: Создание мутирующего вебхука](labs/lab-03-mutating-webhooks.md)
 
-4. **[Lesson 5.4: Webhook Deployment and Certificates](lessons/04-webhook-deployment.md)**
-   - [Lab 5.4: Certificate Management](labs/lab-04-webhook-deployment.md)
+4. **[Урок 5.4: Развёртывание вебхуков и сертификаты](lessons/04-webhook-deployment.md)**
+   - [Лабораторная 5.4: Управление сертификатами](labs/lab-04-webhook-deployment.md)
 
-## Prerequisites Check
+## Проверка предварительных требований
 
-Before starting, ensure you've completed:
+Перед началом убедитесь, что вы завершили:
 
-- ✅ [Module 4](../module-04/README.md): Enhanced operator with conditions and finalizers
-- ✅ Understand API design from [Lesson 3.2](../module-03/lessons/02-designing-api.md)
-- ✅ Have a working operator from Module 3/4
-- ✅ Understand CRD validation from [Lesson 1.4](../module-01/lessons/04-custom-resources.md)
+- ✅ [Модуль 4](../module-04/README.md): усовершенствовали оператор с условиями и финализаторами
+- ✅ Понимаете проектирование API из [Урока 3.2](../module-03/lessons/02-designing-api.md)
+- ✅ Имеете рабочий оператор из Модулей 3/4
+- ✅ Понимаете валидацию CRD из [Урока 1.4](../module-01/lessons/04-custom-resources.md)
 
-If you haven't completed Module 4, start with [Module 4: Advanced Reconciliation Patterns](../module-04/README.md).
+Если вы не завершили Модуль 4, начните с [Модуля 4: Продвинутые паттерны согласования](../module-04/README.md).
 
-## What You'll Build
+## Что вы создадите
 
-Throughout this module, you'll add webhooks to your Database operator:
+На протяжении этого модуля вы добавите вебхуки в свой оператор Database:
 
-- Validating webhook for custom validation rules
-- Mutating webhook for defaulting values
-- Certificate management for webhook security
-- Local testing setup for webhook development
+- Валидирующий вебхук для пользовательских правил валидации
+- Мутирующий вебхук для установки значений по умолчанию
+- Управление сертификатами для безопасности вебхуков
+- Настройку локального тестирования для разработки вебхуков
 
-## Setup
+## Настройка
 
-Before starting this module:
+Перед началом этого модуля:
 
-1. **Have your Database operator from Module 3/4:**
-   - Should have a working operator
-   - API should be well-defined
-   - Basic validation in CRD schema
+1. **Подготовьте свой оператор Database из Модулей 3/4:**
+   - Должен быть рабочий оператор
+   - API должен быть хорошо определён
+   - Базовая валидация в схеме CRD
 
-2. **Ensure development environment is ready:**
+2. **Убедитесь, что среда разработки готова:**
    ```bash
    ./scripts/setup-dev-environment.sh
    ```
 
-3. **Have a kind cluster running:**
+3. **Запущенный кластер kind:**
    ```bash
    ./scripts/setup-kind-cluster.sh
    ```
 
-## Hands-on Labs
+## Практические лабораторные работы
 
-Each lesson includes hands-on exercises that add webhooks to your operator.
+Каждый урок включает практические упражнения, которые добавляют вебхуки в ваш оператор.
 
-- [Lab 5.1: Exploring Admission Control](labs/lab-01-admission-control.md)
-- [Lab 5.2: Building Validating Webhook](labs/lab-02-validating-webhooks.md)
-- [Lab 5.3: Building Mutating Webhook](labs/lab-03-mutating-webhooks.md)
-- [Lab 5.4: Certificate Management](labs/lab-04-webhook-deployment.md)
+- [Лабораторная 5.1: Исследование контроля допуска](labs/lab-01-admission-control.md)
+- [Лабораторная 5.2: Создание валидирующего вебхука](labs/lab-02-validating-webhooks.md)
+- [Лабораторная 5.3: Создание мутирующего вебхука](labs/lab-03-mutating-webhooks.md)
+- [Лабораторная 5.4: Управление сертификатами](labs/lab-04-webhook-deployment.md)
 
-## Solutions
+## Решения
 
-Complete working solutions for all labs are available in the [solutions directory](solutions/):
-- [Lab 5.2 Solutions](solutions/validating-webhook.go) - Complete validating webhook
-- [Lab 5.3 Solutions](solutions/mutating-webhook.go) - Complete mutating webhook
+Полные рабочие решения для всех лабораторных доступны в [каталоге решений](solutions/):
+- [Решения лабораторной 5.2](solutions/validating-webhook.go) — полный валидирующий вебхук
+- [Решения лабораторной 5.3](solutions/mutating-webhook.go) — полный мутирующий вебхук
 
 
-## Navigation
+## Навигация
 
-- [← Previous: Module 4 - Advanced Reconciliation Patterns](../module-04/README.md)
-- [Course Overview](../README.md)
-- [Next: Module 6 - Testing and Debugging →](../module-06/README.md)
-
+- [← Предыдущий: Модуль 4 — Продвинутые паттерны согласования](../module-04/README.md)
+- [Обзор курса](../README.md)
+- [Далее: Модуль 6 — Тестирование и отладка →](../module-06/README.md)

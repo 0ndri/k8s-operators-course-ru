@@ -2,32 +2,32 @@
 layout: default
 title: "Lab 05.1: Admission Control"
 nav_order: 11
-parent: "Module 5: Webhooks & Admission Control"
-grand_parent: Modules
+parent: "Модуль 5: Вебхуки и контроль допуска"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 5.1: Exploring Admission Control
+# Лабораторная 5.1: Исследование контроля допуска
 
-**Related Lesson:** [Lesson 5.1: Kubernetes Admission Control](../lessons/01-admission-control.md)  
-**Navigation:** [Module Overview](../README.md) | [Next Lab: Validating Webhooks →](lab-02-validating-webhooks.md)
+**Связанный урок:** [Урок 5.1: Контроль допуска в Kubernetes](../lessons/01-admission-control.md)  
+**Навигация:** [Обзор модуля](../README.md) | [Следующая лабораторная: Валидирующие вебхуки →](lab-02-validating-webhooks.md)
 
-## Objectives
+## Цели
 
-- Explore existing admission controllers
-- Understand webhook configuration
-- Test webhook endpoints
-- Understand admission control flow
+- Изучить существующие контроллеры допуска
+- Понять конфигурацию вебхука
+- Протестировать эндпоинты вебхука
+- Понять процесс контроля допуска
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Module 4](../../module-04/README.md)
-- Kind cluster running
-- Understanding of admission control concepts
+- Завершение [Модуля 4](../../module-04/README.md)
+- Запущенный кластер kind
+- Понимание концепций контроля допуска
 
-## Exercise 1: Explore Built-in Admission Controllers
+## Упражнение 1: изучение встроенных контроллеров допуска
 
-### Task 1.1: List Admission Controllers
+### Задача 1.1: перечислите контроллеры допуска
 
 ```bash
 # Check API server admission plugins enabled
@@ -45,7 +45,7 @@ docker exec kind-control-plane cat /etc/kubernetes/manifests/kube-apiserver.yaml
 # See: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#which-plugins-are-enabled-by-default
 ```
 
-### Task 1.2: Test ResourceQuota Admission
+### Задача 1.2: протестируйте контроль допуска ResourceQuota
 
 ```bash
 # Create a namespace with quota
@@ -58,9 +58,9 @@ kubectl run test-pod --image=nginx:latest --namespace=quota-test --overrides='{"
 # Should be rejected by ResourceQuota admission controller
 ```
 
-## Exercise 2: Explore Webhook Configurations
+## Упражнение 2: изучение конфигураций вебхуков
 
-### Task 2.1: List Webhook Configurations
+### Задача 2.1: перечислите конфигурации вебхуков
 
 ```bash
 # List validating webhook configurations
@@ -73,9 +73,9 @@ kubectl get mutatingwebhookconfigurations
 kubectl get validatingwebhookconfiguration <name> -o yaml
 ```
 
-### Task 2.2: Examine Webhook Structure
+### Задача 2.2: изучите структуру вебхука
 
-If you have any webhooks installed (e.g., from cert-manager):
+Если у вас установлены какие-либо вебхуки (например, от cert-manager):
 
 ```bash
 # Get webhook configuration
@@ -87,11 +87,11 @@ kubectl get validatingwebhookconfiguration -o yaml | head -50
 # - Failure policy
 ```
 
-## Exercise 3: Understand Webhook Rules
+## Упражнение 3: понимание правил вебхука
 
-### Task 3.1: Analyze Rule Structure
+### Задача 3.1: проанализируйте структуру правила
 
-Create a sample webhook configuration to understand structure:
+Создайте пример конфигурации вебхука, чтобы понять структуру:
 
 ```bash
 # Create sample webhook config (won't work without service, but shows structure)
@@ -124,9 +124,9 @@ kubectl get validatingwebhookconfiguration example-webhook -o yaml
 kubectl delete validatingwebhookconfiguration example-webhook
 ```
 
-## Exercise 4: Test Admission Flow
+## Упражнение 4: тестирование процесса допуска
 
-### Task 4.1: Create Resource and Trace Flow
+### Задача 4.1: создайте ресурс и отследите процесс
 
 ```bash
 # Create a pod with verbose output
@@ -145,7 +145,7 @@ EOF
 kubectl get events --sort-by='.lastTimestamp' | tail -20
 ```
 
-### Task 4.2: Test Validation Failure
+### Задача 4.2: протестируйте сбой валидации
 
 ```bash
 # Try to create invalid resource
@@ -167,9 +167,9 @@ EOF
 # This is caught by schema validation, not webhook
 ```
 
-## Exercise 5: Understand Mutating vs Validating
+## Упражнение 5: понимание мутирующих против валидирующих
 
-### Task 5.1: Observe Built-in Mutations
+### Задача 5.1: наблюдайте за встроенными мутациями
 
 ```bash
 # Create a pod without namespace
@@ -196,16 +196,16 @@ kubectl get pod test-mutation -o yaml | grep -A 10 "metadata:"
 # - etc.
 ```
 
-## Exercise 6: Webhook Service Requirements
+## Упражнение 6: требования к сервису вебхука
 
-### Task 6.1: Understand Service Requirements
+### Задача 6.1: разберитесь в требованиях к сервису
 
-For a webhook to work, you need:
+Чтобы вебхук работал, нужны:
 
-1. **Service** - To route requests to webhook pods
-2. **Certificate** - For TLS connection
-3. **Webhook Configuration** - To register webhook
-4. **Webhook Handler** - To process requests
+1. **Service** — для маршрутизации запросов к подам вебхука
+2. **Certificate** — для TLS-соединения
+3. **Webhook Configuration** — для регистрации вебхука
+4. **Webhook Handler** — для обработки запросов
 
 ```bash
 # Check if any webhook services exist
@@ -215,7 +215,7 @@ kubectl get services -A | grep webhook
 kubectl get pods -A | grep webhook
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Clean up test resources
@@ -224,27 +224,27 @@ kubectl delete namespace quota-test 2>/dev/null || true
 rm -f /tmp/pod.yaml
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Explored built-in admission controllers
-- Examined webhook configurations
-- Understood webhook rules and structure
-- Traced admission flow
-- Observed mutations
-- Understood webhook requirements
+В этой лабораторной вы:
+- Изучили встроенные контроллеры допуска
+- Изучили конфигурации вебхуков
+- Разобрались в правилах и структуре вебхука
+- Отследили процесс допуска
+- Наблюдали за мутациями
+- Разобрались в требованиях к вебхукам
 
-## Key Learnings
+## Ключевые уроки
 
-1. Admission control intercepts API requests
-2. Mutating webhooks run before validating
-3. Webhook configurations define when webhooks are called
-4. Webhooks need services and certificates
-5. Built-in admission controllers provide basic functionality
-6. Custom webhooks extend validation/mutation
+1. Контроль допуска перехватывает запросы к API
+2. Мутирующие вебхуки запускаются до валидирующих
+3. Конфигурации вебхуков определяют, когда вызываются вебхуки
+4. Вебхукам нужны сервисы и сертификаты
+5. Встроенные контроллеры допуска обеспечивают базовую функциональность
+6. Пользовательские вебхуки расширяют валидацию/мутацию
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's build your own validating webhook!
+Теперь давайте создадим ваш собственный валидирующий вебхук!
 
-**Navigation:** [← Module Overview](../README.md) | [Related Lesson](../lessons/01-admission-control.md) | [Next Lab: Validating Webhooks →](lab-02-validating-webhooks.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Связанный урок](../lessons/01-admission-control.md) | [Следующая лабораторная: Валидирующие вебхуки →](lab-02-validating-webhooks.md)

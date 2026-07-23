@@ -2,53 +2,53 @@
 layout: default
 title: "03.4 Client Go"
 nav_order: 4
-parent: "Module 3: Building Custom Controllers"
-grand_parent: Modules
+parent: "Модуль 3: Создание кастомных контроллеров"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 3.4: Working with Client-Go
+# Урок 3.4: Работа с Client-Go
 
-**Navigation:** [← Previous: Reconciliation Logic](03-reconciliation-logic.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущий: Логика согласования](03-reconciliation-logic.md) | [Обзор модуля](../README.md)
 
-## Introduction
+## Введение
 
-The Kubernetes client is your interface to the API server. Understanding how to use it effectively is crucial for building efficient operators. In this lesson, you'll learn advanced client operations, patching strategies, and how to handle concurrency.
+Клиент Kubernetes — это ваш интерфейс к API-серверу. Умение эффективно его использовать критически важно для создания производительных операторов. В этом уроке вы изучите продвинутые операции клиента, стратегии патчинга и способы обработки конкурентного доступа.
 
-## Theory: Working with Client-Go
+## Теория: работа с Client-Go
 
-Client-go provides low-level access to Kubernetes APIs, while controller-runtime builds on it for higher-level abstractions.
+Client-go предоставляет низкоуровневый доступ к API Kubernetes, а controller-runtime строит на нём абстракции более высокого уровня.
 
-### Core Concepts
+### Основные концепции
 
-**Typed vs Dynamic Clients:**
-- **Typed**: Type-safe, compile-time checking, better performance
-- **Dynamic**: Runtime type checking, flexible, slower
-- Choose based on use case
+**Типизированные и динамические клиенты:**
+- **Типизированный (Typed)**: типобезопасность, проверка на этапе компиляции, лучшая производительность
+- **Динамический (Dynamic)**: проверка типов во время выполнения, гибкость, медленнее
+- Выбирайте в зависимости от сценария использования
 
-**Watch Mechanism:**
-- Long-lived connections for change notifications
-- More efficient than polling
-- Handles reconnection automatically
-- Used by informers and controllers
+**Механизм отслеживания (Watch):**
+- Долгоживущие соединения для уведомлений об изменениях
+- Эффективнее опроса (polling)
+- Автоматически обрабатывает переподключение
+- Используется информерами и контроллерами
 
-**Patch Operations:**
-- Strategic merge patch: Kubernetes-aware merging
-- JSON merge patch: Standard JSON patching
-- JSON patch: Precise field updates
-- Choose based on update needs
+**Операции патчинга (Patch):**
+- Strategic merge patch: слияние с учётом особенностей Kubernetes
+- JSON merge patch: стандартный патчинг JSON
+- JSON patch: точечное обновление полей
+- Выбирайте в зависимости от потребностей обновления
 
-**Why Client-Go Matters:**
-- **Performance**: Efficient API interactions
-- **Control**: Fine-grained control over operations
-- **Compatibility**: Works with all Kubernetes versions
-- **Foundation**: Controller-runtime builds on it
+**Почему Client-Go важен:**
+- **Производительность**: эффективное взаимодействие с API
+- **Контроль**: тонкий контроль над операциями
+- **Совместимость**: работает со всеми версиями Kubernetes
+- **Основа**: controller-runtime построен на нём
 
-Understanding client-go helps you optimize operator performance and handle edge cases.
+Понимание client-go помогает оптимизировать производительность оператора и обрабатывать граничные случаи.
 
-## Client Types
+## Типы клиентов
 
-There are different ways to interact with the Kubernetes API:
+Существуют разные способы взаимодействия с API Kubernetes:
 
 ```mermaid
 graph TB
@@ -72,9 +72,9 @@ graph TB
     style RECOMMENDED fill:#FFB6C1
 ```
 
-## Typed Client (Recommended)
+## Типизированный клиент (рекомендуется)
 
-The typed client from controller-runtime is what you've been using:
+Типизированный клиент из controller-runtime — это то, что вы уже использовали:
 
 ```go
 type DatabaseReconciler struct {
@@ -83,15 +83,15 @@ type DatabaseReconciler struct {
 }
 ```
 
-**Advantages:**
-- Type-safe
-- Uses cache (faster)
-- Handles watch events
-- Automatic retries
+**Преимущества:**
+- Типобезопасность
+- Использует кеш (быстрее)
+- Обрабатывает события отслеживания (watch)
+- Автоматические повторы
 
-## Reading Resources
+## Чтение ресурсов
 
-### Get Single Resource
+### Получение одного ресурса (Get)
 
 ```go
 // Get a specific resource
@@ -106,7 +106,7 @@ if errors.IsNotFound(err) {
 }
 ```
 
-### List Multiple Resources
+### Получение списка ресурсов (List)
 
 ```go
 // List all StatefulSets in namespace
@@ -119,7 +119,7 @@ err := r.List(ctx, statefulSetList,
     client.MatchingLabels{"app": "database"})
 ```
 
-## Creating Resources
+## Создание ресурсов
 
 ```go
 // Create a resource
@@ -136,9 +136,9 @@ statefulSet := &appsv1.StatefulSet{
 err := r.Create(ctx, statefulSet)
 ```
 
-## Updating Resources
+## Обновление ресурсов
 
-### Full Update
+### Полное обновление
 
 ```go
 // Update entire resource
@@ -146,7 +146,7 @@ statefulSet.Spec.Replicas = &replicas
 err := r.Update(ctx, statefulSet)
 ```
 
-### Status Update
+### Обновление статуса
 
 ```go
 // Update only status (uses status subresource)
@@ -154,9 +154,9 @@ db.Status.Phase = "Ready"
 err := r.Status().Update(ctx, db)
 ```
 
-## Patch Strategies
+## Стратегии патчинга
 
-Sometimes you only want to update specific fields. Use patches:
+Иногда нужно обновить только определённые поля. Используйте патчи:
 
 ```mermaid
 graph TB
@@ -194,9 +194,9 @@ patch := []byte(`[
 err := r.Patch(ctx, statefulSet, client.RawPatch(types.JSONPatchType, patch))
 ```
 
-## Watching Resources
+## Отслеживание ресурсов
 
-Watch for changes to resources:
+Отслеживайте изменения ресурсов:
 
 ```mermaid
 sequenceDiagram
@@ -211,7 +211,7 @@ sequenceDiagram
     Controller->>Controller: Handle Event
 ```
 
-### Setting Up Watches
+### Настройка отслеживания
 
 ```go
 func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -226,9 +226,9 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-## Optimistic Concurrency Control
+## Оптимистичное управление конкурентным доступом
 
-Kubernetes uses resource versions to prevent conflicts:
+Kubernetes использует версии ресурсов для предотвращения конфликтов:
 
 ```mermaid
 sequenceDiagram
@@ -248,7 +248,7 @@ sequenceDiagram
     Note over C2: Conflict detected
 ```
 
-### Handling Conflicts
+### Обработка конфликтов
 
 ```go
 // Retry on conflict
@@ -275,16 +275,16 @@ for retries := 0; retries < 3; retries++ {
 }
 ```
 
-## Filtering and Searching
+## Фильтрация и поиск
 
-### By Namespace
+### По пространству имён
 
 ```go
 // List resources in namespace
 r.List(ctx, list, client.InNamespace("production"))
 ```
 
-### By Labels
+### По меткам
 
 ```go
 // Match labels
@@ -298,7 +298,7 @@ selector := labels.SelectorFromSet(labels.Set{"app": "database"})
 r.List(ctx, list, client.MatchingLabelsSelector{Selector: selector})
 ```
 
-### By Fields
+### По полям
 
 ```go
 // Match specific field
@@ -307,9 +307,9 @@ r.List(ctx, list, client.MatchingFields{
 })
 ```
 
-## Field Selectors
+## Селекторы полей (Field Selectors)
 
-Use field selectors for efficient queries:
+Используйте селекторы полей для эффективных запросов:
 
 ```go
 // Find StatefulSets owned by Database
@@ -321,9 +321,9 @@ r.List(ctx, &appsv1.StatefulSetList{},
     })
 ```
 
-## Best Practices
+## Лучшие практики
 
-### 1. Use Typed Client
+### 1. Используйте типизированный клиент
 
 ```go
 // Good: Type-safe
@@ -332,7 +332,7 @@ r.Get(ctx, key, &appsv1.StatefulSet{})
 // Avoid: Dynamic client unless necessary
 ```
 
-### 2. Leverage Cache
+### 2. Задействуйте кеш
 
 ```go
 // Client uses cache automatically
@@ -340,7 +340,7 @@ r.Get(ctx, key, &appsv1.StatefulSet{})
 r.Get(ctx, key, resource)  // Uses cache
 ```
 
-### 3. Handle Errors Properly
+### 3. Правильно обрабатывайте ошибки
 
 ```go
 if errors.IsNotFound(err) {
@@ -352,7 +352,7 @@ if errors.IsNotFound(err) {
 }
 ```
 
-### 4. Use Context
+### 4. Используйте контекст
 
 ```go
 // Always use context for cancellation
@@ -362,55 +362,55 @@ defer cancel()
 r.Get(ctx, key, resource)
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Typed client** is recommended (type-safe, cached)
-- **Get** for single resources, **List** for multiple
-- Use **Patch** for partial updates
-- **Watch** for real-time updates
-- Handle **conflicts** with retries
-- Use **filters** for efficient queries
-- Always use **context** for cancellation
+- **Типизированный клиент** рекомендуется (типобезопасный, кешируется)
+- **Get** для одиночных ресурсов, **List** для нескольких
+- Используйте **Patch** для частичных обновлений
+- **Watch** для обновлений в реальном времени
+- Обрабатывайте **конфликты** через повторы
+- Используйте **фильтры** для эффективных запросов
+- Всегда используйте **контекст** для отмены
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When working with clients:
-- Prefer typed client over dynamic
-- Use List with filters for efficiency
-- Handle conflicts gracefully
-- Use patches for partial updates
-- Set up watches for dependent resources
-- Always handle errors properly
+При работе с клиентами:
+- Предпочитайте типизированный клиент динамическому
+- Используйте List с фильтрами для эффективности
+- Аккуратно обрабатывайте конфликты
+- Используйте патчи для частичных обновлений
+- Настраивайте отслеживание зависимых ресурсов
+- Всегда правильно обрабатывайте ошибки
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 3.4: Advanced Client Operations](../labs/lab-04-client-go.md) - Hands-on exercises for this lesson
+- [Лабораторная 3.4: Продвинутые операции клиента](../labs/lab-04-client-go.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
+### Официальная документация
 - [Client-Go](https://github.com/kubernetes/client-go)
-- [Client-Go Examples](https://github.com/kubernetes/client-go/tree/master/examples)
-- [API Client Libraries](https://kubernetes.io/docs/reference/using-api/client-libraries/)
+- [Примеры Client-Go](https://github.com/kubernetes/client-go/tree/master/examples)
+- [Клиентские библиотеки API](https://kubernetes.io/docs/reference/using-api/client-libraries/)
 
-### Further Reading
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 4: Working with Client Libraries
-- [Client-Go Documentation](https://pkg.go.dev/k8s.io/client-go)
-- [Informer Pattern](https://github.com/kubernetes/client-go/blob/master/examples/workqueue/main.go)
+### Дополнительное чтение
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 4: Working with Client Libraries
+- [Документация Client-Go](https://pkg.go.dev/k8s.io/client-go)
+- [Паттерн информера](https://github.com/kubernetes/client-go/blob/master/examples/workqueue/main.go)
 
-### Related Topics
-- [Watch Mechanism](https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes)
-- [Patch Strategies](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/)
-- [Optimistic Concurrency](https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions)
+### Смежные темы
+- [Механизм отслеживания (Watch)](https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes)
+- [Стратегии патчинга](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/)
+- [Оптимистичный конкурентный доступ](https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions)
 
-## Next Steps
+## Дальнейшие шаги
 
-Congratulations! You've completed Module 3. You now understand:
-- Controller-runtime architecture
-- API design principles
-- Reconciliation logic
-- Advanced client operations
+Поздравляем! Вы завершили Модуль 3. Теперь вы понимаете:
+- Архитектуру controller-runtime
+- Принципы проектирования API
+- Логику согласования
+- Продвинутые операции клиента
 
-In [Module 4](../../module-04/README.md), you'll learn advanced reconciliation patterns like conditions, finalizers, and multi-phase reconciliation.
+В [Модуле 4](../../module-04/README.md) вы изучите продвинутые паттерны согласования, такие как условия (conditions), финализаторы и многофазное согласование.
 
-**Navigation:** [← Previous: Reconciliation Logic](03-reconciliation-logic.md) | [Module Overview](../README.md) | [Next: Module 4 →](../../module-04/README.md)
+**Навигация:** [← Предыдущий: Логика согласования](03-reconciliation-logic.md) | [Обзор модуля](../README.md) | [Далее: Модуль 4 →](../../module-04/README.md)

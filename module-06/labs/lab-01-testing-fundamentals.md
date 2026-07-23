@@ -2,33 +2,33 @@
 layout: default
 title: "Lab 06.1: Testing Fundamentals"
 nav_order: 11
-parent: "Module 6: Testing & Debugging"
-grand_parent: Modules
+parent: "Модуль 6: Тестирование и отладка"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 6.1: Setting Up Testing Environment
+# Лабораторная 6.1: Настройка среды тестирования
 
-**Related Lesson:** [Lesson 6.1: Testing Fundamentals](../lessons/01-testing-fundamentals.md)  
-**Navigation:** [Module Overview](../README.md) | [Next Lab: Unit Testing →](lab-02-unit-testing-envtest.md)
+**Связанный урок:** [Урок 6.1: Основы тестирования](../lessons/01-testing-fundamentals.md)  
+**Навигация:** [Обзор модуля](../README.md) | [Следующая лабораторная: Модульное тестирование →](lab-02-unit-testing-envtest.md)
 
-## Objectives
+## Цели
 
-- Set up testing tools and dependencies
-- Understand testing structure
-- Create test scaffolding
-- Prepare for writing tests
+- Настроить инструменты и зависимости для тестирования
+- Понять структуру тестов
+- Создать каркас тестов
+- Подготовиться к написанию тестов
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Module 5](../../module-05/README.md)
-- Database operator from Module 3/4/5
-- Go 1.24+ installed
-- Understanding of Go testing
+- Завершение [Модуля 5](../../module-05/README.md)
+- Оператор Database из Модулей 3/4/5
+- Установленный Go 1.24+
+- Понимание тестирования на Go
 
-## Exercise 1: Install Testing Tools
+## Упражнение 1: установка инструментов тестирования
 
-### Task 1.1: Install Ginkgo and Gomega
+### Задача 1.1: установите Ginkgo и Gomega
 
 ```bash
 # Install Ginkgo
@@ -41,7 +41,7 @@ go get github.com/onsi/gomega/...
 ginkgo version
 ```
 
-### Task 1.2: Install envtest Tools
+### Задача 1.2: установите инструменты envtest
 
 ```bash
 # Install setup-envtest
@@ -54,7 +54,7 @@ setup-envtest use
 setup-envtest list
 ```
 
-### Task 1.3: Install Delve Debugger
+### Задача 1.3: установите отладчик Delve
 
 ```bash
 # Install Delve
@@ -64,22 +64,22 @@ go install github.com/go-delve/delve/cmd/dlv@latest
 dlv version
 ```
 
-## Exercise 2: Set Up Test Structure
+## Упражнение 2: настройка структуры тестов
 
-### Task 2.1: Navigate to Your Operator
+### Задача 2.1: перейдите к вашему оператору
 
 ```bash
 # Navigate to your operator
 cd ~/postgres-operator
 ```
 
-When you run `kubebuilder create api` with `--resource --controller`, Kubebuilder automatically generates test scaffolding files in `internal/controller/`:
-- `suite_test.go` - Test suite setup with envtest
-- `<resource>_controller_test.go` - Basic controller test
+Когда вы запускаете `kubebuilder create api` с `--resource --controller`, Kubebuilder автоматически генерирует файлы каркаса тестов в `internal/controller/`:
+- `suite_test.go` — настройка набора тестов с envtest
+- `<resource>_controller_test.go` — базовый тест контроллера
 
-### Task 2.2: Examine the Generated Suite Test File
+### Задача 2.2: изучите сгенерированный файл набора тестов
 
-The generated `internal/controller/suite_test.go` follows this structure:
+Сгенерированный `internal/controller/suite_test.go` имеет такую структуру:
 
 ```go
 package controller
@@ -184,17 +184,17 @@ func getFirstFoundEnvTestBinaryDir() string {
 }
 ```
 
-**Key features of the generated suite:**
-- **Package-level context**: `ctx` and `cancel` are available to all tests
-- **IDE support**: `getFirstFoundEnvTestBinaryDir()` locates envtest binaries for IDE execution
-- **Logging**: Configured with zap logger writing to GinkgoWriter
-- **Scaffold markers**: `// +kubebuilder:scaffold:imports` and `// +kubebuilder:scaffold:scheme` for future API additions
+**Ключевые особенности сгенерированного набора:**
+- **Контекст на уровне пакета**: `ctx` и `cancel` доступны всем тестам
+- **Поддержка IDE**: `getFirstFoundEnvTestBinaryDir()` находит бинарники envtest для запуска из IDE
+- **Логирование**: настроено с логгером zap, пишущим в GinkgoWriter
+- **Маркеры каркаса**: `// +kubebuilder:scaffold:imports` и `// +kubebuilder:scaffold:scheme` для будущих добавлений API
 
-## Exercise 3: Examine the Generated Controller Test
+## Упражнение 3: изучение сгенерированного теста контроллера
 
-### Task 3.1: Understand the Scaffolded Test Structure
+### Задача 3.1: разберитесь в структуре сгенерированного теста
 
-The generated `internal/controller/database_controller_test.go` follows this structure:
+Сгенерированный `internal/controller/database_controller_test.go` имеет такую структуру:
 
 ```go
 package controller
@@ -268,16 +268,16 @@ var _ = Describe("Database Controller", func() {
 })
 ```
 
-**Key features of the generated test:**
-- **Resource setup/cleanup**: `BeforeEach` creates the resource, `AfterEach` deletes it
-- **Direct reconciler invocation**: Creates `DatabaseReconciler` and calls `Reconcile()` directly
-- **NamespacedName pattern**: Uses `types.NamespacedName` for resource identification
-- **TODO markers**: Indicates where to customize for your specific controller
-- **Uses package-level variables**: Accesses `k8sClient` from `suite_test.go`
+**Ключевые особенности сгенерированного теста:**
+- **Настройка/очистка ресурса**: `BeforeEach` создаёт ресурс, `AfterEach` удаляет его
+- **Прямой вызов реконсайлера**: создаёт `DatabaseReconciler` и вызывает `Reconcile()` напрямую
+- **Паттерн NamespacedName**: использует `types.NamespacedName` для идентификации ресурса
+- **Маркеры TODO**: указывают, где нужно доработать под ваш конкретный контроллер
+- **Использует переменные уровня пакета**: обращается к `k8sClient` из `suite_test.go`
 
-## Exercise 4: Run Tests
+## Упражнение 4: запуск тестов
 
-### Task 4.1: Run Tests
+### Задача 4.1: запустите тесты
 
 ```bash
 # Setup envtest binaries first
@@ -296,7 +296,7 @@ ginkgo -v ./internal/controller/...
 ginkgo -v -focus="Database Controller" ./internal/controller/...
 ```
 
-### Task 4.2: Check Test Coverage
+### Задача 4.2: проверьте покрытие тестами
 
 ```bash
 # Run with coverage
@@ -307,9 +307,9 @@ go test -coverprofile=coverage.out ./internal/controller/...
 go tool cover -html=coverage.out
 ```
 
-## Exercise 5: Verify Setup
+## Упражнение 5: проверка настройки
 
-### Task 5.1: Verify All Tools
+### Задача 5.1: проверьте все инструменты
 
 ```bash
 # Check Ginkgo
@@ -325,41 +325,41 @@ dlv version
 go version
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Clean up test resources (if any)
 # Tests should clean up automatically
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Installed testing tools (Ginkgo, Gomega, envtest, Delve)
-- Examined Kubebuilder-generated test scaffolding structure
-- Understood the test suite setup with envtest
-- Examined the controller test pattern
-- Ran tests and checked coverage
+В этой лабораторной вы:
+- Установили инструменты тестирования (Ginkgo, Gomega, envtest, Delve)
+- Изучили структуру каркаса тестов, сгенерированного Kubebuilder
+- Разобрались в настройке набора тестов с envtest
+- Изучили паттерн теста контроллера
+- Запустили тесты и проверили покрытие
 
-## Key Learnings
+## Ключевые уроки
 
-1. **Kubebuilder generates test scaffolding** - When you create an API with `--controller`, test files are auto-generated
-2. **Ginkgo provides BDD-style test structure** - Describe/Context/It blocks organize tests
-3. **envtest provides lightweight Kubernetes API** - No full cluster needed for controller tests
-4. **Suite setup in BeforeSuite/AfterSuite** - Environment initialized once per test suite
-5. **Package-level variables** - `ctx`, `k8sClient`, `cfg` are shared across tests
-6. **IDE support built-in** - `getFirstFoundEnvTestBinaryDir()` enables running tests from IDEs
-7. **Direct reconciler invocation** - Tests call `Reconcile()` directly for deterministic results
-8. **Scaffold markers** - `// +kubebuilder:scaffold:*` comments allow future API additions
+1. **Kubebuilder генерирует каркас тестов** — когда вы создаёте API с `--controller`, тестовые файлы генерируются автоматически
+2. **Ginkgo обеспечивает структуру тестов в стиле BDD** — блоки Describe/Context/It организуют тесты
+3. **envtest предоставляет легковесный API Kubernetes** — для тестов контроллера не нужен полноценный кластер
+4. **Настройка набора в BeforeSuite/AfterSuite** — среда инициализируется один раз на набор тестов
+5. **Переменные уровня пакета** — `ctx`, `k8sClient`, `cfg` разделяются между тестами
+6. **Встроенная поддержка IDE** — `getFirstFoundEnvTestBinaryDir()` позволяет запускать тесты из IDE
+7. **Прямой вызов реконсайлера** — тесты вызывают `Reconcile()` напрямую для детерминированных результатов
+8. **Маркеры каркаса** — комментарии `// +kubebuilder:scaffold:*` позволяют добавлять API в будущем
 
-## Solutions
+## Решения
 
-The test suite setup from this lab matches the Kubebuilder-generated scaffolding:
-- [Test Suite Setup](../solutions/suite_test.go) - Complete test suite with envtest configuration
-- [Controller Test](../solutions/database_controller_test.go) - Basic controller test structure
+Настройка набора тестов из этой лабораторной соответствует каркасу, сгенерированному Kubebuilder:
+- [Test Suite Setup](../solutions/suite_test.go) — полный набор тестов с конфигурацией envtest
+- [Controller Test](../solutions/database_controller_test.go) — базовая структура теста контроллера
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's write comprehensive unit tests for your operator!
+Теперь давайте напишем исчерпывающие модульные тесты для вашего оператора!
 
-**Navigation:** [← Module Overview](../README.md) | [Related Lesson](../lessons/01-testing-fundamentals.md) | [Next Lab: Unit Testing →](lab-02-unit-testing-envtest.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Связанный урок](../lessons/01-testing-fundamentals.md) | [Следующая лабораторная: Модульное тестирование →](lab-02-unit-testing-envtest.md)

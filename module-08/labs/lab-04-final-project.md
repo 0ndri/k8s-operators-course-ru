@@ -2,73 +2,73 @@
 layout: default
 title: "Lab 08.4: Final Project"
 nav_order: 14
-parent: "Module 8: Advanced Topics"
-grand_parent: Modules
+parent: "Модуль 8: Продвинутые темы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 8.4: Final Project
+# Лабораторная 8.4: Финальный проект
 
-**Related Lesson:** [Lesson 8.4: Real-World Patterns and Best Practices](../lessons/04-real-world-patterns.md)  
-**Navigation:** [← Previous Lab: Stateful Applications](lab-03-stateful-applications.md) | [Module Overview](../README.md) | [Course Overview](../../README.md)
+**Связанный урок:** [Урок 8.4: Практические паттерны и лучшие практики](../lessons/04-real-world-patterns.md)  
+**Навигация:** [← Предыдущая лабораторная: Stateful-приложения](lab-03-stateful-applications.md) | [Обзор модуля](../README.md) | [Обзор курса](../../README.md)
 
-## Objectives
+## Цели
 
-Build a complete, production-ready operator for a stateful application that demonstrates all concepts learned throughout the course. This final project integrates everything you've learned from Modules 1-8 into a single, comprehensive operator.
+Создать полноценный, готовый к продакшену оператор для stateful-приложения, демонстрирующий все концепции, изученные на протяжении курса. Этот финальный проект объединяет всё, что вы изучили из Модулей 1–8, в единый исчерпывающий оператор.
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of all previous modules (Modules 1-7)
-- Completion of [Lab 8.1](lab-01-multi-tenancy.md), [Lab 8.2](lab-02-operator-composition.md), and [Lab 8.3](lab-03-stateful-applications.md)
-- Understanding of all operator concepts:
-  - Kubernetes architecture and API machinery ([Module 1](../../module-01/README.md))
-  - Operator pattern and Kubebuilder ([Module 2](../../module-02/README.md))
-  - Controller runtime and reconciliation ([Module 3](../../module-03/README.md))
-  - Advanced reconciliation patterns ([Module 4](../../module-04/README.md))
-  - Webhooks and admission control ([Module 5](../../module-05/README.md))
-  - Testing and debugging ([Module 6](../../module-06/README.md))
-  - Production considerations ([Module 7](../../module-07/README.md))
-- A working development environment with kubebuilder, Go, Docker/Podman, and kind
+- Завершение всех предыдущих модулей (Модули 1–7)
+- Завершение [Лабораторной 8.1](lab-01-multi-tenancy.md), [Лабораторной 8.2](lab-02-operator-composition.md) и [Лабораторной 8.3](lab-03-stateful-applications.md)
+- Понимание всех концепций операторов:
+  - Архитектура Kubernetes и механизмы API ([Модуль 1](../../module-01/README.md))
+  - Паттерн оператора и Kubebuilder ([Модуль 2](../../module-02/README.md))
+  - Controller runtime и согласование ([Модуль 3](../../module-03/README.md))
+  - Продвинутые паттерны согласования ([Модуль 4](../../module-04/README.md))
+  - Вебхуки и контроль допуска ([Модуль 5](../../module-05/README.md))
+  - Тестирование и отладка ([Модуль 6](../../module-06/README.md))
+  - Подготовка к продакшену ([Модуль 7](../../module-07/README.md))
+- Рабочая среда разработки с kubebuilder, Go, Docker/Podman и kind
 
-## Project Requirements
+## Требования к проекту
 
-Your final operator must include:
+Ваш финальный оператор должен включать:
 
-1. **Full CRUD Operations**
+1. **Полные CRUD-операции**
    - Create, Read, Update, Delete
-   - Proper error handling
-   - Idempotent operations
+   - Корректная обработка ошибок
+   - Идемпотентные операции
 
-2. **Status Reporting**
-   - Status subresource
-   - Conditions
-   - Progress tracking
-   - Observed generation
+2. **Отчётность о статусе**
+   - Подресурс status
+   - Условия (conditions)
+   - Отслеживание прогресса
+   - Наблюдаемое поколение (observed generation)
 
-3. **Webhooks**
-   - Validating webhooks
-   - Mutating webhooks
-   - Default values
-   - Validation rules
+3. **Вебхуки**
+   - Валидирующие вебхуки
+   - Мутирующие вебхуки
+   - Значения по умолчанию
+   - Правила валидации
 
-4. **Testing**
-   - Unit tests
-   - Integration tests
-   - Test coverage > 80%
+4. **Тестирование**
+   - Модульные тесты
+   - Интеграционные тесты
+   - Покрытие тестами > 80%
 
-5. **Production Features**
-   - RBAC configuration
-   - Security hardening
-   - High availability
-   - Performance optimization
+5. **Продакшен-возможности**
+   - Конфигурация RBAC
+   - Усиление безопасности
+   - Высокая доступность
+   - Оптимизация производительности
 
-6. **Advanced Features**
-   - Multi-tenancy support
-   - Backup/restore
-   - Rolling updates
-   - Documentation
+6. **Продвинутые возможности**
+   - Поддержка мультиарендности
+   - Резервное копирование/восстановление
+   - Скользящие обновления
+   - Документация
 
-## Project Structure
+## Структура проекта
 
 ```text
 final-operator/
@@ -93,19 +93,19 @@ final-operator/
 └── README.md
 ```
 
-## Exercise 1: Choose Your Application
+## Упражнение 1: выберите ваше приложение
 
-### Options
+### Варианты
 
-1. **Database Operator** (PostgreSQL, MySQL, MongoDB)
-2. **Message Queue Operator** (RabbitMQ, Kafka)
-3. **Cache Operator** (Redis, Memcached)
-4. **Search Engine Operator** (Elasticsearch)
-5. **Your Choice** (Any stateful application)
+1. **Оператор базы данных** (PostgreSQL, MySQL, MongoDB)
+2. **Оператор очереди сообщений** (RabbitMQ, Kafka)
+3. **Оператор кеша** (Redis, Memcached)
+4. **Оператор поисковой системы** (Elasticsearch)
+5. **Ваш выбор** (любое stateful-приложение)
 
-### Task 1.1: Scaffold Your Operator Project
+### Задача 1.1: сгенерируйте каркас проекта оператора
 
-Start by creating a new operator project using kubebuilder:
+Начните с создания нового проекта оператора с помощью kubebuilder:
 
 ```bash
 # Create a new directory for your final project
@@ -127,9 +127,9 @@ kubebuilder create api \
 # Create Controller [y/n]: y
 ```
 
-### Task 1.2: Define Comprehensive API Types
+### Задача 1.2: определите исчерпывающие типы API
 
-Edit `api/v1/<resource>_types.go` to create a production-ready API. Here's a complete example for a Database operator:
+Отредактируйте `api/v1/<resource>_types.go`, чтобы создать готовый к продакшену API. Вот полный пример для оператора базы данных:
 
 ```go
 package v1
@@ -271,7 +271,7 @@ func init() {
 }
 ```
 
-### Task 1.3: Generate CRDs and Verify
+### Задача 1.3: сгенерируйте CRD и проверьте
 
 ```bash
 # Generate code and CRD manifests
@@ -288,32 +288,32 @@ make install
 kubectl get crd databases.apps.example.com
 ```
 
-## Exercise 2: Implement Core Functionality
+## Упражнение 2: реализация основной функциональности
 
-### Task 2.1: Implement Complete Reconciliation Logic
+### Задача 2.1: реализуйте полную логику согласования
 
-Edit `internal/controller/<resource>_controller.go` to implement full reconciliation. Reference implementations from [Module 3 solutions](../../module-03/solutions/database-controller.go) and [Module 4 solutions](../../module-04/solutions/state-machine-controller.go) for complete examples.
+Отредактируйте `internal/controller/<resource>_controller.go`, чтобы реализовать полное согласование. Для полных примеров используйте эталонные реализации из [решений Модуля 3](../../module-03/solutions/database-controller.go) и [решений Модуля 4](../../module-04/solutions/state-machine-controller.go).
 
-Key components to implement:
+Ключевые компоненты для реализации:
 
-- `Reconcile()` - Main reconciliation loop with phase handling
-- `handlePending()` - Initial state handling
-- `handleCreating()` - Resource creation logic
-- `handleReady()` - Ready state monitoring
-- `handleUpdating()` - Update handling
-- `handleDeletion()` - Cleanup with finalizers
-- `reconcileSecret()` - Secret management
-- `reconcileStatefulSet()` - StatefulSet creation/updates
-- `reconcileService()` - Service management
-- `updateStatus()` - Status and condition updates
+- `Reconcile()` — основной цикл согласования с обработкой фаз
+- `handlePending()` — обработка начального состояния
+- `handleCreating()` — логика создания ресурсов
+- `handleReady()` — мониторинг состояния Ready
+- `handleUpdating()` — обработка обновлений
+- `handleDeletion()` — очистка с финализаторами
+- `reconcileSecret()` — управление Secret
+- `reconcileStatefulSet()` — создание/обновление StatefulSet
+- `reconcileService()` — управление Service
+- `updateStatus()` — обновления статуса и условий
 
-### Task 2.2: Implement Status Management Helpers
+### Задача 2.2: реализуйте вспомогательные функции управления статусом
 
-Add comprehensive status management functions. Reference implementations from [Module 4 solutions](../../module-04/solutions/conditions-helpers.go) for complete condition management.
+Добавьте исчерпывающие функции управления статусом. Для полного управления условиями используйте эталонные реализации из [решений Модуля 4](../../module-04/solutions/conditions-helpers.go).
 
-## Exercise 3: Add Webhooks
+## Упражнение 3: добавление вебхуков
 
-### Task 3.1: Scaffold Webhooks
+### Задача 3.1: сгенерируйте каркас вебхуков
 
 ```bash
 # Create validating and mutating webhooks
@@ -325,28 +325,28 @@ kubebuilder create webhook \
   --defaulting
 ```
 
-### Task 3.2: Implement Validating Webhook
+### Задача 3.2: реализуйте валидирующий вебхук
 
-Edit `internal/webhook/v1/database_webhook.go` to add comprehensive validation. Reference [Module 5 Lab 2](../../module-05/labs/lab-02-validating-webhooks.md) for detailed examples.
+Отредактируйте `internal/webhook/v1/database_webhook.go`, чтобы добавить исчерпывающую валидацию. Подробные примеры см. в [Лабораторной 2 Модуля 5](../../module-05/labs/lab-02-validating-webhooks.md).
 
-Key validations to implement:
+Ключевые валидации для реализации:
 
-- Validate database name format
-- Validate username format
-- Validate storage size format
-- Validate replicas range
-- Prevent changing immutable fields on update
+- Валидация формата имени базы данных
+- Валидация формата имени пользователя
+- Валидация формата размера хранилища
+- Валидация диапазона реплик
+- Предотвращение изменения неизменяемых полей при обновлении
 
-### Task 3.3: Implement Mutating Webhook
+### Задача 3.3: реализуйте мутирующий вебхук
 
-Add defaulting logic for:
+Добавьте логику установки значений по умолчанию для:
 
-- Default image if not specified
-- Default replicas if not specified
-- Default backup retention
-- Default resource limits
+- Образа по умолчанию, если не указан
+- Реплик по умолчанию, если не указаны
+- Периода хранения резервных копий по умолчанию
+- Лимитов ресурсов по умолчанию
 
-### Task 3.4: Generate Webhook Manifests
+### Задача 3.4: сгенерируйте манифесты вебхуков
 
 ```bash
 # Generate webhook manifests
@@ -359,26 +359,26 @@ cat config/webhook/manifests.yaml
 # See Module 5 Lab 4 for webhook deployment details
 ```
 
-## Exercise 4: Add Testing
+## Упражнение 4: добавление тестирования
 
-### Task 4.1: Write Comprehensive Unit Tests
+### Задача 4.1: напишите исчерпывающие модульные тесты
 
-Edit `internal/controller/<resource>_controller_test.go` to add comprehensive tests. Reference [Module 6 solutions](../../module-06/solutions/database_controller_test.go) for complete examples.
+Отредактируйте `internal/controller/<resource>_controller_test.go`, чтобы добавить исчерпывающие тесты. Полные примеры см. в [решениях Модуля 6](../../module-06/solutions/database_controller_test.go).
 
-Test scenarios to cover:
+Сценарии тестирования для покрытия:
 
-- Resource creation
-- Resource updates
-- Resource deletion
-- Status updates
-- Error handling
-- Finalizer handling
+- Создание ресурса
+- Обновления ресурса
+- Удаление ресурса
+- Обновления статуса
+- Обработка ошибок
+- Обработка финализаторов
 
-### Task 4.2: Write Integration Tests
+### Задача 4.2: напишите интеграционные тесты
 
-Create `internal/controller/integration_test.go` for end-to-end tests. Reference [Module 6 Lab 3](../../module-06/labs/lab-03-integration-testing.md).
+Создайте `internal/controller/integration_test.go` для сквозных тестов. См. [Лабораторную 3 Модуля 6](../../module-06/labs/lab-03-integration-testing.md).
 
-### Task 4.3: Run Tests and Check Coverage
+### Задача 4.3: запустите тесты и проверьте покрытие
 
 ```bash
 # Setup envtest binaries
@@ -395,21 +395,21 @@ go tool cover -html=coverage.out
 go test -cover ./internal/controller/...
 ```
 
-### Task 4.4: Add Test Examples for Advanced Features
+### Задача 4.4: добавьте примеры тестов для продвинутых возможностей
 
-Add tests for:
+Добавьте тесты для:
 
-- Backup/restore functionality
-- Multi-tenancy scenarios
-- Error handling and retries
-- Webhook validation
-- Status condition updates
+- Функциональности резервного копирования/восстановления
+- Сценариев мультиарендности
+- Обработки ошибок и повторов
+- Валидации вебхуками
+- Обновлений условий статуса
 
-Reference [Module 6 solutions](../../module-06/solutions/) for complete test examples.
+Полные примеры тестов см. в [решениях Модуля 6](../../module-06/solutions/).
 
-## Exercise 5: Production Features
+## Упражнение 5: продакшен-возможности
 
-### Task 5.1: Configure RBAC
+### Задача 5.1: настройте RBAC
 
 ```bash
 # Generate RBAC manifests
@@ -422,66 +422,66 @@ cat config/rbac/role.yaml
 # Only grant permissions your operator actually needs
 ```
 
-Review and optimize the generated RBAC. Reference [Module 7 Lab 2](../../module-07/labs/lab-02-rbac-security.md) for best practices.
+Проверьте и оптимизируйте сгенерированный RBAC. Лучшие практики см. в [Лабораторной 2 Модуля 7](../../module-07/labs/lab-02-rbac-security.md).
 
-### Task 5.2: Security Hardening
+### Задача 5.2: усиление безопасности
 
-#### Update Dockerfile for Security
+#### Обновите Dockerfile для безопасности
 
-Ensure your `Dockerfile` uses distroless images and runs as non-root. Reference [Module 7 solutions](../../module-07/solutions/Dockerfile) for complete example.
+Убедитесь, что ваш `Dockerfile` использует distroless-образы и запускается не от root. Полный пример см. в [решениях Модуля 7](../../module-07/solutions/Dockerfile).
 
-#### Add Security Contexts
+#### Добавьте контексты безопасности
 
-Update `config/manager/manager.yaml` to include security contexts. Reference [Module 7 solutions](../../module-07/solutions/security.yaml) for complete security configuration.
+Обновите `config/manager/manager.yaml`, включив контексты безопасности. Полную конфигурацию безопасности см. в [решениях Модуля 7](../../module-07/solutions/security.yaml).
 
-### Task 5.3: Enable High Availability
+### Задача 5.3: включите высокую доступность
 
-#### Enable Leader Election
+#### Включите выбор лидера
 
-Update `cmd/main.go` to enable leader election. Reference [Module 7 Lab 3](../../module-07/labs/lab-03-high-availability.md) for complete HA setup.
+Обновите `cmd/main.go`, чтобы включить выбор лидера. Полную настройку HA см. в [Лабораторной 3 Модуля 7](../../module-07/labs/lab-03-high-availability.md).
 
-#### Add Pod Disruption Budget
+#### Добавьте бюджет прерывания подов
 
-Create `config/manager/pdb.yaml` for Pod Disruption Budget configuration.
+Создайте `config/manager/pdb.yaml` для конфигурации бюджета прерывания подов.
 
-### Task 5.4: Performance Optimization
+### Задача 5.4: оптимизация производительности
 
-#### Add Rate Limiting
+#### Добавьте ограничение частоты
 
-Update controller setup to use rate limiting. Reference [Module 7 solutions](../../module-07/solutions/ratelimiter.go) for advanced rate limiting.
+Обновите настройку контроллера, чтобы использовать ограничение частоты. Продвинутое ограничение частоты см. в [решениях Модуля 7](../../module-07/solutions/ratelimiter.go).
 
-### Task 5.5: Add Observability
+### Задача 5.5: добавьте наблюдаемость
 
-Add metrics and logging. Reference [Module 6 Lab 4](../../module-06/labs/lab-04-debugging-observability.md) for complete observability setup.
+Добавьте метрики и логирование. Полную настройку наблюдаемости см. в [Лабораторной 4 Модуля 6](../../module-06/labs/lab-04-debugging-observability.md).
 
-## Exercise 6: Documentation
+## Упражнение 6: документация
 
-### Task 6.1: Create Comprehensive README
+### Задача 6.1: создайте исчерпывающий README
 
-Create a `README.md` in your project root with:
+Создайте `README.md` в корне проекта с:
 
-- Quick start guide
-- Architecture overview
-- API documentation
-- Examples
-- Troubleshooting guide
+- Руководством по быстрому старту
+- Обзором архитектуры
+- Документацией API
+- Примерами
+- Руководством по устранению неполадок
 
-### Task 6.2: Create Example Resources
+### Задача 6.2: создайте примеры ресурсов
 
-Create `config/samples/apps_v1_database.yaml` and additional examples in an `examples/` directory:
+Создайте `config/samples/apps_v1_database.yaml` и дополнительные примеры в каталоге `examples/`:
 
-- Basic usage example
-- Advanced scenarios
-- Multi-tenant setup
-- Backup/restore examples
+- Пример базового использования
+- Продвинутые сценарии
+- Настройка мультиарендности
+- Примеры резервного копирования/восстановления
 
-### Task 6.3: Add API Documentation
+### Задача 6.3: добавьте документацию API
 
-Document all API fields with clear descriptions and examples. Use kubebuilder markers for automatic documentation generation.
+Задокументируйте все поля API с понятными описаниями и примерами. Используйте маркеры kubebuilder для автоматической генерации документации.
 
-## Exercise 7: Build and Deploy
+## Упражнение 7: сборка и развёртывание
 
-### Task 7.1: Build Container Image
+### Задача 7.1: соберите образ контейнера
 
 ```bash
 # Build the image
@@ -494,7 +494,7 @@ kind load docker-image final-operator:v1.0.0 --name k8s-operators-course
 docker push final-operator:v1.0.0
 ```
 
-### Task 7.2: Deploy Operator
+### Задача 7.2: разверните оператор
 
 ```bash
 # Update image in config/manager/manager.yaml
@@ -508,7 +508,7 @@ kubectl get pods -n final-operator-system
 kubectl logs -n final-operator-system -l control-plane=controller-manager
 ```
 
-### Task 7.3: Test Your Operator
+### Задача 7.3: протестируйте ваш оператор
 
 ```bash
 # Create a test resource
@@ -527,79 +527,79 @@ kubectl patch database database-sample --type=merge -p '{"spec":{"replicas":3}}'
 kubectl delete database database-sample
 ```
 
-## Submission Checklist
+## Чек-лист для сдачи
 
-Use this checklist to ensure your operator is complete:
+Используйте этот чек-лист, чтобы убедиться в полноте вашего оператора:
 
-### Core Functionality
+### Основная функциональность
 
-- [ ] Full CRUD operations implemented (Create, Read, Update, Delete)
-- [ ] Proper error handling throughout
-- [ ] Idempotent reconciliation logic
-- [ ] Finalizers implemented for cleanup
+- [ ] Реализованы полные CRUD-операции (Create, Read, Update, Delete)
+- [ ] Корректная обработка ошибок повсюду
+- [ ] Идемпотентная логика согласования
+- [ ] Реализованы финализаторы для очистки
 
-### Status Management
+### Управление статусом
 
-- [ ] Status subresource configured
-- [ ] Conditions implemented and updated correctly
-- [ ] Phase tracking (Pending, Creating, Ready, Failed, etc.)
-- [ ] Observed generation tracking
-- [ ] Progress tracking for long operations
+- [ ] Настроен подресурс status
+- [ ] Условия реализованы и корректно обновляются
+- [ ] Отслеживание фаз (Pending, Creating, Ready, Failed и т. д.)
+- [ ] Отслеживание наблюдаемого поколения
+- [ ] Отслеживание прогресса для длительных операций
 
-### Webhooks
+### Вебхуки
 
-- [ ] Validating webhook implemented
-- [ ] Mutating webhook implemented
-- [ ] Default values set correctly
-- [ ] Validation rules comprehensive
-- [ ] Webhook certificates configured
+- [ ] Реализован валидирующий вебхук
+- [ ] Реализован мутирующий вебхук
+- [ ] Значения по умолчанию установлены корректно
+- [ ] Правила валидации исчерпывающие
+- [ ] Настроены сертификаты вебхука
 
-### Testing
+### Тестирование
 
-- [ ] Unit tests written (>80% coverage)
-- [ ] Integration tests implemented
-- [ ] Test suite runs successfully (`make test`)
-- [ ] Edge cases covered
-- [ ] Error scenarios tested
+- [ ] Написаны модульные тесты (покрытие >80%)
+- [ ] Реализованы интеграционные тесты
+- [ ] Набор тестов успешно выполняется (`make test`)
+- [ ] Покрыты граничные случаи
+- [ ] Протестированы сценарии ошибок
 
-### Production Features
+### Продакшен-возможности
 
-- [ ] RBAC configured and optimized
-- [ ] Security hardened (distroless, non-root, security contexts)
-- [ ] High availability enabled (leader election)
-- [ ] Performance optimized (rate limiting, concurrency)
-- [ ] Observability added (metrics, logging)
+- [ ] RBAC настроен и оптимизирован
+- [ ] Безопасность усилена (distroless, не от root, контексты безопасности)
+- [ ] Включена высокая доступность (выбор лидера)
+- [ ] Производительность оптимизирована (ограничение частоты, конкурентность)
+- [ ] Добавлена наблюдаемость (метрики, логирование)
 
-### Advanced Features
+### Продвинутые возможности
 
-- [ ] Multi-tenancy support (if applicable)
-- [ ] Backup/restore functionality (if applicable)
-- [ ] Rolling updates handled correctly
-- [ ] Resource quotas respected
+- [ ] Поддержка мультиарендности (если применимо)
+- [ ] Функциональность резервного копирования/восстановления (если применимо)
+- [ ] Скользящие обновления обрабатываются корректно
+- [ ] Соблюдаются квоты ресурсов
 
-### Documentation
+### Документация
 
-- [ ] README.md complete with:
-  - Quick start guide
-  - Architecture overview
-  - API documentation
-  - Examples
-  - Troubleshooting guide
-- [ ] Example resources provided
-- [ ] Code comments comprehensive
-- [ ] API fields documented
+- [ ] README.md полон и включает:
+  - Руководство по быстрому старту
+  - Обзор архитектуры
+  - Документацию API
+  - Примеры
+  - Руководство по устранению неполадок
+- [ ] Предоставлены примеры ресурсов
+- [ ] Комментарии в коде исчерпывающие
+- [ ] Поля API задокументированы
 
-### Packaging
+### Упаковка
 
-- [ ] Container image builds successfully
-- [ ] Image pushed to registry (or loaded into kind)
-- [ ] Operator deploys successfully
-- [ ] All resources created correctly
-- [ ] Operator works end-to-end
+- [ ] Образ контейнера успешно собирается
+- [ ] Образ опубликован в реестр (или загружен в kind)
+- [ ] Оператор успешно развёртывается
+- [ ] Все ресурсы создаются корректно
+- [ ] Оператор работает от начала до конца
 
-## Cleanup
+## Очистка
 
-After completing your project:
+После завершения проекта:
 
 ```bash
 # Delete test resources
@@ -615,152 +615,152 @@ make uninstall
 kind delete cluster --name k8s-operators-course
 ```
 
-## Self-Evaluation Checklist
+## Чек-лист для самооценки
 
-Use this checklist to ensure your operator meets production-ready standards:
+Используйте этот чек-лист, чтобы убедиться, что ваш оператор соответствует готовым к продакшену стандартам:
 
-### Functionality
+### Функциональность
 
-- **Core Operations**: All CRUD operations work correctly
-- **Edge Cases**: Handles edge cases gracefully (deletion, updates, failures)
-- **Error Handling**: Proper error handling and retry logic
-- **Status Management**: Status accurately reflects resource state
-- **Webhooks**: Validation and mutation work correctly
+- **Основные операции**: все CRUD-операции работают корректно
+- **Граничные случаи**: аккуратно обрабатывает граничные случаи (удаление, обновления, сбои)
+- **Обработка ошибок**: корректная обработка ошибок и логика повторов
+- **Управление статусом**: статус точно отражает состояние ресурса
+- **Вебхуки**: валидация и мутация работают корректно
 
-### Code Quality
+### Качество кода
 
-- **Structure**: Well-organized, follows Go best practices
-- **Readability**: Clear variable names, comments where needed
-- **Idempotency**: Reconciliation is idempotent
-- **Resource Management**: Proper use of finalizers, owner references
-- **Error Messages**: Clear, actionable error messages
+- **Структура**: хорошо организован, следует лучшим практикам Go
+- **Читаемость**: понятные имена переменных, комментарии где нужно
+- **Идемпотентность**: согласование идемпотентно
+- **Управление ресурсами**: правильное использование финализаторов, ссылок-владельцев
+- **Сообщения об ошибках**: понятные, применимые сообщения об ошибках
 
-### Testing Standards
+### Стандарты тестирования
 
-- **Coverage**: Test coverage > 80%
-- **Unit Tests**: Comprehensive unit tests for controller logic
-- **Integration Tests**: End-to-end integration tests
-- **Edge Cases**: Tests cover error scenarios and edge cases
-- **Test Quality**: Tests are maintainable and well-structured
+- **Покрытие**: покрытие тестами > 80%
+- **Модульные тесты**: исчерпывающие модульные тесты для логики контроллера
+- **Интеграционные тесты**: сквозные интеграционные тесты
+- **Граничные случаи**: тесты покрывают сценарии ошибок и граничные случаи
+- **Качество тестов**: тесты сопровождаемы и хорошо структурированы
 
-### Production Readiness
+### Готовность к продакшену
 
-- **Security**: Uses distroless images, non-root, security contexts
-- **RBAC**: Minimal, least-privilege RBAC configuration
-- **High Availability**: Leader election enabled
-- **Performance**: Rate limiting, concurrency limits configured
-- **Observability**: Metrics and logging implemented
+- **Безопасность**: использует distroless-образы, не от root, контексты безопасности
+- **RBAC**: минимальная конфигурация RBAC по принципу наименьших привилегий
+- **Высокая доступность**: включён выбор лидера
+- **Производительность**: настроены ограничение частоты, лимиты конкурентности
+- **Наблюдаемость**: реализованы метрики и логирование
 
-### Documentation Standards
+### Стандарты документации
 
-- **README**: Comprehensive README with quick start
-- **API Documentation**: All API fields documented
-- **Examples**: Multiple example resources provided
-- **Troubleshooting**: Common issues and solutions documented
-- **Code Comments**: Important logic explained
+- **README**: исчерпывающий README с быстрым стартом
+- **Документация API**: все поля API задокументированы
+- **Примеры**: предоставлено несколько примеров ресурсов
+- **Устранение неполадок**: задокументированы распространённые проблемы и решения
+- **Комментарии в коде**: важная логика объяснена
 
-## Integration with Previous Modules
+## Интеграция с предыдущими модулями
 
-This final project integrates concepts from all previous modules:
+Этот финальный проект объединяет концепции из всех предыдущих модулей:
 
-- **Module 1**: Understanding Kubernetes architecture and API machinery
-- **Module 2**: Using Kubebuilder to scaffold operators
-- **Module 3**: Controller runtime and reconciliation patterns
-- **Module 4**: Advanced patterns (conditions, finalizers, watching)
-- **Module 5**: Webhooks and admission control
-- **Module 6**: Testing and observability
-- **Module 7**: Production considerations (packaging, security, HA)
-- **Module 8**: Advanced topics (multi-tenancy, composition, stateful apps)
+- **Модуль 1**: понимание архитектуры Kubernetes и механизмов API
+- **Модуль 2**: использование Kubebuilder для генерации каркаса операторов
+- **Модуль 3**: controller runtime и паттерны согласования
+- **Модуль 4**: продвинутые паттерны (условия, финализаторы, отслеживание)
+- **Модуль 5**: вебхуки и контроль допуска
+- **Модуль 6**: тестирование и наблюдаемость
+- **Модуль 7**: подготовка к продакшену (упаковка, безопасность, HA)
+- **Модуль 8**: продвинутые темы (мультиарендность, композиция, stateful-приложения)
 
-Reference solutions from previous modules:
+Эталонные решения из предыдущих модулей:
 
-- [Module 3 Solutions](../../module-03/solutions/) - Controller implementation
-- [Module 4 Solutions](../../module-04/solutions/) - Advanced patterns
-- [Module 5 Solutions](../../module-05/solutions/) - Webhooks
-- [Module 6 Solutions](../../module-06/solutions/) - Testing
-- [Module 7 Solutions](../../module-07/solutions/) - Production features
-- [Module 8 Solutions](../solutions/) - Advanced features
+- [Решения Модуля 3](../../module-03/solutions/) — реализация контроллера
+- [Решения Модуля 4](../../module-04/solutions/) — продвинутые паттерны
+- [Решения Модуля 5](../../module-05/solutions/) — вебхуки
+- [Решения Модуля 6](../../module-06/solutions/) — тестирование
+- [Решения Модуля 7](../../module-07/solutions/) — продакшен-возможности
+- [Решения Модуля 8](../solutions/) — продвинутые возможности
 
-## Solutions
+## Решения
 
-Complete example solutions and reference implementations are available:
+Полные примеры решений и эталонные реализации доступны:
 
-- **Previous Module Solutions**: Reference solutions from Modules 3-7 for implementation patterns
-- **Module 8 Solutions**: See [solutions directory](../solutions/) for:
-  - Multi-tenant operator patterns
-  - Operator composition examples
-  - Backup/restore implementations
-  - Rolling update patterns
+- **Решения предыдущих модулей**: используйте эталонные решения из Модулей 3–7 для паттернов реализации
+- **Решения Модуля 8**: см. [каталог решений](../solutions/) для:
+  - Паттернов мультиарендного оператора
+  - Примеров композиции операторов
+  - Реализаций резервного копирования/восстановления
+  - Паттернов скользящих обновлений
 
-## Lab Summary
+## Итоги лабораторной
 
-In this final project lab, you:
+В этой лабораторной с финальным проектом вы:
 
-1. **Designed a complete API** - Created comprehensive CRD with spec and status
-2. **Implemented full reconciliation** - Built complete controller with all CRUD operations
-3. **Added webhooks** - Implemented validating and mutating webhooks
-4. **Wrote comprehensive tests** - Created unit and integration tests with >80% coverage
-5. **Configured production features** - Set up RBAC, security, HA, and performance optimizations
-6. **Created documentation** - Wrote README, examples, and API documentation
-7. **Built and deployed** - Packaged operator as container image and deployed to cluster
+1. **Спроектировали полноценный API** — создали исчерпывающий CRD со spec и status
+2. **Реализовали полное согласование** — построили полноценный контроллер со всеми CRUD-операциями
+3. **Добавили вебхуки** — реализовали валидирующие и мутирующие вебхуки
+4. **Написали исчерпывающие тесты** — создали модульные и интеграционные тесты с покрытием >80%
+5. **Настроили продакшен-возможности** — настроили RBAC, безопасность, HA и оптимизации производительности
+6. **Создали документацию** — написали README, примеры и документацию API
+7. **Собрали и развернули** — упаковали оператор как образ контейнера и развернули в кластер
 
-## Key Learnings
+## Ключевые уроки
 
-Through this final project, you've demonstrated mastery of:
+Благодаря этому финальному проекту вы продемонстрировали владение:
 
-1. **Operator Development Lifecycle** - From scaffolding to production deployment
-2. **Kubernetes API Patterns** - CRDs, status subresources, conditions, finalizers
-3. **Controller Patterns** - Reconciliation, idempotency, error handling
-4. **Admission Control** - Validating and mutating webhooks
-5. **Testing Strategies** - Unit tests with envtest, integration tests
-6. **Production Readiness** - Security, HA, performance, observability
-7. **Best Practices** - Code organization, documentation, examples
+1. **Жизненным циклом разработки операторов** — от генерации каркаса до продакшен-развёртывания
+2. **Паттернами API Kubernetes** — CRD, подресурсы status, условия, финализаторы
+3. **Паттернами контроллеров** — согласование, идемпотентность, обработка ошибок
+4. **Контролем допуска** — валидирующие и мутирующие вебхуки
+5. **Стратегиями тестирования** — модульные тесты с envtest, интеграционные тесты
+6. **Готовностью к продакшену** — безопасность, HA, производительность, наблюдаемость
+7. **Лучшими практиками** — организация кода, документация, примеры
 
-## Next Steps
+## Дальнейшие шаги
 
-After completing this course, you can:
+После завершения этого курса вы можете:
 
-1. **Build Real Operators** - Apply these patterns to build operators for your applications
-2. **Contribute to Open Source** - Contribute to existing operators or create new ones
-3. **Advanced Topics** - Explore:
-   - Operator SDK (alternative to Kubebuilder)
+1. **Создавать реальные операторы** — применять эти паттерны для создания операторов для ваших приложений
+2. **Вносить вклад в open source** — участвовать в существующих операторах или создавать новые
+3. **Продвинутые темы** — изучить:
+   - Operator SDK (альтернатива Kubebuilder)
    - Operator Lifecycle Manager (OLM)
    - Operator Framework
-   - Multi-cluster operators
-   - Operator metrics and dashboards
+   - Мультикластерные операторы
+   - Метрики и дашборды операторов
 
-## Share Your Project
+## Поделитесь своим проектом
 
-We'd love to see what you've built! If you've completed your final project and want to share it:
+Мы будем рады увидеть, что вы создали! Если вы завершили финальный проект и хотите поделиться им:
 
-1. **Post on LinkedIn** - Share your operator project, what you learned, and what you built
-2. **Tag the Course Creator** - Tag [Piyush Jajoo](https://www.linkedin.com/in/pjajoo) in your post
-3. **Include Details** - Share:
-   - What operator you built
-   - Key features you implemented
-   - What you learned from the course
-   - Link to your GitHub repository (if public)
+1. **Опубликуйте в LinkedIn** — поделитесь своим проектом оператора, тем, что вы изучили, и тем, что создали
+2. **Отметьте автора курса** — отметьте [Piyush Jajoo](https://www.linkedin.com/in/pjajoo) в своём посте
+3. **Укажите детали** — поделитесь:
+   - Какой оператор вы создали
+   - Ключевые реализованные возможности
+   - Что вы изучили из курса
+   - Ссылку на ваш репозиторий GitHub (если публичный)
 
-I'll make my best effort in my free time to review your code and provide feedback!
+Я постараюсь в свободное время просмотреть ваш код и дать обратную связь!
 
-## Additional Resources
+## Дополнительные ресурсы
 
-- [Kubebuilder Book](https://book.kubebuilder.io/) - Comprehensive Kubebuilder documentation
-- [Kubernetes API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md) - API design guidelines
-- [Operator Best Practices](https://sdk.operatorframework.io/docs/best-practices/) - Operator SDK best practices
-- [Example Operators](https://github.com/operator-framework/awesome-operators) - List of example operators
+- [Kubebuilder Book](https://book.kubebuilder.io/) — исчерпывающая документация Kubebuilder
+- [Соглашения об API Kubernetes](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md) — рекомендации по проектированию API
+- [Лучшие практики операторов](https://sdk.operatorframework.io/docs/best-practices/) — лучшие практики Operator SDK
+- [Примеры операторов](https://github.com/operator-framework/awesome-operators) — список примеров операторов
 
-## Congratulations! 🎉
+## Поздравляем! 🎉
 
-You've completed the entire **Building Kubernetes Operators Course**!
+Вы завершили весь курс **«Разработка операторов Kubernetes»**!
 
-You now have:
+Теперь у вас есть:
 
-- ✅ Deep understanding of Kubernetes architecture and operators
-- ✅ Hands-on experience building production-ready operators
-- ✅ Knowledge of best practices and patterns
-- ✅ Skills to build operators for any application
+- ✅ Глубокое понимание архитектуры Kubernetes и операторов
+- ✅ Практический опыт создания готовых к продакшену операторов
+- ✅ Знание лучших практик и паттернов
+- ✅ Навыки создания операторов для любого приложения
 
-**You are now ready to build production-ready Kubernetes operators!**
+**Теперь вы готовы создавать готовые к продакшену операторы Kubernetes!**
 
-**Navigation:** [← Previous Lab: Stateful Applications](lab-03-stateful-applications.md) | [Related Lesson](../lessons/04-real-world-patterns.md) | [Module Overview](../README.md) | [Course Overview](../../README.md)
+**Навигация:** [← Предыдущая лабораторная: Stateful-приложения](lab-03-stateful-applications.md) | [Связанный урок](../lessons/04-real-world-patterns.md) | [Обзор модуля](../README.md) | [Обзор курса](../../README.md)

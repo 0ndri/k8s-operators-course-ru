@@ -1,88 +1,88 @@
 ---
 layout: default
-title: "Module 6: Testing & Debugging"
+title: "Модуль 6: Тестирование и отладка"
 nav_order: 6
-parent: Modules
+parent: Модули
 has_children: true
 has_toc: false
 permalink: /module-06/
 mermaid: true
 ---
 
-# Module 6: Testing and Debugging
+# Модуль 6: Тестирование и отладка
 
-## Overview
+## Обзор
 
-Now that you can build sophisticated operators with webhooks ([Module 5](../module-05/README.md)), it's time to learn how to test and debug them effectively. This module covers unit testing with envtest, integration testing, debugging techniques, and observability patterns that make operators production-ready.
+Теперь, когда вы умеете создавать совершенные операторы с вебхуками ([Модуль 5](../module-05/README.md)), пришло время научиться эффективно их тестировать и отлаживать. Этот модуль охватывает модульное тестирование с envtest, интеграционное тестирование, приёмы отладки и паттерны наблюдаемости, которые делают операторы готовыми к продакшену.
 
-**Duration:** 6-7 hours  
-**Prerequisites:** 
-- Completion of [Module 1: Kubernetes Architecture Deep Dive](../module-01/README.md)
-- Completion of [Module 2: Introduction to Operators](../module-02/README.md)
-- Completion of [Module 3: Building Custom Controllers](../module-03/README.md)
-- Completion of [Module 4: Advanced Reconciliation Patterns](../module-04/README.md)
-- Completion of [Module 5: Webhooks and Admission Control](../module-05/README.md)
-- Understanding of Go testing fundamentals
+**Продолжительность:** 6–7 часов  
+**Предварительные требования:** 
+- Завершение [Модуля 1: Глубокое погружение в архитектуру Kubernetes](../module-01/README.md)
+- Завершение [Модуля 2: Введение в операторы](../module-02/README.md)
+- Завершение [Модуля 3: Создание кастомных контроллеров](../module-03/README.md)
+- Завершение [Модуля 4: Продвинутые паттерны согласования](../module-04/README.md)
+- Завершение [Модуля 5: Вебхуки и контроль допуска](../module-05/README.md)
+- Понимание основ тестирования на Go
 
-## Learning Objectives
+## Цели обучения
 
-By the end of this module, you will:
+К концу этого модуля вы:
 
-- Write comprehensive unit tests using envtest
-- Create integration test suites with Ginkgo/Gomega
-- Debug operators effectively using Delve and logs
-- Add observability with metrics, logging, and events
-- Understand testing best practices for operators
+- Напишете исчерпывающие модульные тесты с использованием envtest
+- Создадите наборы интеграционных тестов с Ginkgo/Gomega
+- Научитесь эффективно отлаживать операторы с помощью Delve и логов
+- Добавите наблюдаемость с помощью метрик, логирования и событий
+- Разберётесь в лучших практиках тестирования операторов
 
-## Module Structure
+## Структура модуля
 
-1. **[Lesson 6.1: Testing Fundamentals](lessons/01-testing-fundamentals.md)**
-   - [Lab 6.1: Setting Up Testing Environment](labs/lab-01-testing-fundamentals.md)
+1. **[Урок 6.1: Основы тестирования](lessons/01-testing-fundamentals.md)**
+   - [Лабораторная 6.1: Настройка среды тестирования](labs/lab-01-testing-fundamentals.md)
 
-2. **[Lesson 6.2: Unit Testing with envtest](lessons/02-unit-testing-envtest.md)**
-   - [Lab 6.2: Writing Unit Tests](labs/lab-02-unit-testing-envtest.md)
+2. **[Урок 6.2: Модульное тестирование с envtest](lessons/02-unit-testing-envtest.md)**
+   - [Лабораторная 6.2: Написание модульных тестов](labs/lab-02-unit-testing-envtest.md)
 
-3. **[Lesson 6.3: Integration Testing](lessons/03-integration-testing.md)**
-   - [Lab 6.3: Creating Integration Tests](labs/lab-03-integration-testing.md)
+3. **[Урок 6.3: Интеграционное тестирование](lessons/03-integration-testing.md)**
+   - [Лабораторная 6.3: Создание интеграционных тестов](labs/lab-03-integration-testing.md)
 
-4. **[Lesson 6.4: Debugging and Observability](lessons/04-debugging-observability.md)**
-   - [Lab 6.4: Adding Observability](labs/lab-04-debugging-observability.md)
+4. **[Урок 6.4: Отладка и наблюдаемость](lessons/04-debugging-observability.md)**
+   - [Лабораторная 6.4: Добавление наблюдаемости](labs/lab-04-debugging-observability.md)
 
-## Prerequisites Check
+## Проверка предварительных требований
 
-Before starting, ensure you've completed:
+Перед началом убедитесь, что вы завершили:
 
-- ✅ [Module 5](../module-05/README.md): Operator with webhooks
-- ✅ Understand Go testing from [Module 2](../module-02/README.md)
-- ✅ Have a working operator from Module 3/4/5
-- ✅ Basic understanding of Go testing (`go test`)
+- ✅ [Модуль 5](../module-05/README.md): оператор с вебхуками
+- ✅ Понимаете тестирование на Go из [Модуля 2](../module-02/README.md)
+- ✅ Имеете рабочий оператор из Модулей 3/4/5
+- ✅ Базовое понимание тестирования на Go (`go test`)
 
-If you haven't completed Module 5, start with [Module 5: Webhooks and Admission Control](../module-05/README.md).
+Если вы не завершили Модуль 5, начните с [Модуля 5: Вебхуки и контроль допуска](../module-05/README.md).
 
-## What You'll Build
+## Что вы создадите
 
-Throughout this module, you'll add testing and observability to your Database operator:
+На протяжении этого модуля вы добавите тестирование и наблюдаемость в свой оператор Database:
 
-- Unit tests for reconciliation logic
-- Integration tests for end-to-end scenarios
-- Debugging setup for local development
-- Metrics and logging for observability
+- Модульные тесты для логики согласования
+- Интеграционные тесты для сквозных (end-to-end) сценариев
+- Настройку отладки для локальной разработки
+- Метрики и логирование для наблюдаемости
 
-## Setup
+## Настройка
 
-Before starting this module:
+Перед началом этого модуля:
 
-1. **Have your Database operator from Module 3/4/5:**
-   - Should have a working operator
-   - Webhooks implemented (from Module 5)
-   - Ready to add tests
+1. **Подготовьте свой оператор Database из Модулей 3/4/5:**
+   - Должен быть рабочий оператор
+   - Реализованы вебхуки (из Модуля 5)
+   - Готов к добавлению тестов
 
-2. **Ensure development environment is ready:**
+2. **Убедитесь, что среда разработки готова:**
    ```bash
    ./scripts/setup-dev-environment.sh
    ```
 
-3. **Install testing tools:**
+3. **Установите инструменты тестирования:**
    ```bash
    # Install Ginkgo and Gomega
    go install github.com/onsi/ginkgo/v2/ginkgo@latest
@@ -91,27 +91,26 @@ Before starting this module:
    go install github.com/go-delve/delve/cmd/dlv@latest
    ```
 
-## Hands-on Labs
+## Практические лабораторные работы
 
-Each lesson includes hands-on exercises that add testing and observability to your operator.
+Каждый урок включает практические упражнения, которые добавляют тестирование и наблюдаемость в ваш оператор.
 
-- [Lab 6.1: Setting Up Testing Environment](labs/lab-01-testing-fundamentals.md)
-- [Lab 6.2: Writing Unit Tests](labs/lab-02-unit-testing-envtest.md)
-- [Lab 6.3: Creating Integration Tests](labs/lab-03-integration-testing.md)
-- [Lab 6.4: Adding Observability](labs/lab-04-debugging-observability.md)
+- [Лабораторная 6.1: Настройка среды тестирования](labs/lab-01-testing-fundamentals.md)
+- [Лабораторная 6.2: Написание модульных тестов](labs/lab-02-unit-testing-envtest.md)
+- [Лабораторная 6.3: Создание интеграционных тестов](labs/lab-03-integration-testing.md)
+- [Лабораторная 6.4: Добавление наблюдаемости](labs/lab-04-debugging-observability.md)
 
-## Solutions
+## Решения
 
-Complete working solutions for all labs are available in the [solutions directory](solutions/):
-- [Lab 6.1 Solutions](solutions/suite_test.go) - Test suite setup
-- [Lab 6.2 Solutions](solutions/database_controller_test.go) - Unit test examples
-- [Lab 6.3 Solutions](solutions/integration_test.go) - Integration test examples
-- [Lab 6.4 Solutions - Metrics](solutions/metrics.go), [Lab 6.4 Solutions - Observability](solutions/observability.go) - Observability examples
+Полные рабочие решения для всех лабораторных доступны в [каталоге решений](solutions/):
+- [Решения лабораторной 6.1](solutions/suite_test.go) — настройка набора тестов
+- [Решения лабораторной 6.2](solutions/database_controller_test.go) — примеры модульных тестов
+- [Решения лабораторной 6.3](solutions/integration_test.go) — примеры интеграционных тестов
+- [Решения лабораторной 6.4 — метрики](solutions/metrics.go), [Решения лабораторной 6.4 — наблюдаемость](solutions/observability.go) — примеры наблюдаемости
 
 
-## Navigation
+## Навигация
 
-- [← Previous: Module 5 - Webhooks and Admission Control](../module-05/README.md)
-- [Course Overview](../README.md)
-- [Next: Module 7 - Production Deployment →](../module-07/README.md)
-
+- [← Предыдущий: Модуль 5 — Вебхуки и контроль допуска](../module-05/README.md)
+- [Обзор курса](../README.md)
+- [Далее: Модуль 7 — Развёртывание в продакшене →](../module-07/README.md)

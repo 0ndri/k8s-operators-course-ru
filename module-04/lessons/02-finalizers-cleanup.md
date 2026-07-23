@@ -2,22 +2,22 @@
 layout: default
 title: "04.2 Finalizers Cleanup"
 nav_order: 2
-parent: "Module 4: Advanced Reconciliation"
-grand_parent: Modules
+parent: "Модуль 4: Продвинутое согласование"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 4.2: Finalizers and Cleanup
+# Урок 4.2: Финализаторы и очистка
 
-**Navigation:** [← Previous: Conditions and Status](01-conditions-status.md) | [Module Overview](../README.md) | [Next: Watching and Indexing →](03-watching-indexing.md)
+**Навигация:** [← Предыдущий: Условия и статус](01-conditions-status.md) | [Обзор модуля](../README.md) | [Далее: Отслеживание и индексирование →](03-watching-indexing.md)
 
-## Introduction
+## Введение
 
-When a user deletes a Custom Resource, you often need to perform cleanup before the resource is actually removed. **Finalizers** allow you to intercept deletion and perform necessary cleanup operations like deleting external resources, backing up data, or notifying external systems.
+Когда пользователь удаляет пользовательский ресурс, часто требуется выполнить очистку до того, как ресурс будет фактически удалён. **Финализаторы (finalizers)** позволяют перехватить удаление и выполнить необходимые операции очистки, такие как удаление внешних ресурсов, резервное копирование данных или уведомление внешних систем.
 
-## What are Finalizers?
+## Что такое финализаторы?
 
-Finalizers are keys in `metadata.finalizers` that prevent resource deletion until they're removed:
+Финализаторы — это ключи в `metadata.finalizers`, которые предотвращают удаление ресурса, пока не будут удалены:
 
 ```mermaid
 graph TB
@@ -33,9 +33,9 @@ graph TB
     style CLEANUP fill:#FFB6C1
 ```
 
-## Deletion Flow with Finalizers
+## Процесс удаления с финализаторами
 
-Here's what happens when a resource with finalizers is deleted:
+Вот что происходит при удалении ресурса с финализаторами:
 
 ```mermaid
 sequenceDiagram
@@ -56,9 +56,9 @@ sequenceDiagram
     API-->>User: Resource deleted
 ```
 
-## Implementing Finalizers
+## Реализация финализаторов
 
-### Step 1: Add Finalizer on Creation
+### Шаг 1: добавьте финализатор при создании
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -80,7 +80,7 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-### Step 2: Handle Deletion
+### Шаг 2: обработайте удаление
 
 ```go
 // Check if resource is being deleted
@@ -93,7 +93,7 @@ if !db.DeletionTimestamp.IsZero() {
 // ...
 ```
 
-### Step 3: Implement Cleanup
+### Шаг 3: реализуйте очистку
 
 ```go
 func (r *DatabaseReconciler) handleDeletion(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -126,9 +126,9 @@ func (r *DatabaseReconciler) handleDeletion(ctx context.Context, db *databasev1.
 }
 ```
 
-## Cleanup Patterns
+## Паттерны очистки
 
-### Pattern 1: Delete Owned Resources
+### Паттерн 1: удаление подчинённых ресурсов
 
 ```go
 func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *databasev1.Database) error {
@@ -144,9 +144,9 @@ func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *d
 }
 ```
 
-### Pattern 2: Delete Child Resources Explicitly
+### Паттерн 2: явное удаление дочерних ресурсов
 
-> **Critical:** When using finalizers, you must **explicitly delete** child resources. Owner references only cascade deletes when the parent is deleted, but finalizers prevent the parent from being deleted until cleanup completes - creating a deadlock if you only wait for resources to disappear.
+> **Критически важно:** при использовании финализаторов вы должны **явно удалять** дочерние ресурсы. Ссылки-владельцы каскадно удаляют ресурсы только при удалении родителя, но финализаторы не дают удалить родителя, пока не завершится очистка, — это создаёт взаимоблокировку (deadlock), если вы просто ждёте исчезновения ресурсов.
 
 ```go
 func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *databasev1.Database) error {
@@ -176,7 +176,7 @@ func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *d
 }
 ```
 
-### Pattern 3: External API Cleanup
+### Паттерн 3: очистка через внешний API
 
 ```go
 func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *databasev1.Database) error {
@@ -189,9 +189,9 @@ func (r *DatabaseReconciler) cleanupExternalResources(ctx context.Context, db *d
 }
 ```
 
-## Avoiding Finalizer Deadlocks
+## Как избежать взаимоблокировок финализаторов
 
-Finalizer deadlocks can occur when:
+Взаимоблокировки финализаторов могут возникать, когда:
 
 ```mermaid
 graph TB
@@ -206,25 +206,25 @@ graph TB
     style DEADLOCK fill:#FFB6C1
 ```
 
-### Common Pitfall: Owner Reference + Finalizer Deadlock
+### Распространённая ловушка: взаимоблокировка ссылка-владелец + финализатор
 
-A very common deadlock occurs when:
-1. Parent resource has a finalizer
-2. Cleanup code waits for child resources to be deleted via owner references
-3. Owner reference cascade only works when the parent is deleted
-4. Parent can't be deleted because finalizer is waiting for children to disappear
+Очень частая взаимоблокировка возникает, когда:
+1. У родительского ресурса есть финализатор
+2. Код очистки ждёт удаления дочерних ресурсов через ссылки-владельцы
+3. Каскадное удаление по ссылке-владельцу работает только при удалении родителя
+4. Родитель не может быть удалён, потому что финализатор ждёт исчезновения дочерних ресурсов
 
-**Solution:** Always explicitly delete child resources during cleanup - don't rely on owner reference cascade.
+**Решение:** всегда явно удаляйте дочерние ресурсы во время очистки — не полагайтесь на каскад ссылок-владельцев.
 
-### Prevention Strategies
+### Стратегии предотвращения
 
-1. **Explicit Deletion**: Delete child resources explicitly, don't wait for owner reference cascade
-2. **Idempotent Cleanup**: Cleanup should be safe to retry
-3. **Timeout**: Set maximum time for cleanup
-4. **Force Removal**: Allow manual finalizer removal in emergencies
-5. **Health Checks**: Ensure controller is running before cleanup
+1. **Явное удаление**: удаляйте дочерние ресурсы явно, не ждите каскада ссылок-владельцев
+2. **Идемпотентная очистка**: очистку должно быть безопасно повторять
+3. **Таймаут**: задайте максимальное время для очистки
+4. **Принудительное удаление**: разрешите ручное удаление финализатора в аварийных ситуациях
+5. **Проверки здоровья**: убедитесь, что контроллер работает, перед очисткой
 
-### Example: Timeout Protection
+### Пример: защита таймаутом
 
 ```go
 func (r *DatabaseReconciler) handleDeletion(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -238,9 +238,9 @@ func (r *DatabaseReconciler) handleDeletion(ctx context.Context, db *databasev1.
 }
 ```
 
-## Multiple Finalizers
+## Несколько финализаторов
 
-Resources can have multiple finalizers:
+У ресурсов может быть несколько финализаторов:
 
 ```go
 // Add multiple finalizers
@@ -251,50 +251,50 @@ controllerutil.AddFinalizer(db, "backup.example.com/finalizer")
 // Resource is deleted when all finalizers are removed
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Finalizers** prevent deletion until cleanup is complete
-- Add finalizer on **resource creation**
-- Check **DeletionTimestamp** to detect deletion
-- **Explicitly delete child resources** - don't rely on owner reference cascade (causes deadlock)
-- Perform **cleanup operations** before removing finalizer
-- Remove finalizer **only after cleanup succeeds**
-- Make cleanup **idempotent** (safe to retry)
-- Avoid **finalizer deadlocks** with timeouts and health checks
+- **Финализаторы** предотвращают удаление, пока не завершится очистка
+- Добавляйте финализатор при **создании ресурса**
+- Проверяйте **DeletionTimestamp**, чтобы обнаружить удаление
+- **Явно удаляйте дочерние ресурсы** — не полагайтесь на каскад ссылок-владельцев (вызывает взаимоблокировку)
+- Выполняйте **операции очистки** до удаления финализатора
+- Удаляйте финализатор **только после успешной очистки**
+- Делайте очистку **идемпотентной** (безопасной для повтора)
+- Избегайте **взаимоблокировок финализаторов** с помощью таймаутов и проверок здоровья
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When implementing finalizers:
-- Add finalizer early in reconciliation
-- Check DeletionTimestamp for deletion
-- Perform all cleanup before removing finalizer
-- Handle cleanup failures gracefully
-- Make cleanup idempotent
-- Set timeouts to prevent deadlocks
+При реализации финализаторов:
+- Добавляйте финализатор в начале согласования
+- Проверяйте DeletionTimestamp для обнаружения удаления
+- Выполняйте всю очистку до удаления финализатора
+- Аккуратно обрабатывайте сбои очистки
+- Делайте очистку идемпотентной
+- Устанавливайте таймауты для предотвращения взаимоблокировок
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 4.2: Implementing Finalizers](../labs/lab-02-finalizers-cleanup.md) - Hands-on exercises for this lesson
+- [Лабораторная 4.2: Реализация финализаторов](../labs/lab-02-finalizers-cleanup.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Finalizers](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/)
-- [Garbage Collection](https://kubernetes.io/docs/concepts/architecture/garbage-collection/)
-- [Owner References](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
+### Официальная документация
+- [Финализаторы](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/)
+- [Сборка мусора](https://kubernetes.io/docs/concepts/architecture/garbage-collection/)
+- [Ссылки-владельцы](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 6: Finalizers and Cleanup
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 7: Resource Lifecycle
-- [Kubernetes Finalizers Explained](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 6: Finalizers and Cleanup
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 7: Resource Lifecycle
+- [Объяснение финализаторов Kubernetes](https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/)
 
-### Related Topics
-- [Owner References Pattern](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
-- [Garbage Collection](https://kubernetes.io/docs/concepts/architecture/garbage-collection/)
-- [Deletion Propagation](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/#controlling-how-the-garbage-collector-deletes-dependents)
+### Смежные темы
+- [Паттерн ссылок-владельцев](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
+- [Сборка мусора](https://kubernetes.io/docs/concepts/architecture/garbage-collection/)
+- [Распространение удаления](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/#controlling-how-the-garbage-collector-deletes-dependents)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand finalizers, let's learn about watching and indexing for efficient controllers.
+Теперь, когда вы понимаете финализаторы, давайте изучим отслеживание и индексирование для эффективных контроллеров.
 
-**Navigation:** [← Previous: Conditions and Status](01-conditions-status.md) | [Module Overview](../README.md) | [Next: Watching and Indexing →](03-watching-indexing.md)
+**Навигация:** [← Предыдущий: Условия и статус](01-conditions-status.md) | [Обзор модуля](../README.md) | [Далее: Отслеживание и индексирование →](03-watching-indexing.md)

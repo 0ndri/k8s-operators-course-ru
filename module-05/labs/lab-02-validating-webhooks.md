@@ -2,39 +2,39 @@
 layout: default
 title: "Lab 05.2: Validating Webhooks"
 nav_order: 12
-parent: "Module 5: Webhooks & Admission Control"
-grand_parent: Modules
+parent: "Модуль 5: Вебхуки и контроль допуска"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 5.2: Building Validating Webhook
+# Лабораторная 5.2: Создание валидирующего вебхука
 
-**Related Lesson:** [Lesson 5.2: Implementing Validating Webhooks](../lessons/02-validating-webhooks.md)  
-**Navigation:** [← Previous Lab: Admission Control](lab-01-admission-control.md) | [Module Overview](../README.md) | [Next Lab: Mutating Webhooks →](lab-03-mutating-webhooks.md)
+**Связанный урок:** [Урок 5.2: Реализация валидирующих вебхуков](../lessons/02-validating-webhooks.md)  
+**Навигация:** [← Предыдущая лабораторная: Контроль допуска](lab-01-admission-control.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Мутирующие вебхуки →](lab-03-mutating-webhooks.md)
 
-## Objectives
+## Цели
 
-- Scaffold validating webhook with kubebuilder
-- Implement custom validation logic
-- Test with valid and invalid resources
-- Provide meaningful error messages
+- Сгенерировать каркас валидирующего вебхука с помощью kubebuilder
+- Реализовать пользовательскую логику валидации
+- Протестировать на корректных и некорректных ресурсах
+- Предоставить информативные сообщения об ошибках
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Module 3](../../module-03/README.md) or [Module 4](../../module-04/README.md)
-- Database operator project
-- Understanding of validation requirements
+- Завершение [Модуля 3](../../module-03/README.md) или [Модуля 4](../../module-04/README.md)
+- Проект оператора Database
+- Понимание требований к валидации
 
-## Exercise 1: Scaffold Validating Webhook
+## Упражнение 1: генерация каркаса валидирующего вебхука
 
-### Task 1.1: Navigate to Your Operator
+### Задача 1.1: перейдите к вашему оператору
 
 ```bash
 # Navigate to your Database operator
 cd ~/postgres-operator
 ```
 
-### Task 1.2: Create Validating Webhook
+### Задача 1.2: создайте валидирующий вебхук
 
 ```bash
 # Create validating webhook
@@ -45,11 +45,11 @@ kubebuilder create webhook \
   --programmatic-validation
 ```
 
-**Observe:**
-- What files were created?
-- What was modified?
+**Обратите внимание:**
+- Какие файлы были созданы?
+- Что было изменено?
 
-### Task 1.3: Examine Generated Code
+### Задача 1.3: изучите сгенерированный код
 
 ```bash
 # Check the generated webhook file
@@ -59,17 +59,17 @@ cat internal/webhook/v1/database_webhook.go
 grep "kubebuilder:webhook" internal/webhook/v1/database_webhook.go
 ```
 
-**Observe the structure:**
-- Webhook code is in `internal/webhook/v1/` directory
-- Uses `DatabaseCustomValidator` struct
-- Implements `webhook.CustomValidator` interface
-- Methods take `context.Context` as first parameter
+**Обратите внимание на структуру:**
+- Код вебхука находится в каталоге `internal/webhook/v1/`
+- Использует структуру `DatabaseCustomValidator`
+- Реализует интерфейс `webhook.CustomValidator`
+- Методы принимают `context.Context` первым параметром
 
-## Exercise 2: Implement Validation Logic
+## Упражнение 2: реализация логики валидации
 
-### Task 2.1: Add ValidateCreate
+### Задача 2.1: добавьте ValidateCreate
 
-Edit `internal/webhook/v1/database_webhook.go`:
+Отредактируйте `internal/webhook/v1/database_webhook.go`:
 
 ```go
 package v1
@@ -137,7 +137,7 @@ func (v *DatabaseCustomValidator) ValidateCreate(ctx context.Context, obj runtim
 }
 ```
 
-### Task 2.2: Add ValidateUpdate
+### Задача 2.2: добавьте ValidateUpdate
 
 ```go
 // ValidateUpdate implements webhook.CustomValidator so a webhook will be registered for the type Database.
@@ -182,7 +182,7 @@ func parseStorageSize(size string) int64 {
 }
 ```
 
-### Task 2.3: Add ValidateDelete (Optional)
+### Задача 2.3: добавьте ValidateDelete (опционально)
 
 ```go
 // ValidateDelete implements webhook.CustomValidator so a webhook will be registered for the type Database.
@@ -200,9 +200,9 @@ func (v *DatabaseCustomValidator) ValidateDelete(ctx context.Context, obj runtim
 }
 ```
 
-## Exercise 3: Generate Manifests
+## Упражнение 3: генерация манифестов
 
-### Task 3.1: Generate Webhook Manifests
+### Задача 3.1: сгенерируйте манифесты вебхука
 
 ```bash
 # Generate manifests
@@ -215,34 +215,34 @@ ls -la config/webhook/
 cat config/webhook/manifests.yaml
 ```
 
-### Task 3.2: Verify Webhook Configuration
+### Задача 3.2: проверьте конфигурацию вебхука
 
 ```bash
 # Check the configuration
 cat config/webhook/manifests.yaml | grep -A 20 "ValidatingWebhookConfiguration"
 ```
 
-## Exercise 4: Test Validating Webhook
+## Упражнение 4: тестирование валидирующего вебхука
 
-### Understanding Webhook Testing
+### Понимание тестирования вебхуков
 
-Unlike controller logic, webhooks cannot be easily tested with `make run` because:
-- Webhooks require TLS certificates
-- The Kubernetes API server (inside the cluster) needs to reach the webhook endpoint
-- When running locally, the API server cannot call back to your localhost
+В отличие от логики контроллера, вебхуки нельзя легко протестировать через `make run`, потому что:
+- Вебхукам нужны TLS-сертификаты
+- API-серверу Kubernetes (внутри кластера) нужно достучаться до эндпоинта вебхука
+- При локальном запуске API-сервер не может обратиться обратно к вашему localhost
 
-**Two approaches for development:**
+**Два подхода для разработки:**
 
-| Approach | Command | Webhooks Work? | Use When |
+| Подход | Команда | Работают ли вебхуки? | Когда использовать |
 |----------|---------|----------------|----------|
-| Local development | `make install && make run` | ❌ No | Testing controller/reconciliation logic |
-| In-cluster deployment | `make deploy` | ✅ Yes | Testing webhook validation |
+| Локальная разработка | `make install && make run` | ❌ Нет | Тестирование логики контроллера/согласования |
+| Развёртывание в кластере | `make deploy` | ✅ Да | Тестирование валидации вебхуком |
 
-> **Note:** If you used the course's `scripts/setup-kind-cluster.sh` script to create your cluster, cert-manager is already installed. Verify with: `kubectl get pods -n cert-manager`
+> **Примечание:** если вы использовали скрипт курса `scripts/setup-kind-cluster.sh` для создания кластера, cert-manager уже установлен. Проверьте командой: `kubectl get pods -n cert-manager`
 
-### Task 4.1: Ensure Cert-Manager is Installed
+### Задача 4.1: убедитесь, что Cert-Manager установлен
 
-If cert-manager is not installed:
+Если cert-manager не установлен:
 
 ```bash
 # Install cert-manager in your cluster
@@ -254,9 +254,9 @@ kubectl wait --for=condition=Available deployment/cert-manager-webhook -n cert-m
 kubectl wait --for=condition=Available deployment/cert-manager-cainjector -n cert-manager --timeout=120s
 ```
 
-### Task 4.2: Deploy Operator to Cluster
+### Задача 4.2: разверните оператор в кластер
 
-Since webhooks need to run inside the cluster, we need to build and deploy:
+Поскольку вебхуки должны работать внутри кластера, нужно собрать и развернуть:
 
 ```bash
 # Build the container image
@@ -266,30 +266,30 @@ make docker-build IMG=postgres-operator:latest
 kind load docker-image postgres-operator:latest --name k8s-operators-course
 ```
 
-Before deploying, we need to set `imagePullPolicy: IfNotPresent` so Kubernetes uses the locally loaded image instead of trying to pull from Docker Hub:
+Перед развёртыванием нужно установить `imagePullPolicy: IfNotPresent`, чтобы Kubernetes использовал локально загруженный образ вместо попытки скачать его из Docker Hub:
 
 ```bash
 # Edit config/manager/manager.yaml and add imagePullPolicy
 # Find the container spec and add: imagePullPolicy: IfNotPresent
 ```
 
-Or use this command to patch it:
+Или используйте эту команду, чтобы применить патч:
 
 ```bash
 # Add imagePullPolicy to manager.yaml
 sed -i.bak 's/image: controller:latest/image: controller:latest\n          imagePullPolicy: IfNotPresent/' config/manager/manager.yaml
 ```
 
-Now deploy:
+Теперь разверните:
 
 ```bash
 # Deploy operator with webhooks to cluster
 make deploy IMG=postgres-operator:latest
 ```
 
-> **Using Podman instead of Docker?**
+> **Используете Podman вместо Docker?**
 > 
-> The Makefile uses `CONTAINER_TOOL` variable (defaults to `docker`). Podman prefixes images with `localhost/`, so use:
+> Makefile использует переменную `CONTAINER_TOOL` (по умолчанию `docker`). Podman добавляет к образам префикс `localhost/`, поэтому используйте:
 > ```bash
 > # Build with podman (note: image will be localhost/postgres-operator:latest)
 > make docker-build IMG=postgres-operator:latest CONTAINER_TOOL=podman
@@ -303,11 +303,11 @@ make deploy IMG=postgres-operator:latest
 > make deploy IMG=localhost/postgres-operator:latest
 > ```
 
-> **Getting `ErrImagePull` or `ImagePullBackOff`?**
+> **Получаете `ErrImagePull` или `ImagePullBackOff`?**
 > 
-> This means Kubernetes is trying to pull from Docker Hub instead of using the local image.
+> Это означает, что Kubernetes пытается скачать образ из Docker Hub вместо использования локального.
 > 
-> 1. Ensure `imagePullPolicy: IfNotPresent` is set in `config/manager/manager.yaml`:
+> 1. Убедитесь, что в `config/manager/manager.yaml` установлено `imagePullPolicy: IfNotPresent`:
 >    ```yaml
 >    containers:
 >    - name: manager
@@ -315,18 +315,18 @@ make deploy IMG=postgres-operator:latest
 >      imagePullPolicy: IfNotPresent  # Add this line
 >    ```
 > 
-> 2. **Podman users:** Check the actual image name loaded in kind:
+> 2. **Пользователи Podman:** проверьте фактическое имя образа, загруженного в kind:
 >    ```bash
 >    podman exec k8s-operators-course-control-plane crictl images | grep postgres
 >    ```
->    If it shows `localhost/postgres-operator`, use that name when deploying:
+>    Если показывается `localhost/postgres-operator`, используйте это имя при развёртывании:
 >    ```bash
 >    make deploy IMG=localhost/postgres-operator:latest
 >    ```
 
-> **Tip:** For day-to-day controller development, you can still use `make install && make run`. Only deploy to cluster when you need to test webhook behavior.
+> **Совет:** для повседневной разработки контроллера вы всё ещё можете использовать `make install && make run`. Разворачивайте в кластер только когда нужно протестировать поведение вебхуков.
 
-### Task 4.3: Verify Webhook is Registered
+### Задача 4.3: проверьте, что вебхук зарегистрирован
 
 ```bash
 # Check webhook configuration was created
@@ -339,7 +339,7 @@ kubectl get pods -n postgres-operator-system
 kubectl logs -n postgres-operator-system deployment/postgres-operator-controller-manager
 ```
 
-### Task 4.4: Test Valid Resource
+### Задача 4.4: протестируйте корректный ресурс
 
 ```bash
 # Create valid Database
@@ -361,7 +361,7 @@ EOF
 kubectl get database valid-db
 ```
 
-### Task 4.5: Test Invalid Resources
+### Задача 4.5: протестируйте некорректные ресурсы
 
 ```bash
 # Test invalid image
@@ -399,7 +399,7 @@ EOF
 # Should fail with validation error
 ```
 
-### Task 4.6: Test Update Validation
+### Задача 4.6: протестируйте валидацию обновления
 
 ```bash
 # Create database
@@ -428,11 +428,11 @@ kubectl patch database update-test --type merge -p '{"spec":{"databaseName":"new
 # Should fail with validation error
 ```
 
-## Exercise 5: Improve Error Messages
+## Упражнение 5: улучшение сообщений об ошибках
 
-### Task 5.1: Add Context to Errors
+### Задача 5.1: добавьте контекст к ошибкам
 
-Enhance error messages:
+Улучшите сообщения об ошибках:
 
 ```go
 func (v *DatabaseCustomValidator) ValidateCreate(ctx context.Context, obj runtime.Object) (admission.Warnings, error) {
@@ -464,9 +464,9 @@ func (v *DatabaseCustomValidator) ValidateCreate(ctx context.Context, obj runtim
 }
 ```
 
-**Rebuild and load the new image as explained in** [Task 4.2: Deploy Operator to Cluster](#task-42-deploy-operator-to-cluster) and restart the deployment so that it picks up the new image - `kubectl rollout restart deploy -n postgres-operator-system   postgres-operator-controller-manager`.
+**Пересоберите и загрузите новый образ, как описано в** [Задаче 4.2: Разверните оператор в кластер](#задача-42-разверните-оператор-в-кластер), и перезапустите развёртывание, чтобы оно подхватило новый образ — `kubectl rollout restart deploy -n postgres-operator-system   postgres-operator-controller-manager`.
 
-Now validate with a sample below -
+Теперь проверьте на примере ниже:
 ```
 kubectl apply -f - <<EOF
 apiVersion: database.example.com/v1
@@ -485,7 +485,7 @@ EOF
 # Should fail and error message should show both the spec.Image and spec.Storage errors
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete test resources
@@ -494,34 +494,34 @@ kubectl delete databases --all
 # Stop operator (Ctrl+C)
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Scaffolded validating webhook with kubebuilder
-- Implemented custom validation logic
-- Tested with valid and invalid resources
-- Improved error messages
-- Tested update validation
+В этой лабораторной вы:
+- Сгенерировали каркас валидирующего вебхука с помощью kubebuilder
+- Реализовали пользовательскую логику валидации
+- Протестировали на корректных и некорректных ресурсах
+- Улучшили сообщения об ошибках
+- Протестировали валидацию обновления
 
-## Key Learnings
+## Ключевые уроки
 
-1. Kubebuilder scaffolds webhooks easily in `internal/webhook/v1/`
-2. Uses `DatabaseCustomValidator` struct implementing `webhook.CustomValidator`
-3. Methods receive `context.Context` as first parameter
-4. `ValidateUpdate` receives both old and new objects as `runtime.Object`
-5. Type-assert `runtime.Object` to your actual resource type
-6. Provide clear, actionable error messages
-7. Test with both valid and invalid resources
-8. Webhooks run after CRD schema validation
-9. Error messages help users fix issues
+1. Kubebuilder легко генерирует каркас вебхуков в `internal/webhook/v1/`
+2. Использует структуру `DatabaseCustomValidator`, реализующую `webhook.CustomValidator`
+3. Методы получают `context.Context` первым параметром
+4. `ValidateUpdate` получает и старый, и новый объект как `runtime.Object`
+5. Приводите по типу `runtime.Object` к фактическому типу вашего ресурса
+6. Предоставляйте понятные, применимые сообщения об ошибках
+7. Тестируйте на корректных и некорректных ресурсах
+8. Вебхуки запускаются после валидации схемы CRD
+9. Сообщения об ошибках помогают пользователям исправлять проблемы
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Validating Webhook](../solutions/validating-webhook.go) - Complete validating webhook implementation with custom validation logic
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Validating Webhook](../solutions/validating-webhook.go) — полная реализация валидирующего вебхука с пользовательской логикой валидации
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's build a mutating webhook for defaulting!
+Теперь давайте создадим мутирующий вебхук для установки значений по умолчанию!
 
-**Navigation:** [← Previous Lab: Admission Control](lab-01-admission-control.md) | [Related Lesson](../lessons/02-validating-webhooks.md) | [Next Lab: Mutating Webhooks →](lab-03-mutating-webhooks.md)
+**Навигация:** [← Предыдущая лабораторная: Контроль допуска](lab-01-admission-control.md) | [Связанный урок](../lessons/02-validating-webhooks.md) | [Следующая лабораторная: Мутирующие вебхуки →](lab-03-mutating-webhooks.md)

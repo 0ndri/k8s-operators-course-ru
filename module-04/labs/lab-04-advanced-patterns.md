@@ -2,36 +2,36 @@
 layout: default
 title: "Lab 04.4: Advanced Patterns"
 nav_order: 14
-parent: "Module 4: Advanced Reconciliation"
-grand_parent: Modules
+parent: "Модуль 4: Продвинутое согласование"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 4.4: Multi-Phase Reconciliation
+# Лабораторная 4.4: Многофазное согласование
 
-**Related Lesson:** [Lesson 4.4: Advanced Patterns](../lessons/04-advanced-patterns.md)  
-**Navigation:** [← Previous Lab: Watching](lab-03-watching-indexing.md) | [Module Overview](../README.md)
+**Связанный урок:** [Урок 4.4: Продвинутые паттерны](../lessons/04-advanced-patterns.md)  
+**Навигация:** [← Предыдущая лабораторная: Отслеживание](lab-03-watching-indexing.md) | [Обзор модуля](../README.md)
 
-## Objectives
+## Цели
 
-- Implement multi-phase reconciliation
-- Create a state machine for Database operator
-- Handle external dependencies
-- Ensure idempotency
+- Реализовать многофазное согласование
+- Создать конечный автомат для оператора Database
+- Обработать внешние зависимости
+- Обеспечить идемпотентность
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 4.3](lab-03-watching-indexing.md)
-- Database operator with watches
-- Understanding of advanced patterns
+- Завершение [Лабораторной 4.3](lab-03-watching-indexing.md)
+- Оператор Database с отслеживанием
+- Понимание продвинутых паттернов
 
-## Exercise 1: Implement State Machine
+## Упражнение 1: реализация конечного автомата
 
-### Task 1.0: Update the API Types (Important!)
+### Задача 1.0: обновите типы API (важно!)
 
-Before implementing the state machine, you need to update the `Phase` field validation in your API types to allow the new states.
+Прежде чем реализовывать конечный автомат, нужно обновить валидацию поля `Phase` в типах API, чтобы разрешить новые состояния.
 
-Edit `api/v1/database_types.go` and update the Phase field enum:
+Отредактируйте `api/v1/database_types.go` и обновите enum поля Phase:
 
 ```go
 // DatabaseStatus defines the observed state of Database
@@ -44,19 +44,19 @@ type DatabaseStatus struct {
 }
 ```
 
-Then regenerate and reinstall the CRD:
+Затем перегенерируйте и переустановите CRD:
 
 ```bash
 make manifests
 make install
 ```
 
-> **Important:** If you skip this step, you'll see validation errors like:
+> **Важно:** если вы пропустите этот шаг, вы увидите ошибки валидации вроде:
 > `Database.database.example.com "test-db" is invalid: phase: Unsupported value: "Provisioning": supported values: "Pending", "Creating", "Ready", "Failed"`
 
-### Task 1.1: Define States
+### Задача 1.1: определите состояния
 
-Add state constants in `internal/controller/database_controller.go`:
+Добавьте константы состояний в `internal/controller/database_controller.go`:
 
 ```go
 type DatabaseState string
@@ -72,7 +72,7 @@ const (
 )
 ```
 
-### Task 1.2: Implement State Machine
+### Задача 1.2: реализуйте конечный автомат
 
 ```go
 func (r *DatabaseReconciler) reconcileWithStateMachine(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -105,9 +105,9 @@ func (r *DatabaseReconciler) reconcileWithStateMachine(ctx context.Context, db *
 }
 ```
 
-### Task 1.3: Update the Main Reconcile Function
+### Задача 1.3: обновите основную функцию Reconcile
 
-**Important:** You must update your main `Reconcile` function to call the state machine instead of the direct reconciliation flow:
+**Важно:** вы должны обновить свою основную функцию `Reconcile`, чтобы она вызывала конечный автомат вместо прямого потока согласования:
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -143,11 +143,11 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-> **Note:** If you skip this step and keep the old Reconcile function that directly calls `reconcileStatefulSet`, `reconcileService`, and `updateStatus`, the state machine functions will never be called and you'll only see `Pending → Creating → Ready` transitions.
+> **Примечание:** если вы пропустите этот шаг и оставите старую функцию Reconcile, которая напрямую вызывает `reconcileStatefulSet`, `reconcileService` и `updateStatus`, функции конечного автомата никогда не будут вызваны, и вы увидите только переходы `Pending → Creating → Ready`.
 
-## Exercise 2: Implement State Handlers
+## Упражнение 2: реализация обработчиков состояний
 
-### Task 2.1: State Transition Functions
+### Задача 2.1: функции переходов состояний
 
 ```go
 func (r *DatabaseReconciler) transitionToProvisioning(ctx context.Context, db *databasev1.Database) (ctrl.Result, error) {
@@ -293,11 +293,11 @@ func (r *DatabaseReconciler) handleFailed(ctx context.Context, db *databasev1.Da
 }
 ```
 
-> **Note:** The `RequeueAfter: 15 * time.Second` delays and `logger.Info()` calls are added to help visualize state transitions during development. Watch both the operator logs and the Database status to see each transition. In production, you would remove these delays and reduce logging verbosity.
+> **Примечание:** задержки `RequeueAfter: 15 * time.Second` и вызовы `logger.Info()` добавлены, чтобы помочь визуализировать переходы состояний во время разработки. Смотрите одновременно логи оператора и статус Database, чтобы увидеть каждый переход. В продакшене эти задержки следует убрать и снизить подробность логирования.
 
-## Exercise 3: Test State Machine
+## Упражнение 3: тестирование конечного автомата
 
-### Task 3.1: Install and Run
+### Задача 3.1: установите и запустите
 
 ```bash
 # Install CRD
@@ -307,7 +307,7 @@ make install
 make run
 ```
 
-### Task 3.2: Create Database
+### Задача 3.2: создайте Database
 
 ```bash
 # Create Database
@@ -329,11 +329,11 @@ EOF
 watch -n 1 'kubectl get database test-db -o jsonpath="{.status.phase}"'
 ```
 
-### Task 3.3: Observe State Transitions
+### Задача 3.3: понаблюдайте за переходами состояний
 
-Open **two terminals** to observe the state machine in action:
+Откройте **два терминала**, чтобы наблюдать за конечным автоматом в действии:
 
-**Terminal 1 - Watch the operator logs:**
+**Терминал 1 — смотрите логи оператора:**
 ```bash
 # The operator logs will show STATE TRANSITION messages like:
 # STATE TRANSITION: Pending -> Provisioning
@@ -344,7 +344,7 @@ Open **two terminals** to observe the state machine in action:
 # Look for lines containing "STATE TRANSITION" and "Waiting 15 seconds"
 ```
 
-**Terminal 2 - Watch the Database status:**
+**Терминал 2 — смотрите статус Database:**
 ```bash
 # Watch phase transitions (updates every second)
 watch -n 1 'kubectl get database test-db -o jsonpath="{.status.phase}"'
@@ -353,12 +353,12 @@ watch -n 1 'kubectl get database test-db -o jsonpath="{.status.phase}"'
 kubectl get database test-db -o jsonpath='{.status.conditions}' | jq '.'
 ```
 
-**Expected state progression (each phase visible for ~15 seconds):**
+**Ожидаемая последовательность состояний (каждая фаза видна ~15 секунд):**
 ```
 Pending -> Provisioning -> Configuring -> Deploying -> Verifying -> Ready
 ```
 
-**Expected log output:**
+**Ожидаемый вывод логов:**
 ```
 INFO    STATE TRANSITION: Pending -> Provisioning    {"database": "test-db"}
 INFO    Waiting 15 seconds before next reconciliation (for visualization)    {"currentPhase": "Provisioning"}
@@ -368,9 +368,9 @@ INFO    STATE TRANSITION: Provisioning -> Configuring    {"database": "test-db"}
 INFO    Database is now READY!    {"database": "test-db", "endpoint": "test-db.default.svc.cluster.local:5432"}
 ```
 
-## Exercise 4: Handle External Dependencies
+## Упражнение 4: обработка внешних зависимостей
 
-### Task 4.1: Add External Dependency Check
+### Задача 4.1: добавьте проверку внешней зависимости
 
 ```go
 func (r *DatabaseReconciler) checkExternalDependency(ctx context.Context, db *databasev1.Database) error {
@@ -395,11 +395,11 @@ func (r *DatabaseReconciler) handleProvisioning(ctx context.Context, db *databas
 }
 ```
 
-## Exercise 5: Ensure Idempotency
+## Упражнение 5: обеспечение идемпотентности
 
-### Task 5.1: Review Idempotent Operations
+### Задача 5.1: разберите идемпотентные операции
 
-Your existing `reconcileStatefulSet` function already follows the idempotent pattern. Let's review how it works:
+Ваша существующая функция `reconcileStatefulSet` уже следует идемпотентному паттерну. Разберём, как она работает:
 
 ```go
 func (r *DatabaseReconciler) reconcileStatefulSet(ctx context.Context, db *databasev1.Database) error {
@@ -442,57 +442,57 @@ func (r *DatabaseReconciler) reconcileStatefulSet(ctx context.Context, db *datab
 }
 ```
 
-### Key Idempotency Principles
+### Ключевые принципы идемпотентности
 
-1. **Check before create**: Always check if resource exists before creating
-2. **Compare before update**: Only update if actual state differs from desired state
-3. **Use patches when possible**: `patchStatefulSetReplicas` is more targeted than full updates
-4. **Handle conflicts**: `updateWithRetry` handles concurrent modification conflicts
-5. **No side effects on no-op**: If state is already correct, function returns immediately
+1. **Проверка перед созданием**: всегда проверяйте существование ресурса перед созданием
+2. **Сравнение перед обновлением**: обновляйте только если фактическое состояние отличается от желаемого
+3. **Используйте патчи, когда возможно**: `patchStatefulSetReplicas` точнее, чем полные обновления
+4. **Обрабатывайте конфликты**: `updateWithRetry` обрабатывает конфликты одновременного изменения
+5. **Без побочных эффектов при no-op**: если состояние уже корректно, функция сразу возвращается
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete test resources
 kubectl delete databases --all
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Implemented multi-phase reconciliation
-- Created a state machine
-- Handled external dependencies
-- Ensured idempotency
-- Tested state transitions
+В этой лабораторной вы:
+- Реализовали многофазное согласование
+- Создали конечный автомат
+- Обработали внешние зависимости
+- Обеспечили идемпотентность
+- Протестировали переходы состояний
 
-## Key Learnings
+## Ключевые уроки
 
-1. Multi-phase reconciliation handles complex deployments
-2. State machines provide structured transitions
-3. External dependencies need availability checks
-4. All operations must be idempotent
-5. State transitions should be clear and observable
-6. Error handling is crucial in state machines
+1. Многофазное согласование обрабатывает сложные развёртывания
+2. Конечные автоматы обеспечивают структурированные переходы
+3. Внешние зависимости требуют проверок доступности
+4. Все операции должны быть идемпотентными
+5. Переходы состояний должны быть чёткими и наблюдаемыми
+6. Обработка ошибок критически важна в конечных автоматах
 
-## Solutions
+## Решения
 
-This lab combines concepts from previous labs. Refer to:
-- [State Machine Controller](../solutions/state-machine-controller.go) - **Complete state machine implementation**
-- [Condition Helpers](../solutions/conditions-helpers.go) - For status management
-- [Finalizer Handler](../solutions/finalizer-handler.go) - For cleanup patterns
-- [Watch Setup](../solutions/watch-setup.go) - For watching patterns
+Эта лабораторная объединяет концепции из предыдущих лабораторных. См.:
+- [State Machine Controller](../solutions/state-machine-controller.go) — **полная реализация конечного автомата**
+- [Condition Helpers](../solutions/conditions-helpers.go) — для управления статусом
+- [Finalizer Handler](../solutions/finalizer-handler.go) — для паттернов очистки
+- [Watch Setup](../solutions/watch-setup.go) — для паттернов отслеживания
 
-> **Note:** The `state-machine-controller.go` file contains the complete implementation including the updated `Reconcile` function that calls the state machine. Make sure your main `Reconcile` function calls `reconcileWithStateMachine` instead of directly reconciling resources.
+> **Примечание:** файл `state-machine-controller.go` содержит полную реализацию, включая обновлённую функцию `Reconcile`, которая вызывает конечный автомат. Убедитесь, что ваша основная функция `Reconcile` вызывает `reconcileWithStateMachine`, а не согласовывает ресурсы напрямую.
 
-## Congratulations!
+## Поздравляем!
 
-You've completed Module 4! You now understand:
-- Status management with conditions
-- Finalizers for cleanup
-- Watching and indexing
-- Advanced reconciliation patterns
+Вы завершили Модуль 4! Теперь вы понимаете:
+- Управление статусом с помощью условий
+- Финализаторы для очистки
+- Отслеживание и индексирование
+- Продвинутые паттерны согласования
 
-In Module 5, you'll learn about webhooks for validation and mutation!
+В Модуле 5 вы изучите вебхуки для валидации и мутации!
 
-**Navigation:** [← Previous Lab: Watching](lab-03-watching-indexing.md) | [Related Lesson](../lessons/04-advanced-patterns.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущая лабораторная: Отслеживание](lab-03-watching-indexing.md) | [Связанный урок](../lessons/04-advanced-patterns.md) | [Обзор модуля](../README.md)

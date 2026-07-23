@@ -2,22 +2,22 @@
 layout: default
 title: "05.3 Mutating Webhooks"
 nav_order: 3
-parent: "Module 5: Webhooks & Admission Control"
-grand_parent: Modules
+parent: "Модуль 5: Вебхуки и контроль допуска"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 5.3: Implementing Mutating Webhooks
+# Урок 5.3: Реализация мутирующих вебхуков
 
-**Navigation:** [← Previous: Validating Webhooks](02-validating-webhooks.md) | [Module Overview](../README.md) | [Next: Webhook Deployment →](04-webhook-deployment.md)
+**Навигация:** [← Предыдущий: Валидирующие вебхуки](02-validating-webhooks.md) | [Обзор модуля](../README.md) | [Далее: Развёртывание вебхуков →](04-webhook-deployment.md)
 
-## Introduction
+## Введение
 
-Mutating webhooks allow you to modify resources before they're validated and stored. This is perfect for setting defaults, adding required fields, or modifying resource structure. Mutating webhooks run before validating webhooks, so they can prepare resources for validation.
+Мутирующие вебхуки позволяют изменять ресурсы до их валидации и сохранения. Это идеально подходит для установки значений по умолчанию, добавления обязательных полей или изменения структуры ресурса. Мутирующие вебхуки запускаются до валидирующих, поэтому они могут подготавливать ресурсы к валидации.
 
-## Mutating Webhook Flow
+## Процесс работы мутирующего вебхука
 
-Here's how a mutating webhook works:
+Вот как работает мутирующий вебхук:
 
 ```mermaid
 sequenceDiagram
@@ -37,20 +37,20 @@ sequenceDiagram
     Note over Webhook: Returns JSON Patch<br/>to modify resource
 ```
 
-## Creating Mutating Webhook
+## Создание мутирующего вебхука
 
-If starting fresh, create mutating webhook with kubebuilder:
+Если начинаете с нуля, создайте мутирующий вебхук с помощью kubebuilder:
 
 ```bash
 # Create mutating webhook
 kubebuilder create webhook --group database --version v1 --kind Database --defaulting
 ```
 
-If you already have a validating webhook (from Lab 5.2), add the defaulter to your existing webhook file manually.
+Если у вас уже есть валидирующий вебхук (из Лабораторной 5.2), добавьте дефолтер (defaulter) в существующий файл вебхука вручную.
 
-## Webhook Handler Structure
+## Структура обработчика вебхука
 
-The generated mutating webhook in `internal/webhook/v1/database_webhook.go` uses the `CustomDefaulter` interface:
+Сгенерированный мутирующий вебхук в `internal/webhook/v1/database_webhook.go` использует интерфейс `CustomDefaulter`:
 
 ```go
 package v1
@@ -97,15 +97,15 @@ func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Objec
 }
 ```
 
-**Key points:**
-- Uses `webhook.CustomDefaulter` interface with a separate struct
-- `Default` method receives `context.Context` and `runtime.Object`
-- Type-assert `runtime.Object` to your actual resource type
-- Register with `.WithDefaulter(&DatabaseCustomDefaulter{})`
+**Ключевые моменты:**
+- Использует интерфейс `webhook.CustomDefaulter` с отдельной структурой
+- Метод `Default` получает `context.Context` и `runtime.Object`
+- Приводите по типу `runtime.Object` к фактическому типу вашего ресурса
+- Регистрируется через `.WithDefaulter(&DatabaseCustomDefaulter{})`
 
-## Implementing Defaulting
+## Реализация установки значений по умолчанию
 
-### Example: Set Default Values
+### Пример: установка значений по умолчанию
 
 ```go
 func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Object) error {
@@ -135,7 +135,7 @@ func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Objec
 }
 ```
 
-### Example: Context-Aware Defaults
+### Пример: значения по умолчанию с учётом контекста
 
 ```go
 func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Object) error {
@@ -170,9 +170,9 @@ func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Objec
 }
 ```
 
-## Common Mutation Patterns
+## Распространённые паттерны мутации
 
-### Pattern 1: Set Defaults
+### Паттерн 1: установка значений по умолчанию
 
 ```mermaid
 graph LR
@@ -185,7 +185,7 @@ graph LR
     style SET fill:#90EE90
 ```
 
-### Pattern 2: Add Required Fields
+### Паттерн 2: добавление обязательных полей
 
 ```go
 func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Object) error {
@@ -214,9 +214,9 @@ func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Objec
 }
 ```
 
-## Mutation Order
+## Порядок мутаций
 
-Mutating webhooks run in a specific order:
+Мутирующие вебхуки запускаются в определённом порядке:
 
 ```mermaid
 graph TB
@@ -231,11 +231,11 @@ graph TB
     style VALIDATE fill:#FFB6C1
 ```
 
-**Important:** Mutations are applied sequentially, so order matters!
+**Важно:** мутации применяются последовательно, поэтому порядок имеет значение!
 
-## Idempotent Mutations
+## Идемпотентные мутации
 
-Mutations must be **idempotent** - applying them multiple times should have the same effect:
+Мутации должны быть **идемпотентными** — их многократное применение должно давать один и тот же результат:
 
 ```go
 func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Object) error {
@@ -262,9 +262,9 @@ func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Objec
 }
 ```
 
-## CRD Schema Defaults vs Webhook Defaults
+## Значения по умолчанию схемы CRD против вебхука
 
-An important consideration when implementing defaulting:
+Важное соображение при реализации установки значений по умолчанию:
 
 ```mermaid
 graph LR
@@ -276,7 +276,7 @@ graph LR
     style MUTATE fill:#90EE90
 ```
 
-**CRD schema defaults** (via `+kubebuilder:default` markers) are applied **before** mutating webhooks:
+**Значения по умолчанию схемы CRD** (через маркеры `+kubebuilder:default`) применяются **до** мутирующих вебхуков:
 
 ```go
 // In api/v1/database_types.go
@@ -284,7 +284,7 @@ graph LR
 Replicas *int32 `json:"replicas,omitempty"`
 ```
 
-This means when your webhook runs, `Replicas` is already `1`, not `nil`. To override:
+Это означает, что когда ваш вебхук запускается, `Replicas` уже равно `1`, а не `nil`. Чтобы переопределить:
 
 ```go
 // Check for the default value, not just nil
@@ -296,53 +296,53 @@ if database.Namespace == "production" {
 }
 ```
 
-**Best Practice:** Use CRD schema defaults for simple static defaults, webhooks for context-aware defaults.
+**Лучшая практика:** используйте значения по умолчанию схемы CRD для простых статических значений, вебхуки — для значений с учётом контекста.
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Mutating webhooks** modify resources before validation
-- Run **before** validating webhooks, but **after** CRD schema defaults
-- Use `webhook.CustomDefaulter` interface with separate struct
-- `Default` method receives `context.Context` and `runtime.Object`
-- Register with `.WithDefaulter(&DatabaseCustomDefaulter{})`
-- Mutations must be **idempotent**
-- Provide **sensible defaults** based on context
-- Check for default values, not just `nil`, when overriding CRD schema defaults
+- **Мутирующие вебхуки** изменяют ресурсы до валидации
+- Запускаются **до** валидирующих вебхуков, но **после** значений по умолчанию схемы CRD
+- Используйте интерфейс `webhook.CustomDefaulter` с отдельной структурой
+- Метод `Default` получает `context.Context` и `runtime.Object`
+- Регистрируется через `.WithDefaulter(&DatabaseCustomDefaulter{})`
+- Мутации должны быть **идемпотентными**
+- Предоставляйте **разумные значения по умолчанию** на основе контекста
+- Проверяйте значения по умолчанию, а не только `nil`, при переопределении значений по умолчанию схемы CRD
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When implementing mutating webhooks:
-- Add to existing webhook file in `internal/webhook/v1/`
-- Use separate `CustomDefaulter` struct
-- Set defaults for optional fields
-- Add required fields automatically
-- Make mutations idempotent
-- Consider context (namespace, labels, etc.)
-- Keep mutations simple and predictable
+При реализации мутирующих вебхуков:
+- Добавляйте в существующий файл вебхука в `internal/webhook/v1/`
+- Используйте отдельную структуру `CustomDefaulter`
+- Устанавливайте значения по умолчанию для необязательных полей
+- Автоматически добавляйте обязательные поля
+- Делайте мутации идемпотентными
+- Учитывайте контекст (пространство имён, метки и т. д.)
+- Держите мутации простыми и предсказуемыми
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 5.3: Building Mutating Webhook](../labs/lab-03-mutating-webhooks.md) - Hands-on exercises for this lesson
+- [Лабораторная 5.3: Создание мутирующего вебхука](../labs/lab-03-mutating-webhooks.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Mutating Admission Webhooks](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#mutatingadmissionwebhook)
+### Официальная документация
+- [Мутирующие вебхуки допуска](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#mutatingadmissionwebhook)
 - [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902)
-- [AdmissionReview API](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response)
+- [API AdmissionReview](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 9: Webhooks
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 9: Admission Control
-- [Kubebuilder Defaulting Webhooks](https://book.kubebuilder.io/cronjob-tutorial/webhook-implementation.html#defaulting)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 9: Webhooks
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 9: Admission Control
+- [Дефолтинг-вебхуки Kubebuilder](https://book.kubebuilder.io/cronjob-tutorial/webhook-implementation.html#defaulting)
 
-### Related Topics
-- [JSON Patch Specification](https://datatracker.ietf.org/doc/html/rfc6902)
-- [Webhook Mutation Best Practices](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#best-practices-and-warnings)
-- [Idempotent Mutations](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#idempotency)
+### Смежные темы
+- [Спецификация JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902)
+- [Лучшие практики мутации вебхуками](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#best-practices-and-warnings)
+- [Идемпотентные мутации](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#idempotency)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand mutating webhooks, let's learn about deploying webhooks and managing certificates.
+Теперь, когда вы понимаете мутирующие вебхуки, давайте изучим развёртывание вебхуков и управление сертификатами.
 
-**Navigation:** [← Previous: Validating Webhooks](02-validating-webhooks.md) | [Module Overview](../README.md) | [Next: Webhook Deployment →](04-webhook-deployment.md)
+**Навигация:** [← Предыдущий: Валидирующие вебхуки](02-validating-webhooks.md) | [Обзор модуля](../README.md) | [Далее: Развёртывание вебхуков →](04-webhook-deployment.md)

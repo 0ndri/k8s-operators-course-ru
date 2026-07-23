@@ -2,22 +2,22 @@
 layout: default
 title: "05.1 Admission Control"
 nav_order: 1
-parent: "Module 5: Webhooks & Admission Control"
-grand_parent: Modules
+parent: "Модуль 5: Вебхуки и контроль допуска"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 5.1: Kubernetes Admission Control
+# Урок 5.1: Контроль допуска в Kubernetes
 
-**Navigation:** [Module Overview](../README.md) | [Next Lesson: Validating Webhooks →](02-validating-webhooks.md)
+**Навигация:** [Обзор модуля](../README.md) | [Следующий урок: Валидирующие вебхуки →](02-validating-webhooks.md)
 
-## Introduction
+## Введение
 
-In [Module 1](../../module-01/lessons/04-custom-resources.md) and [Module 3](../../module-03/lessons/02-designing-api.md), you learned about CRD schema validation. But sometimes you need more complex validation or want to set defaults dynamically. **Admission webhooks** allow you to intercept resource creation/updates and validate or mutate them before they're stored.
+В [Модуле 1](../../module-01/lessons/04-custom-resources.md) и [Модуле 3](../../module-03/lessons/02-designing-api.md) вы изучили валидацию схемы CRD. Но иногда нужна более сложная валидация или требуется динамически устанавливать значения по умолчанию. **Вебхуки контроля допуска (admission webhooks)** позволяют перехватывать создание/обновление ресурсов и валидировать или мутировать их до сохранения.
 
-## What is Admission Control?
+## Что такое контроль допуска (admission control)?
 
-Admission control is a Kubernetes feature that intercepts requests to the API server:
+Контроль допуска — это возможность Kubernetes перехватывать запросы к API-серверу:
 
 ```mermaid
 graph TB
@@ -38,9 +38,9 @@ graph TB
     style VALIDATING fill:#FFB6C1
 ```
 
-## Admission Control Flow
+## Процесс контроля допуска
 
-Here's the complete flow when a resource is created:
+Вот полный процесс при создании ресурса:
 
 ```mermaid
 sequenceDiagram
@@ -65,11 +65,11 @@ sequenceDiagram
     Note over Validating: If validation fails,<br/>request is rejected
 ```
 
-## Mutating vs Validating Webhooks
+## Мутирующие против валидирующих вебхуков
 
-### Mutating Webhooks
+### Мутирующие вебхуки
 
-**Purpose:** Modify resources before validation
+**Назначение:** изменять ресурсы до валидации
 
 ```mermaid
 graph LR
@@ -83,17 +83,17 @@ graph LR
     style MUTATE fill:#90EE90
 ```
 
-**Use cases:**
-- Set default values
-- Add required fields
-- Modify resource structure
-- Inject sidecar containers
+**Сценарии использования:**
+- Установка значений по умолчанию
+- Добавление обязательных полей
+- Изменение структуры ресурса
+- Внедрение sidecar-контейнеров
 
-**Order:** Run **before** validating webhooks
+**Порядок:** запускаются **до** валидирующих вебхуков
 
-### Validating Webhooks
+### Валидирующие вебхуки
 
-**Purpose:** Validate resources and accept/reject
+**Назначение:** валидировать ресурсы и принимать/отклонять
 
 ```mermaid
 graph LR
@@ -106,17 +106,17 @@ graph LR
     style ACCEPT fill:#90EE90
 ```
 
-**Use cases:**
-- Complex validation rules
-- Cross-field validation
-- Business logic validation
-- Policy enforcement
+**Сценарии использования:**
+- Сложные правила валидации
+- Валидация между полями
+- Валидация бизнес-логики
+- Обеспечение политик
 
-**Order:** Run **after** mutating webhooks
+**Порядок:** запускаются **после** мутирующих вебхуков
 
-## Webhook Configuration
+## Конфигурация вебхуков
 
-Webhooks are configured via `ValidatingWebhookConfiguration` or `MutatingWebhookConfiguration`:
+Вебхуки настраиваются через `ValidatingWebhookConfiguration` или `MutatingWebhookConfiguration`:
 
 ```mermaid
 graph TB
@@ -136,9 +136,9 @@ graph TB
     style WEBHOOK_CONFIG fill:#FFB6C1
 ```
 
-### Webhook Rules
+### Правила вебхука
 
-Rules define when webhooks are called:
+Правила определяют, когда вызываются вебхуки:
 
 ```yaml
 rules:
@@ -148,9 +148,9 @@ rules:
   operations: ["CREATE", "UPDATE"]
 ```
 
-### Client Configuration
+### Конфигурация клиента
 
-Defines how to reach the webhook:
+Определяет, как достучаться до вебхука:
 
 ```yaml
 clientConfig:
@@ -161,9 +161,9 @@ clientConfig:
   caBundle: <base64-encoded-ca-cert>
 ```
 
-## Admission Request/Response
+## Запрос/ответ допуска (Admission Request/Response)
 
-### Request Structure
+### Структура запроса
 
 ```go
 type AdmissionRequest struct {
@@ -177,7 +177,7 @@ type AdmissionRequest struct {
 }
 ```
 
-### Response Structure
+### Структура ответа
 
 ```go
 type AdmissionResponse struct {
@@ -189,9 +189,9 @@ type AdmissionResponse struct {
 }
 ```
 
-## Webhook Registration Process
+## Процесс регистрации вебхука
 
-Here's how webhooks are registered:
+Вот как регистрируются вебхуки:
 
 ```mermaid
 sequenceDiagram
@@ -213,9 +213,9 @@ sequenceDiagram
     API->>API: Process Response
 ```
 
-## When to Use Webhooks
+## Когда использовать вебхуки
 
-### Use Webhooks When:
+### Используйте вебхуки, когда:
 
 ```mermaid
 flowchart TD
@@ -232,63 +232,63 @@ flowchart TD
     style WEBHOOK fill:#90EE90
 ```
 
-**Use webhooks for:**
-- Cross-field validation (field A depends on field B)
-- External data validation (check against external API)
-- Complex business rules
-- Dynamic defaulting based on context
-- Policy enforcement
+**Используйте вебхуки для:**
+- Валидации между полями (поле A зависит от поля B)
+- Валидации по внешним данным (проверка через внешний API)
+- Сложных бизнес-правил
+- Динамических значений по умолчанию на основе контекста
+- Обеспечения политик
 
-**Use CRD schema for:**
-- Simple field validation
-- Type checking
-- Required fields
-- Pattern matching
-- Enum values
+**Используйте схему CRD для:**
+- Простой валидации полей
+- Проверки типов
+- Обязательных полей
+- Сопоставления с шаблоном
+- Значений перечислений (enum)
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Admission control** intercepts API requests
-- **Mutating webhooks** modify resources (run first)
-- **Validating webhooks** validate resources (run after mutation)
-- **Webhook configuration** defines when and how webhooks are called
-- **Admission request/response** structures define the interface
-- Use webhooks for **complex validation** that CRD schema can't handle
-- Use CRD schema for **simple validation**
+- **Контроль допуска** перехватывает запросы к API
+- **Мутирующие вебхуки** изменяют ресурсы (запускаются первыми)
+- **Валидирующие вебхуки** валидируют ресурсы (запускаются после мутации)
+- **Конфигурация вебхука** определяет, когда и как вызываются вебхуки
+- **Структуры запроса/ответа допуска** определяют интерфейс
+- Используйте вебхуки для **сложной валидации**, с которой не справляется схема CRD
+- Используйте схему CRD для **простой валидации**
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When implementing webhooks:
-- Mutating webhooks run before validating
-- Both can reject requests
-- Mutating webhooks return patches
-- Validating webhooks return allow/deny
-- Webhooks need certificates for TLS
-- Webhooks must be fast (affects API latency)
+При реализации вебхуков:
+- Мутирующие вебхуки запускаются до валидирующих
+- Оба могут отклонять запросы
+- Мутирующие вебхуки возвращают патчи
+- Валидирующие вебхуки возвращают разрешить/отклонить
+- Вебхукам нужны сертификаты для TLS
+- Вебхуки должны быть быстрыми (влияют на задержку API)
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 5.1: Exploring Admission Control](../labs/lab-01-admission-control.md) - Hands-on exercises for this lesson
+- [Лабораторная 5.1: Исследование контроля допуска](../labs/lab-01-admission-control.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Dynamic Admission Control](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
-- [Admission Controllers](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/)
-- [Webhook Configuration](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-configuration)
+### Официальная документация
+- [Динамический контроль допуска](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
+- [Контроллеры допуска](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/)
+- [Конфигурация вебхука](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-configuration)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 9: Webhooks
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 9: Admission Control
-- [Kubernetes Admission Control Guide](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 9: Webhooks
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 9: Admission Control
+- [Руководство по контролю допуска Kubernetes](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
 
-### Related Topics
-- [Validating Admission Webhooks](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook)
-- [Mutating Admission Webhooks](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook)
-- [Webhook Best Practices](https://kubernetes.io/docs/concepts/cluster-administration/admission-webhooks-good-practices/)
+### Смежные темы
+- [Валидирующие вебхуки допуска](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook)
+- [Мутирующие вебхуки допуска](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook)
+- [Лучшие практики вебхуков](https://kubernetes.io/docs/concepts/cluster-administration/admission-webhooks-good-practices/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand admission control, let's implement a validating webhook for your operator.
+Теперь, когда вы понимаете контроль допуска, давайте реализуем валидирующий вебхук для вашего оператора.
 
-**Navigation:** [← Module Overview](../README.md) | [Next: Validating Webhooks →](02-validating-webhooks.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Далее: Валидирующие вебхуки →](02-validating-webhooks.md)

@@ -1,61 +1,61 @@
-# GitHub Actions Solutions for Module 7
+# Решения GitHub Actions для Модуля 7
 
-This directory contains GitHub Actions workflows for automating operator releases.
+Этот каталог содержит workflows GitHub Actions для автоматизации релизов оператора.
 
 ## Workflows
 
-### `release.yaml` - Main Release Workflow
+### `release.yaml` — основной workflow релиза
 
-Triggers on version tags (e.g., `v0.1.0`) and:
+Запускается по тегам версий (например, `v0.1.0`) и:
 
-1. **Builds and pushes Docker image** to GitHub Container Registry (GHCR)
-   - Multi-architecture support (amd64, arm64)
-   - Semantic version tags
-   - SHA-based tags for traceability
+1. **Собирает и публикует Docker-образ** в GitHub Container Registry (GHCR)
+   - Поддержка нескольких архитектур (amd64, arm64)
+   - Теги семантических версий
+   - Теги на основе SHA для трассируемости
 
-2. **Generates and publishes Helm chart** to GHCR OCI registry
-   - Uses `make helm-chart` target
-   - Pushes to `oci://ghcr.io/<owner>/charts`
-   - Attaches chart as release artifact
+2. **Генерирует и публикует Helm-чарт** в OCI-реестр GHCR
+   - Использует цель `make helm-chart`
+   - Публикует в `oci://ghcr.io/<owner>/charts`
+   - Прикрепляет чарт как артефакт релиза
 
-3. **Creates installer manifest**
-   - Single-file install via `kubectl apply -f`
-   - Attached to GitHub release
+3. **Создаёт манифест-установщик**
+   - Установка одним файлом через `kubectl apply -f`
+   - Прикрепляется к релизу GitHub
 
-### `helm-gh-pages.yaml` - GitHub Pages Helm Repository
+### `helm-gh-pages.yaml` — репозиторий Helm на GitHub Pages
 
-Alternative approach using GitHub Pages:
+Альтернативный подход с использованием GitHub Pages:
 
-- Triggers on changes to `charts/` directory
-- Uses helm/chart-releaser-action
-- Publishes to GitHub Pages-based Helm repository
+- Запускается при изменениях в каталоге `charts/`
+- Использует helm/chart-releaser-action
+- Публикует в репозиторий Helm на основе GitHub Pages
 
-## Usage
+## Использование
 
-### Option 1: OCI Registry (Recommended)
+### Вариант 1: OCI-реестр (рекомендуется)
 
-Copy `release.yaml` to `.github/workflows/release.yaml`:
+Скопируйте `release.yaml` в `.github/workflows/release.yaml`:
 
 ```bash
 mkdir -p .github/workflows
 cp release.yaml .github/workflows/
 ```
 
-Install charts from OCI:
+Установка чартов из OCI:
 
 ```bash
 helm install my-operator oci://ghcr.io/YOUR_USERNAME/charts/postgres-operator --version 0.1.0
 ```
 
-### Option 2: GitHub Pages Helm Repository
+### Вариант 2: репозиторий Helm на GitHub Pages
 
-Copy `helm-gh-pages.yaml` to `.github/workflows/`:
+Скопируйте `helm-gh-pages.yaml` в `.github/workflows/`:
 
 ```bash
 cp helm-gh-pages.yaml .github/workflows/
 ```
 
-Add Helm repository:
+Добавьте репозиторий Helm:
 
 ```bash
 helm repo add postgres-operator https://YOUR_USERNAME.github.io/postgres-operator
@@ -63,9 +63,9 @@ helm repo update
 helm install my-operator postgres-operator/postgres-operator
 ```
 
-## Required Makefile Targets
+## Необходимые цели Makefile
 
-Ensure your Makefile has these targets:
+Убедитесь, что в вашем Makefile есть эти цели:
 
 ```makefile
 CHART_NAME ?= postgres-operator
@@ -103,7 +103,7 @@ helm-lint: helm-chart
 	helm lint $(CHART_DIR)
 ```
 
-## Creating a Release
+## Создание релиза
 
 ```bash
 # Ensure you're on main branch
@@ -116,16 +116,15 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-## Permissions
+## Разрешения
 
-The workflows require these repository permissions:
+Workflows требуют следующих разрешений репозитория:
 
-- `contents: write` - Create releases, push to gh-pages
-- `packages: write` - Push to GHCR
+- `contents: write` — создание релизов, публикация в gh-pages
+- `packages: write` — публикация в GHCR
 
-These are configured in the workflow files using `permissions:` blocks.
+Они настроены в файлах workflow с помощью блоков `permissions:`.
 
-## Secrets
+## Секреты
 
-No additional secrets are required when using `GITHUB_TOKEN`. The workflows use the automatic `secrets.GITHUB_TOKEN` which has appropriate permissions for GHCR.
-
+При использовании `GITHUB_TOKEN` дополнительные секреты не требуются. Workflows используют автоматический `secrets.GITHUB_TOKEN`, у которого есть подходящие разрешения для GHCR.

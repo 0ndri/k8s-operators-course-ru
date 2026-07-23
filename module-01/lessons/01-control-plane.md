@@ -2,46 +2,46 @@
 layout: default
 title: "1.1 Control Plane"
 nav_order: 1
-parent: "Module 1: Kubernetes Architecture"
-grand_parent: Modules
+parent: "Модуль 1: Архитектура Kubernetes"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 1.1: Kubernetes Control Plane Review
+# Урок 1.1: Обзор управляющего слоя Kubernetes
 
-**Navigation:** [Module Overview](../README.md) | [Next Lesson: API Machinery →](02-api-machinery.md)
+**Навигация:** [Обзор модуля](../README.md) | [Следующий урок: Механизмы API →](02-api-machinery.md)
 
-## Introduction
+## Введение
 
-The Kubernetes control plane is the brain of your cluster. Understanding its components and how they interact is crucial for building operators, as operators extend and interact with these same components.
+Управляющий слой Kubernetes (control plane) — это «мозг» вашего кластера. Понимание его компонентов и того, как они взаимодействуют, критически важно для создания операторов, поскольку операторы расширяют эти же компоненты и взаимодействуют с ними.
 
-## Theory: Understanding the Control Plane
+## Теория: как устроен управляющий слой
 
-The Kubernetes control plane is a distributed system that maintains the desired state of your cluster. It follows a **declarative model** where you specify what you want (desired state), and the control plane works to make the cluster match that state.
+Управляющий слой Kubernetes — это распределённая система, которая поддерживает желаемое состояние вашего кластера. В его основе лежит **декларативная модель**: вы указываете, что хотите получить (желаемое состояние), а управляющий слой приводит кластер в соответствие с этим состоянием.
 
-### Key Concepts
+### Ключевые концепции
 
-**Declarative vs Imperative:**
-- **Declarative**: You describe the desired end state (e.g., "I want 3 replicas")
-- **Imperative**: You give step-by-step commands (e.g., "create pod, create pod, create pod")
-- Kubernetes uses declarative APIs - you declare what you want, controllers make it happen
+**Декларативный подход против императивного:**
+- **Декларативный**: вы описываете желаемое конечное состояние (например, «мне нужно 3 реплики»)
+- **Императивный**: вы отдаёте пошаговые команды (например, «создай под, создай под, создай под»)
+- Kubernetes использует декларативные API — вы объявляете, что хотите получить, а контроллеры это реализуют
 
-**Eventual Consistency:**
-- The control plane works to make the cluster match desired state
-- Changes may take time to propagate
-- Controllers continuously reconcile to maintain consistency
+**Итоговая согласованность (eventual consistency):**
+- Управляющий слой работает над приведением кластера к желаемому состоянию
+- Изменения могут распространяться не мгновенно
+- Контроллеры непрерывно выполняют согласование, чтобы поддерживать согласованность
 
-**Separation of Concerns:**
-- API Server: Validates and stores state
-- etcd: Persists state
-- Controllers: Reconcile state
-- Scheduler: Assigns workloads
+**Разделение ответственности (separation of concerns):**
+- API Server: валидирует и хранит состояние
+- etcd: обеспечивает персистентность состояния
+- Контроллеры: согласовывают состояние
+- Scheduler: назначает рабочие нагрузки
 
-Understanding these principles helps you build operators that follow the same patterns.
+Понимание этих принципов помогает создавать операторы, следующие тем же паттернам.
 
-## Control Plane Components
+## Компоненты управляющего слоя
 
-The Kubernetes control plane consists of several key components that work together to manage your cluster:
+Управляющий слой Kubernetes состоит из нескольких ключевых компонентов, которые совместно управляют вашим кластером:
 
 ```mermaid
 graph TB
@@ -71,29 +71,29 @@ graph TB
 
 ### API Server
 
-The API Server is the central hub of the Kubernetes cluster. All communication flows through it.
+API Server — это центральный узел кластера Kubernetes. Всё взаимодействие проходит через него.
 
-**Key Responsibilities:**
-- Validates and processes all API requests
-- Serves as the front-end to etcd
-- Implements authentication, authorization, and admission control
-- Provides API versioning and resource discovery
+**Основные обязанности:**
+- Валидирует и обрабатывает все запросы к API
+- Служит фронтендом для etcd
+- Реализует аутентификацию, авторизацию и контроль допуска (admission control)
+- Обеспечивает версионирование API и обнаружение ресурсов
 
 ### etcd
 
-etcd is the distributed key-value store that holds the entire cluster state.
+etcd — это распределённое хранилище типа «ключ-значение», в котором хранится всё состояние кластера.
 
-**Key Characteristics:**
-- Single source of truth for cluster state
-- Highly available and consistent
-- Stores all Kubernetes objects
-- Watches and change notifications
+**Ключевые характеристики:**
+- Единый источник истины о состоянии кластера
+- Высокая доступность и согласованность
+- Хранит все объекты Kubernetes
+- Отслеживание изменений (watch) и уведомления об изменениях
 
 ### Controller Manager
 
-The Controller Manager runs built-in controllers that implement core Kubernetes functionality.
+Controller Manager запускает встроенные контроллеры, которые реализуют базовую функциональность Kubernetes.
 
-**Built-in Controllers Include:**
+**Встроенные контроллеры включают:**
 - Deployment Controller
 - ReplicaSet Controller
 - StatefulSet Controller
@@ -104,11 +104,11 @@ The Controller Manager runs built-in controllers that implement core Kubernetes 
 
 ### Scheduler
 
-The Scheduler assigns Pods to nodes based on resource requirements and constraints.
+Scheduler назначает поды на узлы на основе требований к ресурсам и ограничений.
 
-## API Server Request Flow
+## Поток обработки запроса в API Server
 
-When you run `kubectl apply`, here's what happens:
+Когда вы выполняете `kubectl apply`, происходит следующее:
 
 ```mermaid
 sequenceDiagram
@@ -136,9 +136,9 @@ sequenceDiagram
     Controller->>Controller: Reconcile desired state
 ```
 
-## Controller Manager Architecture
+## Архитектура Controller Manager
 
-The Controller Manager runs multiple controllers, each watching specific resources:
+Controller Manager запускает несколько контроллеров, каждый из которых отслеживает определённые ресурсы:
 
 ```mermaid
 graph LR
@@ -170,17 +170,17 @@ graph LR
     API --> etcd[(etcd)]
 ```
 
-Each controller:
-1. Watches specific resource types
-2. Compares desired state (from spec) with actual state
-3. Takes actions to reconcile differences
-4. Updates status
+Каждый контроллер:
+1. Отслеживает определённые типы ресурсов
+2. Сравнивает желаемое состояние (из spec) с фактическим состоянием
+3. Предпринимает действия для устранения расхождений
+4. Обновляет статус
 
-## Hands-on Exercise: Exploring the Control Plane
+## Практическое упражнение: исследование управляющего слоя
 
-Let's explore the control plane components in your kind cluster.
+Давайте исследуем компоненты управляющего слоя в вашем кластере kind.
 
-### Step 1: View Control Plane Components
+### Шаг 1: просмотр компонентов управляющего слоя
 
 ```bash
 # View all pods in kube-system namespace (control plane)
@@ -193,7 +193,7 @@ kubectl get pods -n kube-system -l component=kube-apiserver -o yaml
 kubectl logs -n kube-system -l component=kube-controller-manager --tail=50
 ```
 
-### Step 2: Explore API Server
+### Шаг 2: исследование API Server
 
 ```bash
 # Get API server endpoints
@@ -206,7 +206,7 @@ kubectl get --raw /version
 kubectl api-versions
 ```
 
-### Step 3: Observe Controller Behavior
+### Шаг 3: наблюдение за поведением контроллера
 
 ```bash
 # Create a deployment
@@ -222,7 +222,7 @@ kubectl get replicasets -w
 kubectl get replicasets -l app=nginx
 ```
 
-### Step 4: Trace a Request Flow
+### Шаг 4: трассировка потока запроса
 
 ```bash
 # Create a pod to observe the request flow
@@ -241,30 +241,29 @@ EOF
 kubectl get events --sort-by='.lastTimestamp'
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **API Server** is the central communication hub
-- **etcd** stores all cluster state
-- **Controller Manager** runs built-in controllers that implement core functionality
-- **Scheduler** assigns Pods to nodes
-- All components communicate through the API Server
-- Controllers watch resources and reconcile desired vs actual state
+- **API Server** — это центральный узел взаимодействия
+- **etcd** хранит всё состояние кластера
+- **Controller Manager** запускает встроенные контроллеры, реализующие базовую функциональность
+- **Scheduler** назначает поды на узлы
+- Все компоненты взаимодействуют через API Server
+- Контроллеры отслеживают ресурсы и согласовывают желаемое состояние с фактическим
 
-## Understanding for Operators
+## Что это значит для операторов
 
-When building operators, you'll:
-- Interact with the API Server to read/write resources
-- Store your custom resources in etcd
-- Implement controllers that follow the same pattern as built-in controllers
-- Use the same watch mechanisms that built-in controllers use
+При создании операторов вы будете:
+- Взаимодействовать с API Server для чтения/записи ресурсов
+- Хранить свои пользовательские ресурсы в etcd
+- Реализовывать контроллеры по тому же паттерну, что и встроенные контроллеры
+- Использовать те же механизмы отслеживания (watch), что и встроенные контроллеры
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 1.1: Exploring the Control Plane](../labs/lab-01-control-plane.md) - Hands-on exercises for this lesson
+- [Лабораторная 1.1: Исследование управляющего слоя](../labs/lab-01-control-plane.md) — практические упражнения для этого урока
 
-## Next Steps
+## Дальнейшие шаги
 
-In the next lesson, we'll dive deeper into the Kubernetes API machinery to understand how resources are structured and how the API works.
+В следующем уроке мы глубже разберём механизмы API Kubernetes, чтобы понять, как структурированы ресурсы и как работает API.
 
-**Navigation:** [← Module Overview](../README.md) | [Next: Lesson 1.2 - API Machinery →](02-api-machinery.md)
-
+**Навигация:** [← Обзор модуля](../README.md) | [Далее: Урок 1.2 — Механизмы API →](02-api-machinery.md)

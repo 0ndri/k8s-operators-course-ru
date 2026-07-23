@@ -2,93 +2,93 @@
 layout: default
 title: "02.1 Operator Pattern"
 nav_order: 1
-parent: "Module 2: Introduction to Operators"
-grand_parent: Modules
+parent: "Модуль 2: Введение в операторы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 2.1: The Operator Pattern
+# Урок 2.1: Паттерн оператора
 
-**Navigation:** [Module Overview](../README.md) | [Next Lesson: Kubebuilder Fundamentals →](02-kubebuilder-fundamentals.md)
+**Навигация:** [Обзор модуля](../README.md) | [Следующий урок: Основы Kubebuilder →](02-kubebuilder-fundamentals.md)
 
-## Introduction
+## Введение
 
-In [Module 1](../module-01/README.md), you learned about Kubernetes controllers, Custom Resources, and the reconciliation pattern. Operators are controllers that manage Custom Resources using domain-specific knowledge. This lesson explains what operators are, when to use them, and how they differ from other Kubernetes tools.
+В [Модуле 1](../module-01/README.md) вы изучили контроллеры Kubernetes, пользовательские ресурсы (Custom Resources) и паттерн согласования (reconciliation). Операторы — это контроллеры, которые управляют пользовательскими ресурсами, используя знания предметной области. Этот урок объясняет, что такое операторы, когда их использовать и чем они отличаются от других инструментов Kubernetes.
 
-## Theory: The Operator Pattern
+## Теория: паттерн оператора
 
-Operators are a pattern for packaging, deploying, and managing Kubernetes applications using Custom Resources and controllers. They extend Kubernetes by encoding **operational knowledge** into software and follow the controller pattern while adding domain-specific intelligence.
+Операторы — это паттерн для упаковки, развёртывания и управления приложениями Kubernetes с помощью пользовательских ресурсов и контроллеров. Они расширяют Kubernetes, кодируя **операционные знания** в программное обеспечение, и следуют паттерну контроллера, добавляя при этом интеллект, специфичный для предметной области.
 
-### Core Philosophy
+### Основная философия
 
-**Operational Knowledge as Code:**
-- Operators encode how to deploy, configure, and manage applications
-- This knowledge is captured in code, not documentation
-- Makes operations repeatable and consistent
-- Domain knowledge is embedded in the controller logic
+**Операционные знания как код:**
+- Операторы кодируют, как развёртывать, конфигурировать приложения и управлять ими
+- Эти знания фиксируются в коде, а не в документации
+- Делают операции повторяемыми и согласованными
+- Знания предметной области встроены в логику контроллера
 
-**Self-Service Automation:**
-- Users declare what they want (Custom Resource)
-- Operator handles the complexity (deployment, scaling, backups, etc.)
-- Reduces operational burden on users
-- Follows Kubernetes declarative model
+**Самообслуживание через автоматизацию:**
+- Пользователи объявляют, что им нужно (пользовательский ресурс)
+- Оператор берёт на себя сложность (развёртывание, масштабирование, резервное копирование и т. д.)
+- Снижает операционную нагрузку на пользователей
+- Следует декларативной модели Kubernetes
 
-**Kubernetes-Native:**
-- Operators use Kubernetes APIs and patterns
-- Feel like built-in Kubernetes features
-- Integrate with existing tooling (kubectl, Helm, etc.)
+**Kubernetes-нативность:**
+- Операторы используют API и паттерны Kubernetes
+- Ощущаются как встроенные возможности Kubernetes
+- Интегрируются с существующим инструментарием (kubectl, Helm и т. д.)
 
-### Why Operators Matter
+### Почему операторы важны
 
-- **Automation**: Reduces manual operational tasks
-- **Consistency**: Ensures correct application state
-- **Expertise**: Encodes best practices
-- **Lifecycle Management**: Handles full application lifecycle (installation, upgrades, backups, scaling)
+- **Автоматизация**: сокращает ручные операционные задачи
+- **Согласованность**: обеспечивает корректное состояние приложения
+- **Экспертиза**: кодирует лучшие практики
+- **Управление жизненным циклом**: обрабатывает полный жизненный цикл приложения (установка, обновления, резервное копирование, масштабирование)
 
-### Operator Capability Levels
+### Уровни зрелости операторов (Capability Levels)
 
-The Operator Capability Model (Level 1-5) helps understand operator sophistication:
-- **Level 1-2**: Basic deployment and upgrades
-- **Level 3**: Full lifecycle management
-- **Level 4-5**: Advanced automation and self-healing
+Модель зрелости операторов (Operator Capability Model, уровни 1–5) помогает понять степень их развитости:
+- **Уровни 1–2**: базовое развёртывание и обновления
+- **Уровень 3**: полное управление жизненным циклом
+- **Уровни 4–5**: продвинутая автоматизация и самовосстановление
 
-Most production operators aim for Level 3+, providing comprehensive lifecycle management.
+Большинство продакшен-операторов стремятся к уровню 3+, обеспечивая комплексное управление жизненным циклом.
 
-### When to Use Operators
+### Когда использовать операторы
 
-**Good Use Cases:**
-- Complex stateful applications (databases, message queues)
-- Applications requiring domain-specific knowledge
-- Applications needing lifecycle management (backup, restore, upgrade)
-- Applications requiring coordination of multiple resources
-- Need continuous management and monitoring
+**Хорошие сценарии использования:**
+- Сложные stateful-приложения (базы данных, очереди сообщений)
+- Приложения, требующие знаний предметной области
+- Приложения, которым нужно управление жизненным циклом (резервное копирование, восстановление, обновление)
+- Приложения, требующие координации нескольких ресурсов
+- Потребность в непрерывном управлении и мониторинге
 
-**Not Ideal For:**
-- Simple stateless applications (use Deployment)
-- One-time tasks (use Job)
-- Simple configuration (use ConfigMap)
-- Static content (use Deployment + ConfigMap)
+**Не идеальны для:**
+- Простых stateless-приложений (используйте Deployment)
+- Одноразовых задач (используйте Job)
+- Простой конфигурации (используйте ConfigMap)
+- Статического контента (используйте Deployment + ConfigMap)
 
-### Operator vs Other Tools
+### Оператор против других инструментов
 
-**Operators vs Helm:**
-- Helm: Package manager, templating, installation
-- Operators: Lifecycle management, automation, intelligence
-- Often used together: Helm installs, Operator manages
+**Операторы против Helm:**
+- Helm: менеджер пакетов, шаблонизация, установка
+- Операторы: управление жизненным циклом, автоматизация, интеллект
+- Часто используются вместе: Helm устанавливает, оператор управляет
 
-**Operators vs ConfigMaps:**
-- ConfigMaps: Static configuration
-- Operators: Dynamic, intelligent management
+**Операторы против ConfigMap:**
+- ConfigMap: статическая конфигурация
+- Операторы: динамическое, интеллектуальное управление
 
-Understanding when to use operators helps you make the right architectural decisions.
+Понимание того, когда использовать операторы, помогает принимать правильные архитектурные решения.
 
-## What is an Operator?
+## Что такое оператор?
 
-An operator is a Kubernetes controller that:
-- Manages Custom Resources (CRDs) you define
-- Encodes operational knowledge (how to deploy, scale, backup, etc.)
-- Automates complex application management tasks
-- Extends Kubernetes with domain-specific behavior
+Оператор — это контроллер Kubernetes, который:
+- Управляет определёнными вами пользовательскими ресурсами (CRD)
+- Кодирует операционные знания (как развёртывать, масштабировать, делать резервные копии и т. д.)
+- Автоматизирует сложные задачи управления приложениями
+- Расширяет Kubernetes поведением, специфичным для предметной области
 
 ```mermaid
 graph TB
@@ -108,20 +108,20 @@ graph TB
     style CR fill:#90EE90
 ```
 
-## Operator Philosophy
+## Философия операторов
 
-Operators follow the same pattern you learned in [Lesson 1.3](../../module-01/lessons/03-controller-pattern.md):
+Операторы следуют тому же паттерну, который вы изучили в [Уроке 1.3](../../module-01/lessons/03-controller-pattern.md):
 
-1. **Watch** Custom Resources
-2. **Compare** desired state (spec) vs actual state
-3. **Reconcile** by creating/updating Kubernetes resources
-4. **Update** status to reflect actual state
+1. **Отслеживают (Watch)** пользовательские ресурсы
+2. **Сравнивают (Compare)** желаемое состояние (spec) с фактическим
+3. **Согласовывают (Reconcile)**, создавая/обновляя ресурсы Kubernetes
+4. **Обновляют (Update)** статус, отражая фактическое состояние
 
-The difference: operators encode **domain knowledge** about how to manage specific applications.
+Отличие: операторы кодируют **знания предметной области** о том, как управлять конкретными приложениями.
 
-## Operator Capability Levels
+## Уровни зрелости операторов
 
-Operators can have different levels of sophistication:
+Операторы могут иметь разную степень развитости:
 
 ```mermaid
 graph LR
@@ -134,29 +134,29 @@ graph LR
     style L5 fill:#FFB6C1
 ```
 
-### Level 1: Basic Install
-- Deploys application
-- Basic configuration
+### Уровень 1: базовая установка
+- Развёртывает приложение
+- Базовая конфигурация
 
-### Level 2: Seamless Upgrades
-- Handles version upgrades
-- Rolling updates
+### Уровень 2: бесшовные обновления
+- Обрабатывает обновление версий
+- Скользящие обновления (rolling updates)
 
-### Level 3: Full Lifecycle
-- Backup and restore
-- Disaster recovery
+### Уровень 3: полный жизненный цикл
+- Резервное копирование и восстановление
+- Аварийное восстановление (disaster recovery)
 
-### Level 4: Deep Insights
-- Metrics and monitoring
-- Performance tuning
+### Уровень 4: глубокая аналитика
+- Метрики и мониторинг
+- Настройка производительности
 
-### Level 5: Auto Pilot
-- Self-healing
-- Automatic optimization
+### Уровень 5: автопилот
+- Самовосстановление
+- Автоматическая оптимизация
 
-## Operators vs Other Tools
+## Операторы против других инструментов
 
-### Operators vs Helm Charts
+### Операторы против Helm-чартов
 
 ```mermaid
 graph TB
@@ -176,19 +176,19 @@ graph TB
     style OP fill:#FFB6C1
 ```
 
-**Helm Charts:**
-- Template-based deployment
-- Install and forget
-- No ongoing management
-- Good for: Simple applications, one-time setup
+**Helm-чарты:**
+- Развёртывание на основе шаблонов
+- «Установил и забыл»
+- Нет постоянного управления
+- Подходят для: простых приложений, разовой настройки
 
-**Operators:**
-- Code-based logic
-- Continuous reconciliation
-- Ongoing management
-- Good for: Complex applications, stateful services, databases
+**Операторы:**
+- Логика на основе кода
+- Непрерывное согласование
+- Постоянное управление
+- Подходят для: сложных приложений, stateful-сервисов, баз данных
 
-### When to Use Operators
+### Когда использовать операторы
 
 ```mermaid
 flowchart TD
@@ -206,47 +206,47 @@ flowchart TD
     style HELM fill:#FFE4B5
 ```
 
-**Use Operators When:**
-- Application has complex lifecycle (backup, restore, scaling)
-- Need continuous management and monitoring
-- Stateful applications (databases, message queues)
-- Domain-specific knowledge required
-- Want declarative management of operational tasks
+**Используйте операторы, когда:**
+- У приложения сложный жизненный цикл (резервное копирование, восстановление, масштабирование)
+- Нужны непрерывное управление и мониторинг
+- Stateful-приложения (базы данных, очереди сообщений)
+- Требуются знания предметной области
+- Нужно декларативное управление операционными задачами
 
-**Use Helm When:**
-- Simple application deployment
-- One-time setup sufficient
-- No ongoing operational complexity
+**Используйте Helm, когда:**
+- Простое развёртывание приложения
+- Достаточно разовой настройки
+- Нет постоянной операционной сложности
 
-## Real-World Operator Examples
+## Примеры реальных операторов
 
 ### Prometheus Operator
 
-Manages Prometheus monitoring stack:
-- Deploys Prometheus servers
-- Configures service discovery
-- Manages alerting rules
-- Handles storage
+Управляет стеком мониторинга Prometheus:
+- Развёртывает серверы Prometheus
+- Настраивает обнаружение сервисов
+- Управляет правилами оповещений
+- Обрабатывает хранилище
 
 ### PostgreSQL Operator
 
-Manages PostgreSQL databases:
-- Creates database clusters
-- Handles backups
-- Manages replication
-- Performs upgrades
+Управляет базами данных PostgreSQL:
+- Создаёт кластеры баз данных
+- Обрабатывает резервное копирование
+- Управляет репликацией
+- Выполняет обновления
 
 ### Elasticsearch Operator
 
-Manages Elasticsearch clusters:
-- Deploys cluster nodes
-- Manages sharding
-- Handles scaling
-- Manages indices
+Управляет кластерами Elasticsearch:
+- Развёртывает узлы кластера
+- Управляет шардированием
+- Обрабатывает масштабирование
+- Управляет индексами
 
-## Operator Architecture
+## Архитектура оператора
 
-An operator consists of:
+Оператор состоит из:
 
 ```mermaid
 graph TB
@@ -272,13 +272,13 @@ graph TB
     style CRD fill:#90EE90
 ```
 
-1. **CRD**: Defines your Custom Resource (from [Lesson 1.4](../../module-01/lessons/04-custom-resources.md))
-2. **Controller**: Reconciliation logic (from [Lesson 1.3](../../module-01/lessons/03-controller-pattern.md))
-3. **RBAC**: Permissions for the operator
+1. **CRD**: определяет ваш пользовательский ресурс (из [Урока 1.4](../../module-01/lessons/04-custom-resources.md))
+2. **Контроллер**: логика согласования (из [Урока 1.3](../../module-01/lessons/03-controller-pattern.md))
+3. **RBAC**: разрешения для оператора
 
-## Operator Workflow
+## Рабочий процесс оператора
 
-Here's how an operator works:
+Вот как работает оператор:
 
 ```mermaid
 sequenceDiagram
@@ -302,47 +302,47 @@ sequenceDiagram
     Note over Operator,Cluster: Continuous reconciliation loop
 ```
 
-This is the same reconciliation pattern from [Lesson 1.3](../../module-01/lessons/03-controller-pattern.md), but applied to your Custom Resources!
+Это тот же паттерн согласования из [Урока 1.3](../../module-01/lessons/03-controller-pattern.md), но применённый к вашим пользовательским ресурсам!
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Operators** are controllers that manage Custom Resources
-- Operators encode **domain knowledge** about application management
-- Follow the same **reconciliation pattern** as built-in controllers
-- Use operators for **complex, stateful applications** that need ongoing management
-- Operators provide **declarative management** of operational tasks
+- **Операторы** — это контроллеры, которые управляют пользовательскими ресурсами
+- Операторы кодируют **знания предметной области** об управлении приложениями
+- Следуют тому же **паттерну согласования**, что и встроенные контроллеры
+- Используйте операторы для **сложных stateful-приложений**, которым нужно постоянное управление
+- Операторы обеспечивают **декларативное управление** операционными задачами
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When building operators:
-- You'll create CRDs (like in [Lesson 1.4](../../module-01/lessons/04-custom-resources.md))
-- You'll implement controllers (using the pattern from [Lesson 1.3](../../module-01/lessons/03-controller-pattern.md))
-- You'll encode operational knowledge in code
-- You'll reconcile desired vs actual state continuously
+При создании операторов:
+- Вы будете создавать CRD (как в [Уроке 1.4](../../module-01/lessons/04-custom-resources.md))
+- Вы будете реализовывать контроллеры (по паттерну из [Урока 1.3](../../module-01/lessons/03-controller-pattern.md))
+- Вы будете кодировать операционные знания в коде
+- Вы будете непрерывно согласовывать желаемое и фактическое состояние
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 2.1: Exploring Existing Operators](../labs/lab-01-operator-pattern.md) - Hands-on exercises for this lesson
+- [Лабораторная 2.1: Исследование существующих операторов](../labs/lab-01-operator-pattern.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Kubernetes Operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
-- [Operator Pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
-- [Operator Capability Levels](https://operatorframework.io/operator-capabilities/)
+### Официальная документация
+- [Операторы Kubernetes](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+- [Паттерн оператора](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+- [Уровни зрелости операторов](https://operatorframework.io/operator-capabilities/)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Complete guide to operators
-- **Kubernetes: Up and Running** by Kelsey Hightower, Brendan Burns, and Joe Beda - Chapter 16: Operators
-- [Operator Framework](https://operatorframework.io/) - Tools and best practices
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — полное руководство по операторам
+- **Kubernetes: Up and Running**, Kelsey Hightower, Brendan Burns и Joe Beda — глава 16: Operators
+- [Operator Framework](https://operatorframework.io/) — инструменты и лучшие практики
 
-### Related Topics
-- [Operator Best Practices](https://operatorframework.io/operator-capabilities/)
-- [Operator SDK](https://sdk.operatorframework.io/) - Alternative to Kubebuilder
-- [OLM (Operator Lifecycle Manager)](https://olm.operatorframework.io/) - Operator distribution
+### Смежные темы
+- [Лучшие практики операторов](https://operatorframework.io/operator-capabilities/)
+- [Operator SDK](https://sdk.operatorframework.io/) — альтернатива Kubebuilder
+- [OLM (Operator Lifecycle Manager)](https://olm.operatorframework.io/) — распространение операторов
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand what operators are, let's learn about Kubebuilder - the framework that makes building operators easier.
+Теперь, когда вы понимаете, что такое операторы, давайте изучим Kubebuilder — фреймворк, который упрощает создание операторов.
 
-**Navigation:** [← Module Overview](../README.md) | [Next: Kubebuilder Fundamentals →](02-kubebuilder-fundamentals.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Далее: Основы Kubebuilder →](02-kubebuilder-fundamentals.md)

@@ -1,36 +1,36 @@
 ---
 layout: default
-title: Modules
+title: Модули
 nav_order: 2
 has_children: true
 has_toc: false
 permalink: /modules
 ---
 
-# Course Modules
+# Модули курса
 {: .fs-9 }
 
-The course is divided into 8 modules, each building on the previous.
+Курс состоит из 8 модулей, каждый из которых опирается на предыдущий.
 {: .fs-6 .fw-300 }
 
 ---
 
-## Module Overview
+## Обзор модулей
 
-| Module | Topic | Duration |
+| Модуль | Тема | Продолжительность |
 |:-------|:------|:---------|
-| [Module 1]({{ site.baseurl }}/module-01/) | Kubernetes Architecture Deep Dive | 5-6 hours |
-| [Module 2]({{ site.baseurl }}/module-02/) | Introduction to Operators | 5-6 hours |
-| [Module 3]({{ site.baseurl }}/module-03/) | Building Custom Controllers | 6-7 hours |
-| [Module 4]({{ site.baseurl }}/module-04/) | Advanced Reconciliation Patterns | 6-7 hours |
-| [Module 5]({{ site.baseurl }}/module-05/) | Webhooks and Admission Control | 5-6 hours |
-| [Module 6]({{ site.baseurl }}/module-06/) | Testing and Debugging | 5-6 hours |
-| [Module 7]({{ site.baseurl }}/module-07/) | Production Considerations | 5-6 hours |
-| [Module 8]({{ site.baseurl }}/module-08/) | Advanced Topics and Real-World Patterns | 5-6 hours |
+| [Модуль 1]({{ site.baseurl }}/module-01/) | Глубокое погружение в архитектуру Kubernetes | 5–6 часов |
+| [Модуль 2]({{ site.baseurl }}/module-02/) | Введение в операторы | 5–6 часов |
+| [Модуль 3]({{ site.baseurl }}/module-03/) | Создание кастомных контроллеров | 6–7 часов |
+| [Модуль 4]({{ site.baseurl }}/module-04/) | Продвинутые паттерны согласования | 6–7 часов |
+| [Модуль 5]({{ site.baseurl }}/module-05/) | Вебхуки и контроль допуска | 5–6 часов |
+| [Модуль 6]({{ site.baseurl }}/module-06/) | Тестирование и отладка | 5–6 часов |
+| [Модуль 7]({{ site.baseurl }}/module-07/) | Подготовка к продакшену | 5–6 часов |
+| [Модуль 8]({{ site.baseurl }}/module-08/) | Продвинутые темы и практические паттерны | 5–6 часов |
 
 ---
 
-## Learning Path
+## Траектория обучения
 
 ```mermaid
 graph LR
@@ -54,96 +54,95 @@ graph LR
 
 ---
 
-## Module Details
+## Подробнее о модулях
 
-### [Module 1: Kubernetes Architecture Deep Dive]({{ site.baseurl }}/module-01/)
+### [Модуль 1: Глубокое погружение в архитектуру Kubernetes]({{ site.baseurl }}/module-01/)
 
-Understand how Kubernetes works under the hood.
+Разберитесь, как Kubernetes устроен изнутри.
 
-- Control plane components and their interactions
-- API machinery and how it operates
-- The controller pattern and reconciliation loops
-- Custom Resource Definitions (CRDs)
-
----
-
-### [Module 2: Introduction to Operators]({{ site.baseurl }}/module-02/)
-
-Learn the operator pattern and build your first operator.
-
-- What operators are and when to use them
-- Kubebuilder fundamentals
-- Setting up your development environment
-- Building your first operator
+- Компоненты управляющего слоя (control plane) и их взаимодействие
+- Механизмы API (API machinery) и принципы их работы
+- Паттерн контроллера и циклы согласования (reconciliation loops)
+- Определения пользовательских ресурсов (CRD)
 
 ---
 
-### [Module 3: Building Custom Controllers]({{ site.baseurl }}/module-03/)
+### [Модуль 2: Введение в операторы]({{ site.baseurl }}/module-02/)
 
-Master the controller-runtime library.
+Изучите паттерн оператора и создайте свой первый оператор.
 
-- Controller runtime deep dive
-- Designing your API
-- Reconciliation logic
-- Client-go operations
-
----
-
-### [Module 4: Advanced Reconciliation Patterns]({{ site.baseurl }}/module-04/)
-
-Handle complex scenarios with advanced patterns.
-
-- Conditions and status management
-- Finalizers and cleanup
-- Watching and indexing
-- State machines and advanced patterns
+- Что такое операторы и когда их использовать
+- Основы Kubebuilder
+- Настройка среды разработки
+- Создание вашего первого оператора
 
 ---
 
-### [Module 5: Webhooks and Admission Control]({{ site.baseurl }}/module-05/)
+### [Модуль 3: Создание кастомных контроллеров]({{ site.baseurl }}/module-03/)
 
-Implement admission webhooks.
+Освойте библиотеку controller-runtime.
 
-- Admission control fundamentals
-- Validating webhooks
-- Mutating webhooks
-- Webhook deployment
-
----
-
-### [Module 6: Testing and Debugging]({{ site.baseurl }}/module-06/)
-
-Test and debug your operators.
-
-- Testing fundamentals
-- Unit testing with envtest
-- Integration testing
-- Debugging and observability
+- Глубокое погружение в controller-runtime
+- Проектирование вашего API
+- Логика согласования (reconciliation)
+- Операции client-go
 
 ---
 
-### [Module 7: Production Considerations]({{ site.baseurl }}/module-07/)
+### [Модуль 4: Продвинутые паттерны согласования]({{ site.baseurl }}/module-04/)
 
-Prepare your operator for production.
+Обрабатывайте сложные сценарии с помощью продвинутых паттернов.
 
-- Packaging and distribution
-- RBAC and security
-- High availability
-- Performance and scalability
+- Условия (conditions) и управление статусом
+- Финализаторы и очистка
+- Отслеживание и индексирование
+- Конечные автоматы и продвинутые паттерны
 
 ---
 
-### [Module 8: Advanced Topics and Real-World Patterns]({{ site.baseurl }}/module-08/)
+### [Модуль 5: Вебхуки и контроль допуска]({{ site.baseurl }}/module-05/)
 
-Master advanced operator patterns.
+Реализуйте вебхуки контроля допуска (admission webhooks).
 
-- Multi-tenancy and namespace isolation
-- Operator composition
-- Stateful application management
-- Real-world patterns and best practices
+- Основы контроля допуска (admission control)
+- Валидирующие вебхуки
+- Мутирующие вебхуки
+- Развёртывание вебхуков
+
+---
+
+### [Модуль 6: Тестирование и отладка]({{ site.baseurl }}/module-06/)
+
+Тестируйте и отлаживайте свои операторы.
+
+- Основы тестирования
+- Модульное тестирование с envtest
+- Интеграционное тестирование
+- Отладка и наблюдаемость
+
+---
+
+### [Модуль 7: Подготовка к продакшену]({{ site.baseurl }}/module-07/)
+
+Подготовьте свой оператор к продакшену.
+
+- Упаковка и распространение
+- RBAC и безопасность
+- Высокая доступность
+- Производительность и масштабируемость
+
+---
+
+### [Модуль 8: Продвинутые темы и практические паттерны]({{ site.baseurl }}/module-08/)
+
+Освойте продвинутые паттерны операторов.
+
+- Мультиарендность и изоляция пространств имён
+- Композиция операторов
+- Управление stateful-приложениями
+- Практические паттерны и лучшие практики
 
 ---
 
 {: .note }
-Each module includes lessons, hands-on labs, and complete solutions.
-
+Каждый модуль включает уроки, практические лабораторные работы и полные решения.

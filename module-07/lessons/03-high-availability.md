@@ -2,81 +2,81 @@
 layout: default
 title: "07.3 High Availability"
 nav_order: 3
-parent: "Module 7: Production Considerations"
-grand_parent: Modules
+parent: "Модуль 7: Подготовка к продакшену"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 7.3: High Availability
+# Урок 7.3: Высокая доступность
 
-**Navigation:** [← Previous: RBAC and Security](02-rbac-security.md) | [Module Overview](../README.md) | [Next: Performance and Scalability →](04-performance-scalability.md)
+**Навигация:** [← Предыдущий: RBAC и безопасность](02-rbac-security.md) | [Обзор модуля](../README.md) | [Далее: Производительность и масштабируемость →](04-performance-scalability.md)
 
-## Introduction
+## Введение
 
-Production operators need to be highly available - they should continue operating even if individual pods fail. This lesson covers leader election, multiple replicas, failover handling, and resource management for high availability.
+Продакшен-операторы должны быть высокодоступными — они должны продолжать работать, даже если отдельные поды выходят из строя. Этот урок охватывает выбор лидера, несколько реплик, обработку отказа (failover) и управление ресурсами для высокой доступности.
 
-## Theory: High Availability
+## Теория: высокая доступность
 
-High availability ensures operators **continue operating** despite failures.
+Высокая доступность гарантирует, что операторы **продолжают работать** несмотря на сбои.
 
-### Why High Availability?
+### Зачем нужна высокая доступность?
 
-**Reliability:**
-- Operators manage critical workloads
-- Single point of failure is unacceptable
-- Redundancy prevents outages
-- Failover ensures continuity
+**Надёжность:**
+- Операторы управляют критически важными нагрузками
+- Единая точка отказа недопустима
+- Избыточность предотвращает простои
+- Отказоустойчивость обеспечивает непрерывность
 
-**Scalability:**
-- Handle increased load
-- Distribute work across replicas
-- Scale horizontally
-- Performance under load
+**Масштабируемость:**
+- Обработка возросшей нагрузки
+- Распределение работы между репликами
+- Горизонтальное масштабирование
+- Производительность под нагрузкой
 
-**Resilience:**
-- Survive pod failures
-- Survive node failures
-- Automatic recovery
-- Zero-downtime deployments
+**Устойчивость:**
+- Переживание сбоев подов
+- Переживание сбоев узлов
+- Автоматическое восстановление
+- Развёртывания без простоя
 
-### Leader Election
+### Выбор лидера (Leader Election)
 
-**Why Leader Election?**
-- Controllers must not conflict
-- Only one should reconcile at a time
-- Prevents duplicate work
-- Ensures consistency
+**Зачем нужен выбор лидера?**
+- Контроллеры не должны конфликтовать
+- Согласование должен выполнять только один за раз
+- Предотвращает дублирование работы
+- Обеспечивает согласованность
 
-**How It Works:**
-- Controllers compete for lease
-- Winner becomes leader
-- Leader reconciles resources
-- Others wait as standby
+**Как это работает:**
+- Контроллеры конкурируют за аренду (lease)
+- Победитель становится лидером
+- Лидер согласовывает ресурсы
+- Остальные ждут в режиме ожидания (standby)
 
-**Failover:**
-- Leader renews lease periodically
-- If leader fails, lease expires
-- Another controller acquires lease
-- New leader takes over
+**Отказоустойчивость:**
+- Лидер периодически обновляет аренду
+- Если лидер выходит из строя, аренда истекает
+- Другой контроллер получает аренду
+- Новый лидер берёт управление на себя
 
-### Resource Management
+### Управление ресурсами
 
-**Resource Requests:**
-- Guaranteed resources
-- Scheduler uses for placement
-- Ensures operator has resources
+**Запросы ресурсов (Resource Requests):**
+- Гарантированные ресурсы
+- Планировщик использует их для размещения
+- Гарантируют, что у оператора есть ресурсы
 
-**Resource Limits:**
-- Maximum resources
-- Prevents resource exhaustion
-- Protects other workloads
-- Enables overcommitment
+**Лимиты ресурсов (Resource Limits):**
+- Максимум ресурсов
+- Предотвращают исчерпание ресурсов
+- Защищают другие нагрузки
+- Позволяют переподписку (overcommitment)
 
-Understanding high availability helps you build reliable, production-ready operators.
+Понимание высокой доступности помогает создавать надёжные, готовые к продакшену операторы.
 
-## High Availability Architecture
+## Архитектура высокой доступности
 
-Here's how HA works for operators:
+Вот как работает HA для операторов:
 
 ```mermaid
 graph TB
@@ -97,9 +97,9 @@ graph TB
     style ACTIVE fill:#FFB6C1
 ```
 
-## Leader Election
+## Выбор лидера
 
-### How Leader Election Works
+### Как работает выбор лидера
 
 ```mermaid
 sequenceDiagram
@@ -131,9 +131,9 @@ sequenceDiagram
     R2->>R2: Become Leader
 ```
 
-### Leader Election in Kubebuilder
+### Выбор лидера в Kubebuilder
 
-Kubebuilder's generated `cmd/main.go` already includes leader election support via command-line flags:
+Сгенерированный Kubebuilder `cmd/main.go` уже включает поддержку выбора лидера через флаги командной строки:
 
 ```go
 // In cmd/main.go (generated by kubebuilder)
@@ -155,25 +155,25 @@ mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 })
 ```
 
-To enable leader election when running your operator:
+Чтобы включить выбор лидера при запуске оператора:
 
 ```bash
 # Run with leader election enabled
 ./manager --leader-elect=true
 ```
 
-For production deployments, update `config/manager/manager.yaml`:
+Для продакшен-развёртываний обновите `config/manager/manager.yaml`:
 
 ```yaml
 args:
 - --leader-elect
 ```
 
-## Multiple Replicas
+## Несколько реплик
 
-### Kubebuilder Deployment Configuration
+### Конфигурация развёртывания Kubebuilder
 
-Update the replica count in `config/manager/manager.yaml`:
+Обновите количество реплик в `config/manager/manager.yaml`:
 
 ```yaml
 apiVersion: apps/v1
@@ -200,9 +200,9 @@ spec:
         - --leader-elect  # Enable leader election for HA
 ```
 
-Or use `kustomize` patches in `config/default/manager_config_patch.yaml`.
+Или используйте патчи `kustomize` в `config/default/manager_config_patch.yaml`.
 
-### Replica Coordination
+### Координация реплик
 
 ```mermaid
 graph TB
@@ -222,9 +222,9 @@ graph TB
     style STANDBY fill:#FFE4B5
 ```
 
-## Failover Process
+## Процесс отказоустойчивости
 
-### Failover Flow
+### Процесс failover
 
 ```mermaid
 flowchart TD
@@ -238,7 +238,7 @@ flowchart TD
     style ELECT fill:#90EE90
 ```
 
-### Handling Failover
+### Обработка отказа
 
 ```go
 // Leader election handles failover automatically
@@ -249,9 +249,9 @@ flowchart TD
 // 4. No reconciliation is lost (idempotent operations)
 ```
 
-## Resource Management
+## Управление ресурсами
 
-### Resource Limits
+### Лимиты ресурсов
 
 ```yaml
 resources:
@@ -263,7 +263,7 @@ resources:
     memory: 512Mi
 ```
 
-### Resource Sizing
+### Подбор размера ресурсов
 
 ```mermaid
 graph LR
@@ -278,9 +278,9 @@ graph LR
     style LARGE fill:#FFB6C1
 ```
 
-## Pod Disruption Budget
+## Бюджет прерывания подов (Pod Disruption Budget)
 
-### PDB Configuration
+### Конфигурация PDB
 
 ```yaml
 apiVersion: policy/v1
@@ -294,7 +294,7 @@ spec:
       app: postgres-operator
 ```
 
-### PDB Protection
+### Защита с помощью PDB
 
 ```mermaid
 graph TB
@@ -309,9 +309,9 @@ graph TB
     style PDB fill:#90EE90
 ```
 
-## Health Checks
+## Проверки здоровья (Health Checks)
 
-Kubebuilder's generated `cmd/main.go` automatically sets up health endpoints:
+Сгенерированный Kubebuilder `cmd/main.go` автоматически настраивает эндпоинты здоровья:
 
 ```go
 // In cmd/main.go (generated by kubebuilder)
@@ -325,9 +325,9 @@ if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
 }
 ```
 
-### Liveness and Readiness in Deployment
+### Liveness и Readiness в развёртывании
 
-The health probes are already configured in `config/manager/manager.yaml`:
+Пробы здоровья уже настроены в `config/manager/manager.yaml`:
 
 ```yaml
 livenessProbe:
@@ -345,50 +345,50 @@ readinessProbe:
   periodSeconds: 10
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Leader election** is built into kubebuilder via `--leader-elect` flag
-- **Multiple replicas** provide redundancy (update `config/manager/manager.yaml`)
-- **Failover** is automatic with leader election
-- **Health checks** are pre-configured by kubebuilder (`/healthz`, `/readyz`)
-- **Resource limits** prevent resource exhaustion
-- **Pod Disruption Budgets** protect availability
-- **Idempotent operations** handle failover gracefully
+- **Выбор лидера** встроен в kubebuilder через флаг `--leader-elect`
+- **Несколько реплик** обеспечивают избыточность (обновите `config/manager/manager.yaml`)
+- **Отказоустойчивость** автоматическая при выборе лидера
+- **Проверки здоровья** предварительно настроены kubebuilder (`/healthz`, `/readyz`)
+- **Лимиты ресурсов** предотвращают исчерпание ресурсов
+- **Бюджеты прерывания подов** защищают доступность
+- **Идемпотентные операции** аккуратно обрабатывают отказ
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When implementing high availability with kubebuilder:
-- Add `--leader-elect` to deployment args in `config/manager/manager.yaml`
-- Increase `replicas` to 3 in the deployment
-- Health probes are already configured by kubebuilder
-- Set appropriate resource limits in the deployment
-- Add Pod Disruption Budgets in `config/manager/`
-- Ensure your reconciliation logic is idempotent
-- Use `make deploy` to deploy with HA configuration
+При реализации высокой доступности с kubebuilder:
+- Добавьте `--leader-elect` в аргументы развёртывания в `config/manager/manager.yaml`
+- Увеличьте `replicas` до 3 в развёртывании
+- Пробы здоровья уже настроены kubebuilder
+- Установите подходящие лимиты ресурсов в развёртывании
+- Добавьте бюджеты прерывания подов в `config/manager/`
+- Убедитесь, что ваша логика согласования идемпотентна
+- Используйте `make deploy` для развёртывания с конфигурацией HA
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 7.3: Implementing HA](../labs/lab-03-high-availability.md) - Hands-on exercises for this lesson
+- [Лабораторная 7.3: Реализация HA](../labs/lab-03-high-availability.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Leader Election](https://kubernetes.io/docs/concepts/architecture/leases/)
-- [Pod Disruption Budgets](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets)
-- [Resource Management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+### Официальная документация
+- [Выбор лидера](https://kubernetes.io/docs/concepts/architecture/leases/)
+- [Бюджеты прерывания подов](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets)
+- [Управление ресурсами](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 14: High Availability
-- **Kubernetes: Up and Running** by Kelsey Hightower, Brendan Burns, and Joe Beda - Chapter 12: Deploying Applications
-- [Kubernetes High Availability](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 14: High Availability
+- **Kubernetes: Up and Running**, Kelsey Hightower, Brendan Burns и Joe Beda — глава 12: Deploying Applications
+- [Высокая доступность Kubernetes](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/)
 
-### Related Topics
-- [Leases API](https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/lease-v1/)
-- [Health Checks](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
-- [Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
+### Смежные темы
+- [API Leases](https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/lease-v1/)
+- [Проверки здоровья](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+- [Квоты ресурсов](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand high availability, let's learn about performance optimization.
+Теперь, когда вы понимаете высокую доступность, давайте изучим оптимизацию производительности.
 
-**Navigation:** [← Previous: RBAC and Security](02-rbac-security.md) | [Module Overview](../README.md) | [Next: Performance and Scalability →](04-performance-scalability.md)
+**Навигация:** [← Предыдущий: RBAC и безопасность](02-rbac-security.md) | [Обзор модуля](../README.md) | [Далее: Производительность и масштабируемость →](04-performance-scalability.md)

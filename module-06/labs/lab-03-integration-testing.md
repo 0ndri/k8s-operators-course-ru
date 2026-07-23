@@ -2,32 +2,32 @@
 layout: default
 title: "Lab 06.3: Integration Testing"
 nav_order: 13
-parent: "Module 6: Testing & Debugging"
-grand_parent: Modules
+parent: "Модуль 6: Тестирование и отладка"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 6.3: Creating Integration Tests
+# Лабораторная 6.3: Создание интеграционных тестов
 
-**Related Lesson:** [Lesson 6.3: Integration Testing](../lessons/03-integration-testing.md)  
-**Navigation:** [← Previous Lab: Unit Testing](lab-02-unit-testing-envtest.md) | [Module Overview](../README.md) | [Next Lab: Observability →](lab-04-debugging-observability.md)
+**Связанный урок:** [Урок 6.3: Интеграционное тестирование](../lessons/03-integration-testing.md)  
+**Навигация:** [← Предыдущая лабораторная: Модульное тестирование](lab-02-unit-testing-envtest.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Наблюдаемость →](lab-04-debugging-observability.md)
 
-## Objectives
+## Цели
 
-- Set up integration test environment
-- Write end-to-end tests
-- Test complete workflows
-- Integrate with CI/CD
+- Настроить среду интеграционного тестирования
+- Написать сквозные (end-to-end) тесты
+- Протестировать полные рабочие процессы
+- Интегрировать с CI/CD
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 6.2](lab-02-unit-testing-envtest.md)
-- kind installed
-- Understanding of integration testing
+- Завершение [Лабораторной 6.2](lab-02-unit-testing-envtest.md)
+- Установленный kind
+- Понимание интеграционного тестирования
 
-## Exercise 1: Set Up Integration Test Environment
+## Упражнение 1: настройка среды интеграционного тестирования
 
-### Task 1.1: Create Integration Test Directory
+### Задача 1.1: создайте каталог интеграционных тестов
 
 ```bash
 # Create integration test directory
@@ -35,18 +35,18 @@ mkdir -p test/integration
 cd test/integration
 ```
 
-### Task 1.2: Initialize Ginkgo Suite
+### Задача 1.2: инициализируйте набор Ginkgo
 
 ```bash
 # Initialize Ginkgo suite
 ginkgo bootstrap
 ```
 
-### Task 1.3: Create Suite Test
+### Задача 1.3: создайте набор тестов
 
-Create `test/integration/integration_suite_test.go`:
+Создайте `test/integration/integration_suite_test.go`:
 
-**Important**: The client needs to know about your custom `Database` type. You must register it with the scheme!
+**Важно**: клиент должен знать о вашем пользовательском типе `Database`. Вы должны зарегистрировать его в схеме!
 
 ```go
 package integration_test
@@ -90,18 +90,18 @@ var _ = BeforeSuite(func() {
 })
 ```
 
-**Why is scheme registration needed?**
-- The Kubernetes client uses the scheme to convert Go types to/from JSON/YAML
-- Built-in types (Pod, Service, etc.) are already registered
-- Custom Resource types like `Database` must be explicitly registered
+**Почему нужна регистрация в схеме?**
+- Клиент Kubernetes использует схему для преобразования Go-типов в/из JSON/YAML
+- Встроенные типы (Pod, Service и т. д.) уже зарегистрированы
+- Типы пользовательских ресурсов, такие как `Database`, нужно регистрировать явно
 
-## Exercise 2: Write End-to-End Test
+## Упражнение 2: написание сквозного теста
 
-### Task 2.1: Test Database Lifecycle
+### Задача 2.1: протестируйте жизненный цикл Database
 
-Create `test/integration/database_test.go`:
+Создайте `test/integration/database_test.go`:
 
-**Note**: The package must match the suite file (`integration_test`).
+**Примечание**: пакет должен совпадать с файлом набора (`integration_test`).
 
 ```go
 package integration_test
@@ -265,20 +265,20 @@ var _ = Describe("Database Operator Integration", func() {
 })
 ```
 
-**Key features:**
-- Uses unique resource names to avoid test conflicts
-- Proper cleanup in `AfterEach` (removes finalizers before deletion)
-- Tests full lifecycle: create → update → delete
-- Tests scaling (replicas 1 → 3)
-- Tests child resource creation (StatefulSet, Service, Secret)
+**Ключевые особенности:**
+- Использует уникальные имена ресурсов для избежания конфликтов тестов
+- Правильная очистка в `AfterEach` (удаляет финализаторы перед удалением)
+- Тестирует полный жизненный цикл: создание → обновление → удаление
+- Тестирует масштабирование (реплики 1 → 3)
+- Тестирует создание дочерних ресурсов (StatefulSet, Service, Secret)
 
-## Exercise 3: Test Webhooks (Optional)
+## Упражнение 3: тестирование вебхуков (опционально)
 
-**Note**: Webhook tests require webhooks to be deployed and configured with cert-manager. If you haven't set up webhooks, skip this exercise.
+**Примечание**: тесты вебхуков требуют, чтобы вебхуки были развёрнуты и настроены с cert-manager. Если вы не настроили вебхуки, пропустите это упражнение.
 
-### Task 3.1: Test Validating Webhook
+### Задача 3.1: протестируйте валидирующий вебхук
 
-Add to `test/integration/database_test.go` (inside the main Describe block):
+Добавьте в `test/integration/database_test.go` (внутри основного блока Describe):
 
 ```go
 	// Only run if webhooks are deployed
@@ -328,15 +328,15 @@ Context("Validating webhook", func() {
 })
 ```
 
-**Note**: If webhooks aren't deployed, the "reject invalid" test will fail because the validation only happens in the webhook. You can skip webhook tests by using:
+**Примечание**: если вебхуки не развёрнуты, тест «отклонить некорректный» не пройдёт, потому что валидация происходит только в вебхуке. Вы можете пропустить тесты вебхуков командой:
 
 ```bash
 ginkgo -v -skip="webhook" ./test/integration
 ```
 
-## Exercise 4: Run Integration Tests
+## Упражнение 4: запуск интеграционных тестов
 
-### Task 4.1: Run Tests Locally
+### Задача 4.1: запустите тесты локально
 
 ```bash
 # Ensure kind cluster is running, if not use ./scripts/setup-kind-cluster.sh
@@ -353,18 +353,18 @@ make deploy IMG=localhost/postgres-operator:latest
 ginkgo -v ./test/integration
 ```
 
-### Task 4.2: Run with Focus
+### Задача 4.2: запуск с фокусом
 
 ```bash
 # Run specific test
 ginkgo -v -focus="Database lifecycle" ./test/integration
 ```
 
-## Exercise 5: CI/CD Integration
+## Упражнение 5: интеграция с CI/CD
 
-### Task 5.1: Create GitHub Actions Workflow
+### Задача 5.1: создайте workflow GitHub Actions
 
-Create `.github/workflows/integration-tests.yml`:
+Создайте `.github/workflows/integration-tests.yml`:
 
 ```yaml
 name: Integration Tests
@@ -433,14 +433,14 @@ jobs:
         run: kind delete cluster
 ```
 
-**Key points:**
-- **Build image first** - `make docker-build` creates the container image
-- **Load into kind** - `kind load docker-image` makes the image available to the cluster
-- **Include namespace** - `-n postgres-operator-system` in kubectl wait
-- **Wait for cert-manager** - Cert-manager must be ready before the operator can start (webhooks need TLS certs)
-- **Debug on failure** - Logs help diagnose issues
+**Ключевые моменты:**
+- **Сначала соберите образ** — `make docker-build` создаёт образ контейнера
+- **Загрузите в kind** — `kind load docker-image` делает образ доступным для кластера
+- **Указывайте пространство имён** — `-n postgres-operator-system` в kubectl wait
+- **Дождитесь cert-manager** — cert-manager должен быть готов до запуска оператора (вебхукам нужны TLS-сертификаты)
+- **Отладка при сбое** — логи помогают диагностировать проблемы
 
-## Cleanup
+## Очистка
 
 ```bash
 # Clean up test resources
@@ -450,33 +450,33 @@ kubectl delete databases --all
 kind delete cluster
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Set up integration test environment
-- Wrote end-to-end tests
-- Tested complete workflows
-- Tested webhooks
-- Integrated with CI/CD
+В этой лабораторной вы:
+- Настроили среду интеграционного тестирования
+- Написали сквозные тесты
+- Протестировали полные рабочие процессы
+- Протестировали вебхуки
+- Интегрировали с CI/CD
 
-## Key Learnings
+## Ключевые уроки
 
-1. **Register custom types with scheme** - The k8s client must know about your CRD types via `databasev1.AddToScheme(scheme.Scheme)`
-2. **Pass scheme to client** - Use `client.Options{Scheme: scheme.Scheme}` when creating the client
-3. **Integration tests use real clusters** - Tests run against actual Kubernetes API (kind, minikube, etc.)
-4. **Eventually waits for async operations** - Controllers are async; use `Eventually` for assertions
-5. **Test complete workflows** - Create → Update → Delete lifecycle
-6. **Webhooks require deployment** - Webhook tests only work when webhooks are deployed with cert-manager
-7. **CI/CD automates testing** - Use GitHub Actions or similar for automated testing
-8. **Clean up resources after tests** - Delete created resources to avoid test pollution
+1. **Регистрируйте пользовательские типы в схеме** — клиент k8s должен знать о ваших типах CRD через `databasev1.AddToScheme(scheme.Scheme)`
+2. **Передавайте схему клиенту** — используйте `client.Options{Scheme: scheme.Scheme}` при создании клиента
+3. **Интеграционные тесты используют реальные кластеры** — тесты выполняются на настоящем API Kubernetes (kind, minikube и т. д.)
+4. **Eventually ожидает асинхронные операции** — контроллеры асинхронны; используйте `Eventually` для утверждений
+5. **Тестируйте полные рабочие процессы** — жизненный цикл создание → обновление → удаление
+6. **Вебхуки требуют развёртывания** — тесты вебхуков работают только когда вебхуки развёрнуты с cert-manager
+7. **CI/CD автоматизирует тестирование** — используйте GitHub Actions или аналог для автоматизированного тестирования
+8. **Очищайте ресурсы после тестов** — удаляйте созданные ресурсы, чтобы избежать «загрязнения» тестов
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Integration Test Examples](../solutions/integration_test.go) - Complete integration test examples
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Integration Test Examples](../solutions/integration_test.go) — полные примеры интеграционных тестов
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's add observability and learn debugging techniques!
+Теперь давайте добавим наблюдаемость и изучим приёмы отладки!
 
-**Navigation:** [← Previous Lab: Unit Testing](lab-02-unit-testing-envtest.md) | [Related Lesson](../lessons/03-integration-testing.md) | [Next Lab: Observability →](lab-04-debugging-observability.md)
+**Навигация:** [← Предыдущая лабораторная: Модульное тестирование](lab-02-unit-testing-envtest.md) | [Связанный урок](../lessons/03-integration-testing.md) | [Следующая лабораторная: Наблюдаемость →](lab-04-debugging-observability.md)

@@ -2,22 +2,22 @@
 layout: default
 title: "04.4 Advanced Patterns"
 nav_order: 4
-parent: "Module 4: Advanced Reconciliation"
-grand_parent: Modules
+parent: "Модуль 4: Продвинутое согласование"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 4.4: Advanced Patterns
+# Урок 4.4: Продвинутые паттерны
 
-**Navigation:** [← Previous: Watching and Indexing](03-watching-indexing.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущий: Отслеживание и индексирование](03-watching-indexing.md) | [Обзор модуля](../README.md)
 
-## Introduction
+## Введение
 
-Real-world operators often need to handle complex scenarios: multi-phase deployments, state machines, external dependencies, and ensuring idempotency. This lesson covers advanced patterns that make operators robust and production-ready.
+Реальным операторам часто приходится обрабатывать сложные сценарии: многофазные развёртывания, конечные автоматы, внешние зависимости и обеспечение идемпотентности. Этот урок охватывает продвинутые паттерны, которые делают операторы надёжными и готовыми к продакшену.
 
-## Multi-Phase Reconciliation
+## Многофазное согласование
 
-Complex resources often need multiple phases:
+Сложным ресурсам часто нужно несколько фаз:
 
 ```mermaid
 graph TB
@@ -39,7 +39,7 @@ graph TB
     style COMPLETE fill:#90EE90
 ```
 
-### Implementing Multi-Phase
+### Реализация многофазности
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -81,9 +81,9 @@ func (r *DatabaseReconciler) getCurrentPhase(db *databasev1.Database) string {
 }
 ```
 
-## State Machines
+## Конечные автоматы (State Machines)
 
-State machines provide structured state transitions:
+Конечные автоматы обеспечивают структурированные переходы между состояниями:
 
 ```mermaid
 stateDiagram-v2
@@ -101,7 +101,7 @@ stateDiagram-v2
     Failed --> [*]
 ```
 
-### State Machine Implementation
+### Реализация конечного автомата
 
 ```go
 type DatabaseState string
@@ -144,9 +144,9 @@ func (r *DatabaseReconciler) reconcileWithStateMachine(ctx context.Context, db *
 }
 ```
 
-## Handling External Dependencies
+## Обработка внешних зависимостей
 
-Operators often depend on external systems:
+Операторы часто зависят от внешних систем:
 
 ```mermaid
 graph TB
@@ -165,7 +165,7 @@ graph TB
     style EXTERNAL fill:#90EE90
 ```
 
-### External Dependency Pattern
+### Паттерн внешней зависимости
 
 ```go
 func (r *DatabaseReconciler) checkExternalDependency(ctx context.Context, db *databasev1.Database) error {
@@ -193,9 +193,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Idempotency Guarantees
+## Гарантии идемпотентности
 
-Operations must be idempotent - safe to repeat:
+Операции должны быть идемпотентными — безопасными для повтора:
 
 ```mermaid
 graph LR
@@ -206,7 +206,7 @@ graph LR
     style RESULT fill:#90EE90
 ```
 
-### Ensuring Idempotency
+### Обеспечение идемпотентности
 
 ```go
 // Bad: Not idempotent
@@ -245,9 +245,9 @@ func (r *DatabaseReconciler) ensureSecret(ctx context.Context, db *databasev1.Da
 }
 ```
 
-## Stability Patterns
+## Паттерны стабильности
 
-### Pattern 1: Rate Limiting
+### Паттерн 1: ограничение частоты (Rate Limiting)
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -264,7 +264,7 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-### Pattern 2: Exponential Backoff
+### Паттерн 2: экспоненциальная задержка (Exponential Backoff)
 
 ```go
 func (r *DatabaseReconciler) handleError(ctx context.Context, db *databasev1.Database, err error) (ctrl.Result, error) {
@@ -283,7 +283,7 @@ func (r *DatabaseReconciler) handleError(ctx context.Context, db *databasev1.Dat
 }
 ```
 
-### Pattern 3: Circuit Breaker
+### Паттерн 3: размыкатель цепи (Circuit Breaker)
 
 ```go
 type CircuitBreaker struct {
@@ -318,9 +318,9 @@ func (cb *CircuitBreaker) Call(fn func() error) error {
 }
 ```
 
-## Combining Patterns
+## Комбинирование паттернов
 
-Real operators combine multiple patterns:
+Реальные операторы комбинируют несколько паттернов:
 
 ```mermaid
 graph TB
@@ -339,57 +339,57 @@ graph TB
     style IDEMPOTENT fill:#FFB6C1
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Multi-phase reconciliation** handles complex deployments
-- **State machines** provide structured state transitions
-- **External dependencies** need availability checks and retries
-- **Idempotency** is crucial - operations must be safe to repeat
-- **Rate limiting** prevents overwhelming external systems
-- **Exponential backoff** handles transient failures
-- **Circuit breakers** protect against cascading failures
-- **Combine patterns** for robust operators
+- **Многофазное согласование** обрабатывает сложные развёртывания
+- **Конечные автоматы** обеспечивают структурированные переходы между состояниями
+- **Внешние зависимости** требуют проверок доступности и повторов
+- **Идемпотентность** критически важна — операции должны быть безопасны для повтора
+- **Ограничение частоты** предотвращает перегрузку внешних систем
+- **Экспоненциальная задержка** обрабатывает временные сбои
+- **Размыкатели цепи (circuit breakers)** защищают от каскадных сбоев
+- **Комбинируйте паттерны** для надёжных операторов
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When implementing advanced patterns:
-- Use state machines for complex workflows
-- Break complex operations into phases
-- Always check external dependencies
-- Ensure all operations are idempotent
-- Implement rate limiting and backoff
-- Use circuit breakers for resilience
-- Combine patterns as needed
+При реализации продвинутых паттернов:
+- Используйте конечные автоматы для сложных рабочих процессов
+- Разбивайте сложные операции на фазы
+- Всегда проверяйте внешние зависимости
+- Обеспечивайте идемпотентность всех операций
+- Реализуйте ограничение частоты и задержку
+- Используйте размыкатели цепи для устойчивости
+- Комбинируйте паттерны по необходимости
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 4.4: Multi-Phase Reconciliation](../labs/lab-04-advanced-patterns.md) - Hands-on exercises for this lesson
+- [Лабораторная 4.4: Многофазное согласование](../labs/lab-04-advanced-patterns.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Kubernetes Controller Concepts](https://kubernetes.io/docs/concepts/architecture/controller/)
-- [Kubebuilder: Designing APIs](https://book.kubebuilder.io/cronjob-tutorial/api-design)
-- [Controller Runtime: Reconciler Interface](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)
+### Официальная документация
+- [Концепции контроллеров Kubernetes](https://kubernetes.io/docs/concepts/architecture/controller/)
+- [Kubebuilder: проектирование API](https://book.kubebuilder.io/cronjob-tutorial/api-design)
+- [Controller Runtime: интерфейс Reconciler](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 8: Advanced Patterns
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 8: Advanced Controller Patterns
-- [Controller Design Patterns](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/controllers.md)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 8: Advanced Patterns
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 8: Advanced Controller Patterns
+- [Паттерны проектирования контроллеров](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/controllers.md)
 
-### Related Topics
-- [State Machine Pattern](https://en.wikipedia.org/wiki/Finite-state_machine)
-- [Idempotency in Distributed Systems](https://en.wikipedia.org/wiki/Idempotence)
-- [Circuit Breaker Pattern](https://en.wikipedia.org/wiki/Circuit_breaker_design_pattern)
+### Смежные темы
+- [Паттерн конечного автомата](https://en.wikipedia.org/wiki/Finite-state_machine)
+- [Идемпотентность в распределённых системах](https://en.wikipedia.org/wiki/Idempotence)
+- [Паттерн Circuit Breaker](https://en.wikipedia.org/wiki/Circuit_breaker_design_pattern)
 
-## Next Steps
+## Дальнейшие шаги
 
-Congratulations! You've completed Module 4. You now understand:
-- Status management with conditions
-- Finalizers for cleanup
-- Watching and indexing
-- Advanced reconciliation patterns
+Поздравляем! Вы завершили Модуль 4. Теперь вы понимаете:
+- Управление статусом с помощью условий
+- Финализаторы для очистки
+- Отслеживание и индексирование
+- Продвинутые паттерны согласования
 
-In [Module 5](../../module-05/README.md), you'll learn about webhooks for validation and mutation.
+В [Модуле 5](../../module-05/README.md) вы изучите вебхуки для валидации и мутации.
 
-**Navigation:** [← Previous: Watching and Indexing](03-watching-indexing.md) | [Module Overview](../README.md) | [Next: Module 5 →](../../module-05/README.md)
+**Навигация:** [← Предыдущий: Отслеживание и индексирование](03-watching-indexing.md) | [Обзор модуля](../README.md) | [Далее: Модуль 5 →](../../module-05/README.md)

@@ -2,88 +2,88 @@
 layout: default
 title: "08.1 Multi Tenancy"
 nav_order: 1
-parent: "Module 8: Advanced Topics"
-grand_parent: Modules
+parent: "Модуль 8: Продвинутые темы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 8.1: Multi-Tenancy and Namespace Isolation
+# Урок 8.1: Мультиарендность и изоляция пространств имён
 
-**Navigation:** [Module Overview](../README.md) | [Next Lesson: Operator Composition →](02-operator-composition.md)
+**Навигация:** [Обзор модуля](../README.md) | [Следующий урок: Композиция операторов →](02-operator-composition.md)
 
-## Introduction
+## Введение
 
-Production operators often need to support multiple tenants or work across namespaces. This lesson covers cluster-scoped operators, namespace isolation, resource quotas, and multi-tenant patterns that enable operators to manage resources across different namespaces or tenants.
+Продакшен-операторам часто нужно поддерживать несколько арендаторов (tenants) или работать между пространствами имён. Этот урок охватывает операторы с областью действия на весь кластер, изоляцию пространств имён, квоты ресурсов и паттерны мультиарендности, которые позволяют операторам управлять ресурсами в разных пространствах имён или для разных арендаторов.
 
-## Theory: Multi-Tenancy
+## Теория: мультиарендность
 
-Multi-tenancy enables **isolated resource management** for different users or teams.
+Мультиарендность обеспечивает **изолированное управление ресурсами** для разных пользователей или команд.
 
-### Why Multi-Tenancy?
+### Зачем нужна мультиарендность?
 
-**Resource Isolation:**
-- Separate tenants' resources
-- Prevent interference
-- Security boundaries
-- Compliance requirements
+**Изоляция ресурсов:**
+- Разделение ресурсов арендаторов
+- Предотвращение взаимного влияния
+- Границы безопасности
+- Требования комплаенса
 
-**Resource Sharing:**
-- Share cluster infrastructure
-- Cost efficiency
-- Centralized management
-- Scalability
+**Совместное использование ресурсов:**
+- Совместное использование инфраструктуры кластера
+- Экономическая эффективность
+- Централизованное управление
+- Масштабируемость
 
-**Access Control:**
-- Different permissions per tenant
-- RBAC enforcement
-- Network isolation
-- Resource quotas
+**Контроль доступа:**
+- Разные разрешения для каждого арендатора
+- Обеспечение RBAC
+- Сетевая изоляция
+- Квоты ресурсов
 
-### Tenancy Models
+### Модели арендности
 
-**Namespace-Based:**
-- Each tenant gets a namespace
-- Simple isolation
-- Easy to implement
-- Kubernetes-native
+**На основе пространств имён:**
+- Каждый арендатор получает пространство имён
+- Простая изоляция
+- Легко реализовать
+- Kubernetes-нативно
 
-**Label-Based:**
-- Tenants identified by labels
-- Flexible grouping
-- Cross-namespace tenancy
-- More complex
+**На основе меток:**
+- Арендаторы идентифицируются метками
+- Гибкая группировка
+- Арендность между пространствами имён
+- Сложнее
 
-**Cluster-Scoped:**
-- Single operator for all tenants
-- Centralized management
-- Efficient resource usage
-- Requires careful isolation
+**С областью действия на кластер:**
+- Единый оператор для всех арендаторов
+- Централизованное управление
+- Эффективное использование ресурсов
+- Требует тщательной изоляции
 
-### Isolation Mechanisms
+### Механизмы изоляции
 
 **RBAC:**
-- Role-based access control
-- Limit tenant permissions
-- Enforce boundaries
-- Prevent cross-tenant access
+- Управление доступом на основе ролей
+- Ограничение разрешений арендаторов
+- Обеспечение границ
+- Предотвращение доступа между арендаторами
 
-**Resource Quotas:**
-- Limit tenant resource usage
-- Prevent resource exhaustion
-- Fair resource distribution
-- Cost control
+**Квоты ресурсов:**
+- Ограничение использования ресурсов арендатором
+- Предотвращение исчерпания ресурсов
+- Справедливое распределение ресурсов
+- Контроль затрат
 
-**Network Policies:**
-- Network isolation
-- Control traffic flow
-- Security boundaries
-- Tenant isolation
+**Сетевые политики:**
+- Сетевая изоляция
+- Контроль потока трафика
+- Границы безопасности
+- Изоляция арендаторов
 
-Understanding multi-tenancy helps you build operators that support multiple users securely.
+Понимание мультиарендности помогает создавать операторы, безопасно поддерживающие нескольких пользователей.
 
-## Cluster-Scoped vs Namespaced Operators
+## Операторы с областью действия на кластер против пространства имён
 
-### Namespaced Operators
+### Операторы с областью действия на пространство имён
 
 ```mermaid
 graph TB
@@ -100,13 +100,13 @@ graph TB
     style OPERATOR fill:#90EE90
 ```
 
-**Characteristics:**
-- Deployed in specific namespace
-- Manages resources in that namespace
-- One instance per namespace
-- Isolated per namespace
+**Характеристики:**
+- Развёртывается в конкретном пространстве имён
+- Управляет ресурсами в этом пространстве имён
+- Один экземпляр на пространство имён
+- Изолирован по пространствам имён
 
-### Cluster-Scoped Operators
+### Операторы с областью действия на кластер
 
 ```mermaid
 graph TB
@@ -125,15 +125,15 @@ graph TB
     style OPERATOR fill:#FFB6C1
 ```
 
-**Characteristics:**
-- Deployed once for entire cluster
-- Manages resources across all namespaces
-- Single instance for entire cluster
-- Can watch all namespaces
+**Характеристики:**
+- Развёртывается один раз на весь кластер
+- Управляет ресурсами во всех пространствах имён
+- Единый экземпляр на весь кластер
+- Может отслеживать все пространства имён
 
-## Multi-Tenancy Architecture
+## Архитектура мультиарендности
 
-### Multi-Tenant Model
+### Мультиарендная модель
 
 ```mermaid
 graph TB
@@ -154,11 +154,11 @@ graph TB
     style CLUSTER fill:#90EE90
 ```
 
-## Creating Cluster-Scoped CRDs with Kubebuilder
+## Создание CRD с областью действия на кластер с помощью Kubebuilder
 
-### Scaffolding a Cluster-Scoped API
+### Генерация каркаса API с областью действия на кластер
 
-Use kubebuilder to create a new cluster-scoped API:
+Используйте kubebuilder для создания нового API с областью действия на кластер:
 
 ```bash
 # Create new cluster-scoped API
@@ -169,9 +169,9 @@ kubebuilder create api \
   --resource --controller
 ```
 
-### Configuring Cluster Scope
+### Настройка области действия на кластер
 
-Add the scope marker to your types file:
+Добавьте маркер области действия в файл типов:
 
 ```go
 // +kubebuilder:object:root=true
@@ -187,9 +187,9 @@ type ClusterDatabase struct {
 }
 ```
 
-The key marker is `// +kubebuilder:resource:scope=Cluster`.
+Ключевой маркер — `// +kubebuilder:resource:scope=Cluster`.
 
-### Generating CRDs
+### Генерация CRD
 
 ```bash
 # Generate CRD manifests from markers
@@ -199,7 +199,7 @@ make manifests
 #   scope: Cluster
 ```
 
-### Scope Comparison
+### Сравнение областей действия
 
 ```mermaid
 graph LR
@@ -215,11 +215,11 @@ graph LR
     style CLUSTER fill:#FFB6C1
 ```
 
-## Designing Cluster-Scoped APIs
+## Проектирование API с областью действия на кластер
 
-### Key Design Consideration: Target Namespace
+### Ключевое проектное соображение: целевое пространство имён
 
-Cluster-scoped resources don't belong to a namespace, but they often need to create namespaced resources. Include a `targetNamespace` field:
+Ресурсы с областью действия на кластер не принадлежат пространству имён, но им часто нужно создавать ресурсы с областью действия на пространство имён. Включите поле `targetNamespace`:
 
 ```go
 type ClusterDatabaseSpec struct {
@@ -235,9 +235,9 @@ type ClusterDatabaseSpec struct {
 }
 ```
 
-### Ownership Limitations
+### Ограничения владения
 
-**Important:** Cluster-scoped resources cannot use `OwnerReferences` to own namespaced resources. Use labels instead:
+**Важно:** ресурсы с областью действия на кластер не могут использовать `OwnerReferences`, чтобы владеть ресурсами с областью действия на пространство имён. Вместо этого используйте метки:
 
 ```go
 // Cannot do this for cluster-scoped owner:
@@ -248,9 +248,9 @@ statefulSet.Labels["clusterdatabase"] = clusterDatabase.Name
 statefulSet.Labels["tenant"] = clusterDatabase.Spec.Tenant
 ```
 
-### Cleanup with Finalizers
+### Очистка с помощью финализаторов
 
-Since automatic garbage collection doesn't work across scopes, use finalizers:
+Поскольку автоматическая сборка мусора не работает между областями действия, используйте финализаторы:
 
 ```go
 const clusterDatabaseFinalizer = "database.example.com/finalizer"
@@ -283,9 +283,9 @@ func (r *ClusterDatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 }
 ```
 
-## Namespace Isolation
+## Изоляция пространств имён
 
-### Isolation Strategies
+### Стратегии изоляции
 
 ```mermaid
 graph TB
@@ -299,7 +299,7 @@ graph TB
     style ISOLATION fill:#90EE90
 ```
 
-### Resource Quotas
+### Квоты ресурсов
 
 ```yaml
 apiVersion: v1
@@ -317,11 +317,11 @@ spec:
     clusterdatabases.database.example.com: "5"
 ```
 
-## Multi-Tenant Operator Patterns
+## Паттерны мультиарендного оператора
 
-### Pattern 1: Namespace-Based Tenancy
+### Паттерн 1: арендность на основе пространств имён
 
-Use namespaces as tenant boundaries with namespace-scoped resources:
+Используйте пространства имён как границы арендаторов с ресурсами области действия на пространство имён:
 
 ```go
 func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -339,9 +339,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-### Pattern 2: Cluster-Scoped with Target Namespace
+### Паттерн 2: область действия на кластер с целевым пространством имён
 
-Use cluster-scoped resources that deploy to specific namespaces:
+Используйте ресурсы с областью действия на кластер, которые развёртываются в конкретные пространства имён:
 
 ```go
 func (r *ClusterDatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -359,9 +359,9 @@ func (r *ClusterDatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 }
 ```
 
-### Pattern 3: Label-Based Tenancy
+### Паттерн 3: арендность на основе меток
 
-Use labels for flexible tenant identification:
+Используйте метки для гибкой идентификации арендаторов:
 
 ```go
 // ClusterDatabase with tenant label
@@ -381,9 +381,9 @@ databases := &databasev1.ClusterDatabaseList{}
 r.List(ctx, databases, client.MatchingLabels{"tenant": "tenant-1"})
 ```
 
-## Handling Resource Quotas
+## Обработка квот ресурсов
 
-### Checking Quotas in Controller
+### Проверка квот в контроллере
 
 ```go
 func (r *ClusterDatabaseReconciler) checkQuota(ctx context.Context, namespace string) error {
@@ -423,14 +423,14 @@ func (r *ClusterDatabaseReconciler) checkQuota(ctx context.Context, namespace st
 }
 ```
 
-## Both APIs Side by Side
+## Оба API рядом
 
-Your operator can manage both namespace-scoped and cluster-scoped resources:
+Ваш оператор может управлять и ресурсами области действия на пространство имён, и области действия на кластер:
 
-| API | Scope | Use Case |
+| API | Область действия | Сценарий использования |
 |-----|-------|----------|
-| `Database` | Namespaced | Team-level database management |
-| `ClusterDatabase` | Cluster | Platform-level multi-tenant management |
+| `Database` | Namespaced | Управление базами данных на уровне команды |
+| `ClusterDatabase` | Cluster | Мультиарендное управление на уровне платформы |
 
 ```bash
 # List namespace-scoped databases
@@ -440,52 +440,52 @@ kubectl get databases -n my-namespace
 kubectl get clusterdatabases
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Use kubebuilder to scaffold cluster-scoped APIs** - `kubebuilder create api` + `scope=Cluster` marker
-- **Cluster-scoped operators** manage resources across all namespaces
-- **Namespaced operators** manage resources in specific namespace
-- **Cluster-scoped resources need targetNamespace** for creating namespaced resources
-- **Cannot use OwnerReferences across scopes** - use labels and finalizers
-- **Resource quotas** limit tenant resource usage
-- **RBAC** enforces namespace isolation
-- **Both API types can coexist** in the same operator
+- **Используйте kubebuilder для генерации каркаса API с областью действия на кластер** — `kubebuilder create api` + маркер `scope=Cluster`
+- **Операторы с областью действия на кластер** управляют ресурсами во всех пространствах имён
+- **Операторы с областью действия на пространство имён** управляют ресурсами в конкретном пространстве имён
+- **Ресурсам с областью действия на кластер нужен targetNamespace** для создания ресурсов области действия на пространство имён
+- **Нельзя использовать OwnerReferences между областями действия** — используйте метки и финализаторы
+- **Квоты ресурсов** ограничивают использование ресурсов арендатором
+- **RBAC** обеспечивает изоляцию пространств имён
+- **Оба типа API могут сосуществовать** в одном операторе
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When implementing multi-tenancy:
-- Choose appropriate scope (cluster vs namespaced)
-- Use kubebuilder to scaffold new APIs
-- Add `targetNamespace` field for cluster-scoped resources
-- Use labels instead of OwnerReferences for cross-scope ownership
-- Implement finalizers for cleanup
-- Apply resource quotas per tenant
-- Use RBAC for access control
+При реализации мультиарендности:
+- Выбирайте подходящую область действия (кластер или пространство имён)
+- Используйте kubebuilder для генерации каркаса новых API
+- Добавляйте поле `targetNamespace` для ресурсов с областью действия на кластер
+- Используйте метки вместо OwnerReferences для владения между областями действия
+- Реализуйте финализаторы для очистки
+- Применяйте квоты ресурсов для каждого арендатора
+- Используйте RBAC для контроля доступа
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 8.1: Building Multi-Tenant Operator](../labs/lab-01-multi-tenancy.md) - Hands-on exercises for this lesson
+- [Лабораторная 8.1: Создание мультиарендного оператора](../labs/lab-01-multi-tenancy.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)
-- [Resource Quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
-- [Cluster-Scoped Resources](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/#not-all-objects-are-in-a-namespace)
-- [Kubebuilder Markers](https://book.kubebuilder.io/reference/markers/crd.html)
+### Официальная документация
+- [Пространства имён](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)
+- [Квоты ресурсов](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
+- [Ресурсы с областью действия на кластер](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/#not-all-objects-are-in-a-namespace)
+- [Маркеры Kubebuilder](https://book.kubebuilder.io/reference/markers/crd.html)
 
-### Further Reading
-- **Kubernetes: Up and Running** by Kelsey Hightower, Brendan Burns, and Joe Beda - Chapter 13: ConfigMaps and Secrets (multi-tenancy concepts)
-- **Kubernetes Security** by Andrew Martin and Michael Hausenblas - Multi-tenancy patterns
-- [Kubernetes Multi-Tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
+### Дополнительное чтение
+- **Kubernetes: Up and Running**, Kelsey Hightower, Brendan Burns и Joe Beda — глава 13: ConfigMaps and Secrets (концепции мультиарендности)
+- **Kubernetes Security**, Andrew Martin и Michael Hausenblas — паттерны мультиарендности
+- [Мультиарендность Kubernetes](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
 
-### Related Topics
-- [Namespace Best Practices](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/#working-with-namespaces)
-- [Resource Quota Design](https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-scopes)
-- [Network Policies for Isolation](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+### Смежные темы
+- [Лучшие практики пространств имён](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/#working-with-namespaces)
+- [Проектирование квот ресурсов](https://kubernetes.io/docs/concepts/policy/resource-quotas/#quota-scopes)
+- [Сетевые политики для изоляции](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand multi-tenancy, let's learn about operator composition.
+Теперь, когда вы понимаете мультиарендность, давайте изучим композицию операторов.
 
-**Navigation:** [← Module Overview](../README.md) | [Next: Operator Composition →](02-operator-composition.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Далее: Композиция операторов →](02-operator-composition.md)

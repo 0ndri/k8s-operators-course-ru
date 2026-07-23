@@ -2,88 +2,88 @@
 layout: default
 title: "08.2 Operator Composition"
 nav_order: 2
-parent: "Module 8: Advanced Topics"
-grand_parent: Modules
+parent: "Модуль 8: Продвинутые темы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 8.2: Operator Composition
+# Урок 8.2: Композиция операторов
 
-**Navigation:** [← Previous: Multi-Tenancy](01-multi-tenancy.md) | [Module Overview](../README.md) | [Next: Stateful Applications →](03-stateful-applications.md)
+**Навигация:** [← Предыдущий: Мультиарендность](01-multi-tenancy.md) | [Обзор модуля](../README.md) | [Далее: Stateful-приложения →](03-stateful-applications.md)
 
-## Introduction
+## Введение
 
-Real-world applications often require multiple operators working together. This lesson covers operator composition patterns, dependency management, coordination strategies, and how to build operators that work well with others.
+Реальные приложения часто требуют совместной работы нескольких операторов. Этот урок охватывает паттерны композиции операторов, управление зависимостями, стратегии координации и то, как создавать операторы, которые хорошо работают с другими.
 
-## Theory: Operator Composition
+## Теория: композиция операторов
 
-Operator composition enables **complex applications** by combining multiple operators.
+Композиция операторов позволяет создавать **сложные приложения** путём объединения нескольких операторов.
 
-### Why Compose Operators?
+### Зачем композировать операторы?
 
-**Separation of Concerns:**
-- Each operator has focused responsibility
-- Database operator manages databases
-- Backup operator manages backups
-- Clear boundaries
+**Разделение ответственности:**
+- У каждого оператора чёткая зона ответственности
+- Оператор базы данных управляет базами данных
+- Оператор резервного копирования управляет резервными копиями
+- Чёткие границы
 
-**Reusability:**
-- Operators can be reused
-- Backup operator works with any database
-- Compose as needed
-- Build complex systems from simple parts
+**Переиспользуемость:**
+- Операторы можно переиспользовать
+- Оператор резервного копирования работает с любой базой данных
+- Композируйте по необходимости
+- Стройте сложные системы из простых частей
 
-**Modularity:**
-- Independent development
-- Independent testing
-- Independent deployment
-- Easier maintenance
+**Модульность:**
+- Независимая разработка
+- Независимое тестирование
+- Независимое развёртывание
+- Более простое сопровождение
 
-### Composition Patterns
+### Паттерны композиции
 
-**Independent Operators:**
-- No dependencies
-- Work independently
-- Simple coordination
-- Easy to reason about
+**Независимые операторы:**
+- Без зависимостей
+- Работают независимо
+- Простая координация
+- Легко анализировать
 
-**Dependent Operators:**
-- One depends on another
-- Requires coordination
-- Order matters
-- More complex
+**Зависимые операторы:**
+- Один зависит от другого
+- Требуют координации
+- Порядок имеет значение
+- Сложнее
 
-**Composite Operators:**
-- Multiple operators in one
-- Coordinated internally
-- Single deployment
-- Tighter coupling
+**Составные операторы:**
+- Несколько операторов в одном
+- Координируются внутренне
+- Единое развёртывание
+- Более сильная связанность
 
-### Coordination Mechanisms
+### Механизмы координации
 
-**Resource References:**
-- Operators reference each other's resources
-- Explicit dependencies
-- Clear relationships
-- Easy to understand
+**Ссылки на ресурсы:**
+- Операторы ссылаются на ресурсы друг друга
+- Явные зависимости
+- Чёткие связи
+- Легко понять
 
-**Status Conditions:**
-- Operators communicate via status
-- Check conditions before acting
-- Event-driven coordination
-- Loose coupling
+**Условия статуса:**
+- Операторы общаются через статус
+- Проверяют условия перед действием
+- Событийно-управляемая координация
+- Слабая связанность
 
-**Events:**
-- Emit Kubernetes events
-- Other operators can watch
-- Asynchronous coordination
-- Decoupled
+**События:**
+- Генерируют события Kubernetes
+- Другие операторы могут их отслеживать
+- Асинхронная координация
+- Развязанность (decoupled)
 
-Understanding composition helps you build complex systems from simple operators.
+Понимание композиции помогает строить сложные системы из простых операторов.
 
-## Operator Composition Patterns
+## Паттерны композиции операторов
 
-### Pattern 1: Independent Operators
+### Паттерн 1: независимые операторы
 
 ```mermaid
 graph TB
@@ -100,12 +100,12 @@ graph TB
     style APP fill:#90EE90
 ```
 
-**Characteristics:**
-- Operators work independently
-- No direct dependencies
-- Each manages its own resources
+**Характеристики:**
+- Операторы работают независимо
+- Нет прямых зависимостей
+- Каждый управляет своими ресурсами
 
-### Pattern 2: Dependent Operators
+### Паттерн 2: зависимые операторы
 
 ```mermaid
 graph TB
@@ -121,14 +121,14 @@ graph TB
     style OP3 fill:#FFB6C1
 ```
 
-**Characteristics:**
-- Operators depend on each other
-- Order matters
-- Coordination needed
+**Характеристики:**
+- Операторы зависят друг от друга
+- Порядок имеет значение
+- Нужна координация
 
-## Dependency Management
+## Управление зависимостями
 
-### Dependency Flow
+### Поток зависимостей
 
 ```mermaid
 sequenceDiagram
@@ -147,7 +147,7 @@ sequenceDiagram
     Note over OP1,OP2: Operators coordinate<br/>through resources
 ```
 
-### Managing Dependencies
+### Управление зависимостями
 
 ```go
 // Operator 1 creates resource that Operator 2 watches
@@ -172,9 +172,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Coordination Strategies
+## Стратегии координации
 
-### Strategy 1: Resource References
+### Стратегия 1: ссылки на ресурсы
 
 ```go
 // Database references Backup
@@ -207,7 +207,7 @@ func (r *DatabaseReconciler) checkBackup(ctx context.Context, db *databasev1.Dat
 }
 ```
 
-### Strategy 2: Status Conditions
+### Стратегия 2: условия статуса
 
 ```go
 // Operator 1 sets condition
@@ -226,7 +226,7 @@ if backupReady == nil || backupReady.Status != metav1.ConditionTrue {
 }
 ```
 
-### Strategy 3: Events
+### Стратегия 3: события
 
 ```go
 // Operator 1 emits event
@@ -236,9 +236,9 @@ r.Recorder.Event(db, "Normal", "BackupCreated", "Backup created successfully")
 // Can react to events from other operators
 ```
 
-## Composite Operator Pattern
+## Паттерн составного оператора
 
-### Composite Operator Flow
+### Поток составного оператора
 
 ```mermaid
 graph TB
@@ -255,7 +255,7 @@ graph TB
     style COMPOSITE fill:#90EE90
 ```
 
-### Example: Database with Backup
+### Пример: база данных с резервным копированием
 
 ```go
 type DatabaseReconciler struct {
@@ -279,49 +279,49 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Operator composition** enables complex applications
-- **Independent operators** work separately
-- **Dependent operators** require coordination
-- **Resource references** link operators
-- **Status conditions** coordinate state
-- **Events** enable communication
-- **Composite operators** combine multiple components
+- **Композиция операторов** позволяет создавать сложные приложения
+- **Независимые операторы** работают раздельно
+- **Зависимые операторы** требуют координации
+- **Ссылки на ресурсы** связывают операторы
+- **Условия статуса** координируют состояние
+- **События** обеспечивают коммуникацию
+- **Составные операторы** объединяют несколько компонентов
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When composing operators:
-- Design for independence when possible
-- Use resource references for dependencies
-- Coordinate through status conditions
-- Emit events for coordination
-- Handle dependency failures gracefully
-- Document dependencies clearly
+При композиции операторов:
+- По возможности проектируйте для независимости
+- Используйте ссылки на ресурсы для зависимостей
+- Координируйте через условия статуса
+- Генерируйте события для координации
+- Аккуратно обрабатывайте сбои зависимостей
+- Чётко документируйте зависимости
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 8.2: Composing Operators](../labs/lab-02-operator-composition.md) - Hands-on exercises for this lesson
+- [Лабораторная 8.2: Композиция операторов](../labs/lab-02-operator-composition.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Owner References](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
-- [Kubernetes Events](https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/event-v1/)
-- [Resource Dependencies](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
+### Официальная документация
+- [Ссылки-владельцы](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
+- [События Kubernetes](https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/event-v1/)
+- [Зависимости ресурсов](https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 16: Operator Composition
-- **Designing Distributed Systems** by Brendan Burns - Composition patterns
-- [Operator Best Practices](https://sdk.operatorframework.io/docs/best-practices/)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 16: Operator Composition
+- **Designing Distributed Systems**, Brendan Burns — паттерны композиции
+- [Лучшие практики операторов](https://sdk.operatorframework.io/docs/best-practices/)
 
-### Related Topics
-- [Controller Coordination](https://kubernetes.io/docs/concepts/architecture/controller/#controller-coordination)
-- [Event-Driven Architecture](https://en.wikipedia.org/wiki/Event-driven_architecture)
-- [Microservices Patterns](https://microservices.io/patterns/)
+### Смежные темы
+- [Координация контроллеров](https://kubernetes.io/docs/concepts/architecture/controller/#controller-coordination)
+- [Событийно-управляемая архитектура](https://en.wikipedia.org/wiki/Event-driven_architecture)
+- [Паттерны микросервисов](https://microservices.io/patterns/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand operator composition, let's learn about managing stateful applications.
+Теперь, когда вы понимаете композицию операторов, давайте изучим управление stateful-приложениями.
 
-**Navigation:** [← Previous: Multi-Tenancy](01-multi-tenancy.md) | [Module Overview](../README.md) | [Next: Stateful Applications →](03-stateful-applications.md)
+**Навигация:** [← Предыдущий: Мультиарендность](01-multi-tenancy.md) | [Обзор модуля](../README.md) | [Далее: Stateful-приложения →](03-stateful-applications.md)

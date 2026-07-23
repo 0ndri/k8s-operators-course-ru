@@ -2,58 +2,58 @@
 layout: default
 title: "03.1 Controller Runtime"
 nav_order: 1
-parent: "Module 3: Building Custom Controllers"
-grand_parent: Modules
+parent: "Модуль 3: Создание кастомных контроллеров"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 3.1: Controller Runtime Deep Dive
+# Урок 3.1: Глубокое погружение в Controller Runtime
 
-**Navigation:** [Module Overview](../README.md) | [Next Lesson: Designing Your API →](02-designing-api.md)
+**Навигация:** [Обзор модуля](../README.md) | [Следующий урок: Проектирование вашего API →](02-designing-api.md)
 
-## Introduction
+## Введение
 
-In [Module 2](../../module-02/README.md), you built your first operator using kubebuilder. The operator used controller-runtime under the hood, but you didn't need to understand the details. Now, to build more sophisticated operators, you need to understand how controller-runtime works - the same library that powers Kubernetes itself.
+В [Модуле 2](../../module-02/README.md) вы создали свой первый оператор с помощью kubebuilder. Оператор использовал controller-runtime под капотом, но вам не нужно было вникать в детали. Теперь, чтобы создавать более совершенные операторы, нужно понимать, как работает controller-runtime — та же библиотека, что лежит в основе самого Kubernetes.
 
-## Theory: Controller-Runtime Deep Dive
+## Теория: глубокое погружение в Controller-Runtime
 
-Controller-runtime is the foundational library that implements the controller pattern in Kubernetes. Understanding it is essential for building sophisticated operators.
+Controller-runtime — это фундаментальная библиотека, которая реализует паттерн контроллера в Kubernetes. Её понимание необходимо для создания совершенных операторов.
 
-### Core Concepts
+### Основные концепции
 
 **Manager:**
-- Coordinates multiple controllers
-- Manages client connections and caching
-- Handles leader election
-- Provides unified entry point
+- Координирует несколько контроллеров
+- Управляет соединениями клиентов и кешированием
+- Обрабатывает выбор лидера
+- Предоставляет единую точку входа
 
 **Reconciler:**
-- Implements reconciliation logic
-- Receives reconcile requests
-- Returns reconcile results
-- Must be idempotent
+- Реализует логику согласования
+- Получает запросы на согласование
+- Возвращает результаты согласования
+- Должен быть идемпотентным
 
 **Client:**
-- Typed client for Kubernetes resources
-- Uses informers for caching
-- Handles optimistic concurrency
-- Provides CRUD operations
+- Типизированный клиент для ресурсов Kubernetes
+- Использует информеры для кеширования
+- Обрабатывает оптимистичный конкурентный доступ
+- Предоставляет CRUD-операции
 
-**Why Controller-Runtime:**
-- **Standardization**: Same library Kubernetes uses
-- **Efficiency**: Built-in caching and watching
-- **Reliability**: Battle-tested patterns
-- **Abstraction**: Hides complexity of direct API calls
+**Почему Controller-Runtime:**
+- **Стандартизация**: та же библиотека, что использует Kubernetes
+- **Эффективность**: встроенное кеширование и отслеживание
+- **Надёжность**: проверенные в бою паттерны
+- **Абстракция**: скрывает сложность прямых вызовов API
 
-Understanding controller-runtime helps you build efficient, reliable operators.
+Понимание controller-runtime помогает создавать эффективные и надёжные операторы.
 
-## What is Controller-Runtime?
+## Что такое Controller-Runtime?
 
-Controller-runtime is:
-- The **library** that implements the controller pattern
-- Used by **Kubernetes itself** for built-in controllers
-- The **foundation** for kubebuilder
-- Provides **Manager**, **Reconciler**, and **Client** abstractions
+Controller-runtime — это:
+- **Библиотека**, которая реализует паттерн контроллера
+- Используется **самим Kubernetes** для встроенных контроллеров
+- **Основа** для kubebuilder
+- Предоставляет абстракции **Manager**, **Reconciler** и **Client**
 
 ```mermaid
 graph TB
@@ -85,9 +85,9 @@ graph TB
     style RECONCILE fill:#90EE90
 ```
 
-## Manager Architecture
+## Архитектура Manager
 
-The Manager is the central component that coordinates everything:
+Manager — это центральный компонент, который координирует всё:
 
 ```mermaid
 graph LR
@@ -117,17 +117,17 @@ graph LR
     style MGR fill:#FFB6C1
 ```
 
-### Manager Responsibilities
+### Обязанности Manager
 
-1. **Manages Controllers**: Registers and runs controllers
-2. **Manages Cache**: Maintains local cache of resources
-3. **Manages Client**: Provides client for API access
-4. **Manages Scheme**: Handles API type registration
-5. **Leader Election**: Ensures only one instance runs
+1. **Управляет контроллерами**: регистрирует и запускает контроллеры
+2. **Управляет кешем**: поддерживает локальный кеш ресурсов
+3. **Управляет клиентом**: предоставляет клиент для доступа к API
+4. **Управляет схемой (Scheme)**: обрабатывает регистрацию типов API
+5. **Выбор лидера**: гарантирует, что работает только один экземпляр
 
-## Reconcile Function Deep Dive
+## Глубокое погружение в функцию Reconcile
 
-The Reconcile function is the heart of your controller. Let's understand it better:
+Функция Reconcile — это сердце вашего контроллера. Разберёмся в ней лучше:
 
 ```mermaid
 sequenceDiagram
@@ -149,23 +149,23 @@ sequenceDiagram
     Reconcile-->>Queue: Return Result
 ```
 
-### Reconcile Function Signature
+### Сигнатура функции Reconcile
 
 ```go
 func (r *MyReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error)
 ```
 
-**Parameters:**
-- `ctx`: Context for cancellation and timeouts
-- `req`: Request containing namespace and name
+**Параметры:**
+- `ctx`: контекст для отмены и таймаутов
+- `req`: запрос, содержащий пространство имён и имя
 
-**Returns:**
-- `ctrl.Result`: What to do next (requeue, delay, etc.)
-- `error`: Error if reconciliation failed
+**Возвращает:**
+- `ctrl.Result`: что делать дальше (повторить, отложить и т. д.)
+- `error`: ошибку, если согласование не удалось
 
-## Result and Error Handling
+## Обработка результата и ошибок
 
-### ctrl.Result Options
+### Варианты ctrl.Result
 
 ```mermaid
 graph TB
@@ -180,22 +180,22 @@ graph TB
     style DELAY fill:#FFE4B5
 ```
 
-**Empty Result (`ctrl.Result{}`):**
-- Reconciliation succeeded
-- No requeue needed
-- Controller will wait for next event
+**Пустой результат (`ctrl.Result{}`):**
+- Согласование прошло успешно
+- Повтор не нужен
+- Контроллер будет ждать следующего события
 
 **Requeue (`ctrl.Result{Requeue: true}`):**
-- Reconciliation needs to run again
-- Requeues immediately
-- Use when you need to retry
+- Согласование нужно выполнить снова
+- Повторяет немедленно
+- Используйте, когда нужно повторить попытку
 
 **RequeueAfter (`ctrl.Result{RequeueAfter: time.Duration}`):**
-- Requeue after a delay
-- Useful for rate limiting
-- Example: `ctrl.Result{RequeueAfter: 30 * time.Second}`
+- Повтор после задержки
+- Полезно для ограничения частоты (rate limiting)
+- Пример: `ctrl.Result{RequeueAfter: 30 * time.Second}`
 
-### Error Handling
+### Обработка ошибок
 
 ```go
 // Return error to requeue
@@ -212,9 +212,9 @@ if err != nil {
 return ctrl.Result{}, nil
 ```
 
-## Requeue Strategies
+## Стратегии повторной постановки в очередь (requeue)
 
-Different scenarios require different requeue strategies:
+Разные сценарии требуют разных стратегий повтора:
 
 ```mermaid
 flowchart TD
@@ -234,35 +234,35 @@ flowchart TD
     style BACKOFF fill:#FFE4B5
 ```
 
-### Common Patterns
+### Распространённые паттерны
 
-**Pattern 1: Success with Changes**
+**Паттерн 1: успех с изменениями**
 ```go
 // Created/updated resources successfully
 return ctrl.Result{}, nil
 ```
 
-**Pattern 2: Transient Error**
+**Паттерн 2: временная ошибка**
 ```go
 // Temporary failure, retry soon
 return ctrl.Result{RequeueAfter: 10 * time.Second}, err
 ```
 
-**Pattern 3: Rate Limiting**
+**Паттерн 3: ограничение частоты**
 ```go
 // External API rate limit, back off
 return ctrl.Result{RequeueAfter: 30 * time.Second}, nil
 ```
 
-**Pattern 4: Dependency Not Ready**
+**Паттерн 4: зависимость не готова**
 ```go
 // Waiting for dependency, check again soon
 return ctrl.Result{RequeueAfter: 5 * time.Second}, nil
 ```
 
-## Client Architecture
+## Архитектура клиента (Client)
 
-The Client provides access to Kubernetes resources:
+Client предоставляет доступ к ресурсам Kubernetes:
 
 ```mermaid
 graph TB
@@ -282,23 +282,23 @@ graph TB
     style CACHE fill:#90EE90
 ```
 
-### Client vs Direct API Calls
+### Client против прямых вызовов API
 
 **Client (controller-runtime):**
-- Uses local cache (faster)
-- Handles watch events
-- Automatic retries
-- Type-safe
+- Использует локальный кеш (быстрее)
+- Обрабатывает события отслеживания (watch)
+- Автоматические повторы
+- Типобезопасность
 
-**Direct API calls:**
-- Always hits API server
-- No caching
-- Manual retry logic
-- More control
+**Прямые вызовы API:**
+- Всегда обращаются к API-серверу
+- Без кеширования
+- Ручная логика повторов
+- Больше контроля
 
-## Manager Setup
+## Настройка Manager
 
-Here's how the Manager is set up in your operator:
+Вот как Manager настраивается в вашем операторе:
 
 ```go
 func main() {
@@ -324,48 +324,48 @@ func main() {
 }
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Manager** coordinates controllers, cache, and client
-- **Reconcile function** is called for each resource
-- **ctrl.Result** controls when to requeue
-- **Client** provides type-safe access to resources
-- **Cache** improves performance by reducing API calls
-- **Error handling** determines requeue strategy
+- **Manager** координирует контроллеры, кеш и клиент
+- **Функция Reconcile** вызывается для каждого ресурса
+- **ctrl.Result** управляет тем, когда выполнять повтор
+- **Client** предоставляет типобезопасный доступ к ресурсам
+- **Кеш** повышает производительность, сокращая число вызовов API
+- **Обработка ошибок** определяет стратегию повтора
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When building operators:
-- Manager handles the infrastructure
-- You implement the Reconcile function
-- Choose appropriate requeue strategies
-- Use Client for all resource operations
-- Leverage cache for performance
-- Handle errors appropriately
+При создании операторов:
+- Manager берёт на себя инфраструктуру
+- Вы реализуете функцию Reconcile
+- Выбирайте подходящие стратегии повтора
+- Используйте Client для всех операций с ресурсами
+- Задействуйте кеш для производительности
+- Обрабатывайте ошибки надлежащим образом
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 3.1: Exploring Controller Runtime](../labs/lab-01-controller-runtime.md) - Hands-on exercises for this lesson
+- [Лабораторная 3.1: Исследование Controller Runtime](../labs/lab-01-controller-runtime.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
+### Официальная документация
 - [Controller Runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime)
-- [Manager Package](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager)
-- [Client Package](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client)
+- [Пакет Manager](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager)
+- [Пакет Client](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client)
 
-### Further Reading
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 2: The Kubernetes API
-- [Controller Runtime Source](https://github.com/kubernetes-sigs/controller-runtime)
-- [Kubebuilder Book - Controller Runtime](https://book.kubebuilder.io/architecture.html)
+### Дополнительное чтение
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 2: The Kubernetes API
+- [Исходный код Controller Runtime](https://github.com/kubernetes-sigs/controller-runtime)
+- [Kubebuilder Book — Controller Runtime](https://book.kubebuilder.io/architecture.html)
 
-### Related Topics
-- [Informer Pattern](https://github.com/kubernetes/client-go/blob/master/examples/workqueue/main.go)
-- [Leader Election](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/leaderelection)
-- [Cache and Informers](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/cache)
+### Смежные темы
+- [Паттерн информера](https://github.com/kubernetes/client-go/blob/master/examples/workqueue/main.go)
+- [Выбор лидера (Leader Election)](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/leaderelection)
+- [Кеш и информеры](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/cache)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand controller-runtime, let's design a proper API for a more complex operator.
+Теперь, когда вы понимаете controller-runtime, давайте спроектируем корректный API для более сложного оператора.
 
-**Navigation:** [← Module Overview](../README.md) | [Next: Designing Your API →](02-designing-api.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Далее: Проектирование вашего API →](02-designing-api.md)

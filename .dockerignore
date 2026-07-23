@@ -1,0 +1,14 @@
+.git/
+.gitattributes
+.gitignore
+.github/
+.dockerignore
+node_modules/
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+Gemfile.lock
+scripts/
+*.sh
+vendor/

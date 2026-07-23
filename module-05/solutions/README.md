@@ -1,32 +1,32 @@
-# Module 5 Solutions
+# Решения Модуля 5
 
-This directory contains complete, working solutions for Module 5 labs.
+Этот каталог содержит полные рабочие решения для лабораторных Модуля 5.
 
-## Files
+## Файлы
 
-- [**validating-webhook.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-05/solutions/validating-webhook.go): Complete validating webhook implementation
-- [**mutating-webhook.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-05/solutions/mutating-webhook.go): Complete mutating webhook implementation
+- [**validating-webhook.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-05/solutions/validating-webhook.go): полная реализация валидирующего вебхука
+- [**mutating-webhook.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-05/solutions/mutating-webhook.go): полная реализация мутирующего вебхука
 
-## Usage
+## Использование
 
-These solutions can be used as:
-- Reference when implementing your own webhooks
-- Starting point if you get stuck
-- Examples of best practices
+Эти решения можно использовать как:
+- Справочный материал при реализации собственных вебхуков
+- Отправную точку, если вы застряли
+- Примеры лучших практик
 
-## Integration
+## Интеграция
 
-To use these solutions in your operator:
+Чтобы использовать эти решения в вашем операторе:
 
-1. Copy the webhook code to `internal/webhook/v1/database_webhook.go`
-2. Ensure your API types match the structure
-3. Run `make generate` and `make manifests`
+1. Скопируйте код вебхука в `internal/webhook/v1/database_webhook.go`
+2. Убедитесь, что ваши типы API соответствуют структуре
+3. Запустите `make generate` и `make manifests`
 
-## Testing Webhooks
+## Тестирование вебхуков
 
-Webhooks require TLS certificates and must be reachable by the Kubernetes API server. Unlike controllers, webhooks cannot be easily tested with `make run`.
+Вебхукам нужны TLS-сертификаты, и они должны быть достижимы для API-сервера Kubernetes. В отличие от контроллеров, вебхуки нельзя легко протестировать через `make run`.
 
-### Option 1: Deploy to Cluster (Recommended for webhook testing)
+### Вариант 1: развёртывание в кластер (рекомендуется для тестирования вебхуков)
 
 ```bash
 # Ensure cert-manager is installed (handles TLS certificates)
@@ -40,14 +40,14 @@ kind load docker-image postgres-operator:latest --name k8s-operators-course
 make deploy IMG=postgres-operator:latest
 ```
 
-### Option 2: Local Development (Controller logic only)
+### Вариант 2: локальная разработка (только логика контроллера)
 
 ```bash
 # For testing controller/reconciliation logic (webhooks won't be invoked)
 make install && make run
 ```
 
-### Podman Users
+### Пользователи Podman
 
 ```bash
 # Build with podman
@@ -62,24 +62,24 @@ rm /tmp/postgres-operator.tar
 make deploy IMG=localhost/postgres-operator:latest
 ```
 
-## Notes
+## Примечания
 
-- Webhook code goes in `internal/webhook/v1/` directory
-- Uses `webhook.CustomValidator` and `webhook.CustomDefaulter` interfaces
-- Methods receive `context.Context` as first parameter
-- `ValidateUpdate` receives both old and new objects as `runtime.Object`
-- Error messages are clear and actionable
-- Mutations are idempotent
-- Validation covers common scenarios
+- Код вебхука размещается в каталоге `internal/webhook/v1/`
+- Использует интерфейсы `webhook.CustomValidator` и `webhook.CustomDefaulter`
+- Методы получают `context.Context` первым параметром
+- `ValidateUpdate` получает и старый, и новый объект как `runtime.Object`
+- Сообщения об ошибках понятны и применимы
+- Мутации идемпотентны
+- Валидация покрывает распространённые сценарии
 
-## Important: CRD Schema Defaults vs Webhook Defaults
+## Важно: значения по умолчанию схемы CRD против вебхука
 
-CRD schema defaults (via `+kubebuilder:default` markers) are applied **before** mutating webhooks run. This means:
+Значения по умолчанию схемы CRD (через маркеры `+kubebuilder:default`) применяются **до** запуска мутирующих вебхуков. Это означает:
 
-- If your CRD has `+kubebuilder:default=1` for replicas, `Spec.Replicas` will be `1` (not `nil`) when your webhook runs
-- To override CRD defaults in webhooks, check for the default value instead of `nil`
+- Если у вашего CRD есть `+kubebuilder:default=1` для реплик, `Spec.Replicas` будет равно `1` (а не `nil`), когда запускается ваш вебхук
+- Чтобы переопределить значения по умолчанию CRD в вебхуках, проверяйте значение по умолчанию, а не `nil`
 
-Example:
+Пример:
 ```go
 // Instead of checking nil (won't work if CRD has default):
 if database.Spec.Replicas == nil {
@@ -94,4 +94,4 @@ if database.Spec.Replicas == nil || *database.Spec.Replicas < 3 {
 }
 ```
 
-**Best Practice:** Use CRD schema defaults for simple static defaults, and webhooks for context-aware defaults (e.g., based on namespace).
+**Лучшая практика:** используйте значения по умолчанию схемы CRD для простых статических значений, а вебхуки — для значений с учётом контекста (например, на основе пространства имён).

@@ -2,31 +2,31 @@
 layout: default
 title: "Lab 01.1: Control Plane"
 nav_order: 11
-parent: "Module 1: Kubernetes Architecture"
-grand_parent: Modules
+parent: "Модуль 1: Архитектура Kubernetes"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 1.1: Exploring the Control Plane
+# Лабораторная 1.1: Исследование управляющего слоя
 
-**Related Lesson:** [Lesson 1.1: Kubernetes Control Plane Review](../lessons/01-control-plane.md)  
-**Navigation:** [Module Overview](../README.md) | [Next Lab: API Machinery →](lab-02-api-machinery.md)
+**Связанный урок:** [Урок 1.1: Обзор управляющего слоя Kubernetes](../lessons/01-control-plane.md)  
+**Навигация:** [Обзор модуля](../README.md) | [Следующая лабораторная: Механизмы API →](lab-02-api-machinery.md)
 
-## Objectives
+## Цели
 
-- Explore Kubernetes control plane components
-- Understand how components interact
-- Observe controller behavior in real-time
-- Trace API request flows
+- Исследовать компоненты управляющего слоя Kubernetes
+- Понять, как компоненты взаимодействуют
+- Наблюдать за поведением контроллера в реальном времени
+- Отследить потоки запросов к API
 
-## Prerequisites
+## Предварительные требования
 
-- Kind cluster running
-- kubectl configured and working
+- Запущенный кластер kind
+- Настроенный и работающий kubectl
 
-## Exercise 1: Inspect Control Plane Components
+## Упражнение 1: осмотр компонентов управляющего слоя
 
-### Task 1.1: View Control Plane Pods
+### Задача 1.1: просмотр подов управляющего слоя
 
 ```bash
 # List all control plane components
@@ -42,9 +42,9 @@ kubectl get pods -n kube-system -l component=kube-controller-manager
 kubectl get pods -n kube-system -l component=kube-scheduler
 ```
 
-**Expected Output**: You should see pods for API server, controller manager, scheduler, and etcd.
+**Ожидаемый результат**: вы должны увидеть поды API server, controller manager, scheduler и etcd.
 
-### Task 1.2: Explore API Server
+### Задача 1.2: исследование API Server
 
 ```bash
 # Get cluster information
@@ -60,14 +60,14 @@ kubectl api-versions | head -20
 kubectl api-resources | grep -E "NAME|deployments|pods|services"
 ```
 
-**Questions to Answer:**
-1. What version of Kubernetes is running?
-2. How many API groups are available?
-3. What API version are Deployments using?
+**Вопросы для ответа:**
+1. Какая версия Kubernetes запущена?
+2. Сколько групп API доступно?
+3. Какую версию API используют Deployments?
 
-## Exercise 2: Observe Controller Behavior
+## Упражнение 2: наблюдение за поведением контроллера
 
-### Task 2.1: Create and Observe a Deployment
+### Задача 2.1: создайте и понаблюдайте за Deployment
 
 ```bash
 # Create a deployment
@@ -92,12 +92,12 @@ sleep 30
 kill $DEPLOY_PID $RS_PID $POD_PID 2>/dev/null
 ```
 
-**Observations:**
-1. What order were resources created?
-2. How long did it take for all pods to be ready?
-3. What status fields changed during creation?
+**Наблюдения:**
+1. В каком порядке создавались ресурсы?
+2. Сколько времени потребовалось, чтобы все поды стали готовы?
+3. Какие поля status менялись во время создания?
 
-### Task 2.2: Trace Resource Creation
+### Задача 2.2: трассировка создания ресурсов
 
 ```bash
 # Get the deployment with all details
@@ -114,13 +114,13 @@ grep -A 5 "ownerReferences" /tmp/nginx-pod.yaml
 grep -A 5 "ownerReferences" /tmp/nginx-rs.yaml
 ```
 
-**Questions:**
-1. What is the relationship between Deployment, ReplicaSet, and Pod?
-2. How are owner references used?
+**Вопросы:**
+1. Какова связь между Deployment, ReplicaSet и Pod?
+2. Как используются ссылки-владельцы (owner references)?
 
-## Exercise 3: View Controller Logs
+## Упражнение 3: просмотр логов контроллера
 
-### Task 3.1: Controller Manager Logs
+### Задача 3.1: логи Controller Manager
 
 ```bash
 # View recent controller manager logs
@@ -133,7 +133,7 @@ kubectl logs -n kube-system -l component=kube-controller-manager --tail=100 | gr
 kubectl logs -n kube-system -l component=kube-controller-manager -f --tail=20
 ```
 
-**In another terminal, trigger an action:**
+**В другом терминале запустите действие:**
 ```bash
 # Scale the deployment
 kubectl scale deployment nginx --replicas=5
@@ -141,7 +141,7 @@ kubectl scale deployment nginx --replicas=5
 # Watch the logs to see controller activity
 ```
 
-### Task 3.2: Scheduler Logs
+### Задача 3.2: логи Scheduler
 
 ```bash
 # View scheduler logs
@@ -151,9 +151,9 @@ kubectl logs -n kube-system -l component=kube-scheduler --tail=50
 kubectl logs -n kube-system -l component=kube-scheduler --tail=100 | grep -i "scheduled"
 ```
 
-## Exercise 4: Direct API Interaction
+## Упражнение 4: прямое взаимодействие с API
 
-### Task 4.1: Use kubectl proxy
+### Задача 4.1: используйте kubectl proxy
 
 ```bash
 # Start kubectl proxy in background
@@ -176,7 +176,7 @@ curl http://localhost:8001/apis/apps/v1/namespaces/default/deployments/nginx | j
 kill $PROXY_PID
 ```
 
-### Task 4.2: Create Resource via API
+### Задача 4.2: создайте ресурс через API
 
 ```bash
 # Start proxy again
@@ -210,9 +210,9 @@ kubectl delete pod api-created-pod
 kill $PROXY_PID
 ```
 
-## Exercise 5: Observe Reconciliation
+## Упражнение 5: наблюдение за согласованием
 
-### Task 5.1: Manual Pod Deletion
+### Задача 5.1: ручное удаление пода
 
 ```bash
 # Get a pod name
@@ -227,7 +227,7 @@ kubectl get pods -l app=nginx -w
 # The ReplicaSet controller should recreate it!
 ```
 
-### Task 5.2: Change Desired State
+### Задача 5.2: изменение желаемого состояния
 
 ```bash
 # Scale down
@@ -243,28 +243,28 @@ kubectl scale deployment nginx --replicas=4
 kubectl get pods -l app=nginx -w
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete the deployment (this will cascade delete ReplicaSet and Pods)
 kubectl delete deployment nginx
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Explored control plane components
-- Observed controller behavior in real-time
-- Traced API request flows
-- Understood the reconciliation process
-- Interacted with the Kubernetes API directly
+В этой лабораторной вы:
+- Исследовали компоненты управляющего слоя
+- Наблюдали за поведением контроллера в реальном времени
+- Отследили потоки запросов к API
+- Разобрались в процессе согласования
+- Напрямую взаимодействовали с API Kubernetes
 
-## Key Learnings
+## Ключевые уроки
 
-1. Control plane components work together to manage the cluster
-2. Controllers continuously watch and reconcile resources
-3. The API Server is the central communication hub
-4. Owner references maintain resource relationships
-5. Reconciliation happens automatically when desired != actual state
+1. Компоненты управляющего слоя совместно управляют кластером
+2. Контроллеры непрерывно отслеживают и согласовывают ресурсы
+3. API Server — это центральный узел взаимодействия
+4. Ссылки-владельцы (owner references) поддерживают связи между ресурсами
+5. Согласование происходит автоматически, когда желаемое состояние не совпадает с фактическим
 
-**Navigation:** [← Module Overview](../README.md) | [Related Lesson](../lessons/01-control-plane.md) | [Next Lab: API Machinery →](lab-02-api-machinery.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Связанный урок](../lessons/01-control-plane.md) | [Следующая лабораторная: Механизмы API →](lab-02-api-machinery.md)

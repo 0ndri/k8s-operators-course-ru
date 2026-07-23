@@ -2,61 +2,61 @@
 layout: default
 title: "1.3 Controller Pattern"
 nav_order: 3
-parent: "Module 1: Kubernetes Architecture"
-grand_parent: Modules
+parent: "Модуль 1: Архитектура Kubernetes"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 1.3: The Controller Pattern
+# Урок 1.3: Паттерн контроллера
 
-**Navigation:** [← Previous: API Machinery](02-api-machinery.md) | [Module Overview](../README.md) | [Next: Custom Resources →](04-custom-resources.md)
+**Навигация:** [← Предыдущий: Механизмы API](02-api-machinery.md) | [Обзор модуля](../README.md) | [Далее: Пользовательские ресурсы →](04-custom-resources.md)
 
-## Introduction
+## Введение
 
-The controller pattern is the foundation of Kubernetes and operators. Understanding how controllers work is essential for building effective operators. Controllers continuously watch resources and reconcile the desired state with the actual state.
+Паттерн контроллера — это основа Kubernetes и операторов. Понимание того, как работают контроллеры, необходимо для создания эффективных операторов. Контроллеры непрерывно отслеживают ресурсы и согласовывают желаемое состояние с фактическим.
 
-## Theory: The Controller Pattern
+## Теория: паттерн контроллера
 
-The controller pattern is a **reactive programming model** that maintains desired state through continuous reconciliation.
+Паттерн контроллера — это **реактивная модель программирования**, которая поддерживает желаемое состояние через непрерывное согласование (reconciliation).
 
-### Core Concepts
+### Основные концепции
 
-**Reconciliation Loop:**
-- Controllers continuously compare desired state (spec) with actual state
-- When they differ, controllers take corrective action
-- This happens in a loop, ensuring eventual consistency
+**Цикл согласования (reconciliation loop):**
+- Контроллеры непрерывно сравнивают желаемое состояние (spec) с фактическим
+- При расхождении контроллеры предпринимают корректирующие действия
+- Это происходит в цикле, обеспечивая итоговую согласованность
 
-**Declarative Management:**
-- Users declare desired state, not how to achieve it
-- Controllers figure out the "how"
-- This separates concerns: users specify what, controllers handle how
+**Декларативное управление:**
+- Пользователи объявляют желаемое состояние, а не способ его достижения
+- Контроллеры сами определяют «как»
+- Это разделяет ответственность: пользователи указывают «что», контроллеры отвечают за «как»
 
-**Idempotency:**
-- Controllers must be idempotent (safe to run multiple times)
-- Same desired state + same actual state = no action needed
-- This enables safe retries and recovery from failures
+**Идемпотентность:**
+- Контроллеры должны быть идемпотентными (безопасными для многократного запуска)
+- То же желаемое состояние + то же фактическое состояние = действий не требуется
+- Это обеспечивает безопасные повторы и восстановление после сбоев
 
-**Watch Mechanism:**
-- Controllers watch resources for changes
-- Changes trigger reconciliation
-- This is more efficient than polling
+**Механизм отслеживания (watch):**
+- Контроллеры отслеживают ресурсы на предмет изменений
+- Изменения запускают согласование
+- Это эффективнее, чем опрос (polling)
 
-### Why This Pattern Works
+### Почему этот паттерн работает
 
-1. **Resilience**: If a controller crashes, it resumes and reconciles
-2. **Scalability**: Controllers handle many resources efficiently
-3. **Consistency**: Continuous reconciliation ensures state matches desired
-4. **Extensibility**: You can add new controllers for new resources
+1. **Отказоустойчивость**: если контроллер падает, он возобновляет работу и выполняет согласование
+2. **Масштабируемость**: контроллеры эффективно обрабатывают множество ресурсов
+3. **Согласованность**: непрерывное согласование гарантирует соответствие состояния желаемому
+4. **Расширяемость**: вы можете добавлять новые контроллеры для новых ресурсов
 
-Understanding this pattern is crucial for building operators, as operators are controllers that manage Custom Resources.
+Понимание этого паттерна критично для создания операторов, поскольку операторы — это контроллеры, управляющие пользовательскими ресурсами (Custom Resources).
 
-## What is a Controller?
+## Что такое контроллер?
 
-A controller is a control loop that:
-1. Watches resources
-2. Compares desired state (spec) with actual state
-3. Takes actions to make actual match desired
-4. Updates status
+Контроллер — это цикл управления (control loop), который:
+1. Отслеживает ресурсы
+2. Сравнивает желаемое состояние (spec) с фактическим
+3. Предпринимает действия, чтобы фактическое состояние соответствовало желаемому
+4. Обновляет статус
 
 ```mermaid
 graph TB
@@ -74,9 +74,9 @@ graph TB
     style COMPARE fill:#90EE90
 ```
 
-## Control Loop and Reconciliation
+## Цикл управления и согласование
 
-The reconciliation loop is the heart of a controller:
+Цикл согласования — это сердце контроллера:
 
 ```mermaid
 sequenceDiagram
@@ -106,9 +106,9 @@ sequenceDiagram
     Controller->>API: Create 1 Pod
 ```
 
-## Declarative vs Imperative
+## Декларативный подход против императивного
 
-Kubernetes uses a **declarative** model:
+Kubernetes использует **декларативную** модель:
 
 ```mermaid
 graph LR
@@ -131,12 +131,12 @@ graph LR
     style D2 fill:#90EE90
 ```
 
-**Declarative**: You describe what you want, the system figures out how to achieve it.  
-**Imperative**: You specify exactly what actions to take.
+**Декларативный**: вы описываете, что хотите получить, а система сама определяет, как этого достичь.  
+**Императивный**: вы точно указываете, какие действия предпринять.
 
-## Watch Mechanisms and Informers
+## Механизмы отслеживания и информеры (informers)
 
-Controllers use **watches** to be notified of changes:
+Контроллеры используют **отслеживание (watch)**, чтобы получать уведомления об изменениях:
 
 ```mermaid
 graph TB
@@ -163,17 +163,17 @@ graph TB
     style CACHE fill:#FFE4B5
 ```
 
-### How Watches Work
+### Как работает отслеживание
 
-1. **Initial List**: Controller lists all resources
-2. **Watch Stream**: API Server streams change events
-3. **Local Cache**: Controller maintains a local cache
-4. **Event Handlers**: Process events and queue work
-5. **Reconciliation**: Process queued items
+1. **Начальный список (List)**: контроллер получает список всех ресурсов
+2. **Поток изменений (Watch Stream)**: API Server передаёт события изменений
+3. **Локальный кеш**: контроллер поддерживает локальный кеш
+4. **Обработчики событий**: обрабатывают события и ставят работу в очередь
+5. **Согласование**: обработка элементов из очереди
 
-## Leader Election
+## Выбор лидера (Leader Election)
 
-In high-availability setups, multiple controller replicas run, but only one is active:
+В конфигурациях с высокой доступностью запускается несколько реплик контроллера, но активна только одна:
 
 ```mermaid
 sequenceDiagram
@@ -205,9 +205,9 @@ sequenceDiagram
     C2->>API: Reconcile
 ```
 
-## Hands-on Exercise: Observing Controllers in Action
+## Практическое упражнение: наблюдение за контроллерами в действии
 
-### Step 1: Create a Deployment and Observe
+### Шаг 1: создайте Deployment и понаблюдайте
 
 ```bash
 # Create a deployment
@@ -223,13 +223,13 @@ kubectl get replicasets -w
 kubectl get pods -w
 ```
 
-**What you'll observe:**
-1. Deployment is created
-2. Deployment controller creates a ReplicaSet
-3. ReplicaSet controller creates Pods
-4. Status updates as resources are created
+**Что вы увидите:**
+1. Создаётся Deployment
+2. Deployment controller создаёт ReplicaSet
+3. ReplicaSet controller создаёт поды
+4. Статус обновляется по мере создания ресурсов
 
-### Step 2: Observe Reconciliation
+### Шаг 2: наблюдайте за согласованием
 
 ```bash
 # Delete a pod manually
@@ -241,7 +241,7 @@ kubectl get pods -w
 # The controller noticed the discrepancy and fixed it!
 ```
 
-### Step 3: Change Desired State
+### Шаг 3: измените желаемое состояние
 
 ```bash
 # Scale the deployment
@@ -253,14 +253,14 @@ kubectl get pods -w
 # The controller reconciled: desired (5) vs actual (3) → created 2 more
 ```
 
-### Step 4: View Controller Logs
+### Шаг 4: просмотрите логи контроллера
 
 ```bash
 # View controller manager logs to see reconciliation
 kubectl logs -n kube-system -l component=kube-controller-manager --tail=100 | grep nginx
 ```
 
-### Step 5: Understand the Control Loop
+### Шаг 5: разберитесь в цикле управления
 
 ```bash
 # Get the deployment
@@ -274,9 +274,9 @@ kubectl get deployment nginx -o yaml
 # The controller continuously ensures these match
 ```
 
-## Reconciliation Strategies
+## Стратегии согласования
 
-Controllers use different reconciliation strategies:
+Контроллеры используют разные стратегии согласования:
 
 ```mermaid
 graph TB
@@ -297,17 +297,17 @@ graph TB
     style ACTION fill:#FFB6C1
 ```
 
-### Requeue Strategies
+### Стратегии повторной постановки в очередь (requeue)
 
-When reconciliation needs to happen again:
+Когда согласование нужно выполнить снова:
 
-- **Immediate**: Requeue immediately (for errors)
-- **After Duration**: Requeue after a delay (for retries)
-- **Never**: Don't requeue (success)
+- **Немедленно (Immediate)**: повторить сразу (при ошибках)
+- **Через интервал (After Duration)**: повторить после задержки (для повторных попыток)
+- **Никогда (Never)**: не повторять (успех)
 
-## Idempotency
+## Идемпотентность
 
-Controllers must be **idempotent** - running the same reconciliation multiple times should have the same effect:
+Контроллеры должны быть **идемпотентными** — многократный запуск одного и того же согласования должен давать один и тот же результат:
 
 ```mermaid
 graph LR
@@ -321,9 +321,9 @@ graph LR
     style STATE2 fill:#FFB6C1
 ```
 
-**Example**: If a Pod already exists, creating it again should be a no-op, not create a duplicate.
+**Пример**: если под уже существует, повторное его создание должно быть no-op (без действий), а не создавать дубликат.
 
-## Hands-on: Testing Idempotency
+## Практика: проверка идемпотентности
 
 ```bash
 # Apply the same deployment multiple times
@@ -373,50 +373,49 @@ kubectl get deployment test-deployment
 kubectl get pods -l app=test
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- Controllers implement **control loops** that continuously reconcile state
-- **Reconciliation** = making actual state match desired state
-- Controllers use **watches/informers** to be notified of changes
-- **Declarative model**: describe what you want, not how to do it
-- Controllers must be **idempotent**
-- **Leader election** ensures only one controller instance is active
-- Controllers update **status** to reflect actual state
+- Контроллеры реализуют **циклы управления (control loops)**, которые непрерывно согласовывают состояние
+- **Согласование** = приведение фактического состояния в соответствие с желаемым
+- Контроллеры используют **отслеживание/информеры (watches/informers)** для получения уведомлений об изменениях
+- **Декларативная модель**: описывайте, что вы хотите, а не как это сделать
+- Контроллеры должны быть **идемпотентными**
+- **Выбор лидера (leader election)** гарантирует, что активен только один экземпляр контроллера
+- Контроллеры обновляют **статус**, отражая фактическое состояние
 
-## Understanding for Operators
+## Что это значит для операторов
 
-When building operators:
-- You'll implement the same controller pattern
-- Your reconciler will compare spec vs status
-- You'll use informers to watch your custom resources
-- You'll need to handle idempotency
-- You'll implement leader election for HA
-- You'll update status to reflect progress
+При создании операторов:
+- Вы реализуете тот же паттерн контроллера
+- Ваш реконсайлер будет сравнивать spec и status
+- Вы будете использовать информеры для отслеживания своих пользовательских ресурсов
+- Вам нужно будет обеспечивать идемпотентность
+- Вы реализуете выбор лидера для высокой доступности (HA)
+- Вы будете обновлять статус, отражая прогресс
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 1.3: Observing Controllers in Action](../labs/lab-03-controller-pattern.md) - Hands-on exercises for this lesson
+- [Лабораторная 1.3: Наблюдение за контроллерами в действии](../labs/lab-03-controller-pattern.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Kubernetes Controllers](https://kubernetes.io/docs/concepts/architecture/controller/)
-- [Client Libraries](https://kubernetes.io/docs/reference/using-api/client-libraries/)
-- [Informer Pattern](https://github.com/kubernetes/client-go/blob/master/examples/workqueue/main.go)
+### Официальная документация
+- [Контроллеры Kubernetes](https://kubernetes.io/docs/concepts/architecture/controller/)
+- [Клиентские библиотеки](https://kubernetes.io/docs/reference/using-api/client-libraries/)
+- [Паттерн информера](https://github.com/kubernetes/client-go/blob/master/examples/workqueue/main.go)
 
-### Further Reading
-- **Kubernetes: Up and Running** by Kelsey Hightower, Brendan Burns, and Joe Beda - Chapter 4: Common kubectl Commands (controller concepts)
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 2: The Kubernetes API
-- [Kubernetes Controller Pattern](https://kubernetes.io/docs/concepts/architecture/controller/)
+### Дополнительное чтение
+- **Kubernetes: Up and Running**, Kelsey Hightower, Brendan Burns и Joe Beda — глава 4: Common kubectl Commands (концепции контроллеров)
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 2: The Kubernetes API
+- [Паттерн контроллера Kubernetes](https://kubernetes.io/docs/concepts/architecture/controller/)
 
-### Related Topics
-- [Reconciliation in Kubernetes](https://kubernetes.io/docs/concepts/architecture/controller/#reconciliation)
-- [Watch Mechanism](https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes)
-- [Informer and Workqueue Pattern](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/controllers.md)
+### Смежные темы
+- [Согласование в Kubernetes](https://kubernetes.io/docs/concepts/architecture/controller/#reconciliation)
+- [Механизм отслеживания (Watch)](https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes)
+- [Паттерн Informer и Workqueue](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/controllers.md)
 
-## Next Steps
+## Дальнейшие шаги
 
-In the next lesson, we'll learn about Custom Resources and CRDs - the foundation for building operators.
+В следующем уроке мы изучим пользовательские ресурсы (Custom Resources) и CRD — основу для создания операторов.
 
-**Navigation:** [← Previous: API Machinery](02-api-machinery.md) | [Module Overview](../README.md) | [Next: Custom Resources →](04-custom-resources.md)
-
+**Навигация:** [← Предыдущий: Механизмы API](02-api-machinery.md) | [Обзор модуля](../README.md) | [Далее: Пользовательские ресурсы →](04-custom-resources.md)

@@ -2,22 +2,22 @@
 layout: default
 title: "06.3 Integration Testing"
 nav_order: 3
-parent: "Module 6: Testing & Debugging"
-grand_parent: Modules
+parent: "Модуль 6: Тестирование и отладка"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 6.3: Integration Testing
+# Урок 6.3: Интеграционное тестирование
 
-**Navigation:** [← Previous: Unit Testing with envtest](02-unit-testing-envtest.md) | [Module Overview](../README.md) | [Next: Debugging and Observability →](04-debugging-observability.md)
+**Навигация:** [← Предыдущий: Модульное тестирование с envtest](02-unit-testing-envtest.md) | [Обзор модуля](../README.md) | [Далее: Отладка и наблюдаемость →](04-debugging-observability.md)
 
-## Introduction
+## Введение
 
-While unit tests verify logic in isolation, integration tests verify that your operator works correctly with a real Kubernetes cluster. Integration tests use actual clusters (like kind) to test end-to-end workflows and ensure everything works together.
+Если модульные тесты проверяют логику в изоляции, то интеграционные тесты проверяют, что ваш оператор корректно работает с реальным кластером Kubernetes. Интеграционные тесты используют настоящие кластеры (например, kind) для проверки сквозных (end-to-end) рабочих процессов и гарантируют, что всё работает вместе.
 
-## Integration Testing Flow
+## Процесс интеграционного тестирования
 
-Here's how integration tests work:
+Вот как работают интеграционные тесты:
 
 ```mermaid
 sequenceDiagram
@@ -38,9 +38,9 @@ sequenceDiagram
     Test->>Cluster: Cleanup
 ```
 
-## Integration Test Structure
+## Структура интеграционного теста
 
-### Using Ginkgo for Integration Tests
+### Использование Ginkgo для интеграционных тестов
 
 ```go
 package integration
@@ -86,9 +86,9 @@ var _ = Describe("Database Operator Integration", func() {
 })
 ```
 
-## Testing End-to-End Workflows
+## Тестирование сквозных рабочих процессов
 
-### Example: Complete Database Lifecycle
+### Пример: полный жизненный цикл Database
 
 ```go
 Describe("Database lifecycle", func() {
@@ -154,9 +154,9 @@ Describe("Database lifecycle", func() {
 })
 ```
 
-## Testing Webhooks
+## Тестирование вебхуков
 
-### Example: Testing Validating Webhook
+### Пример: тестирование валидирующего вебхука
 
 ```go
 Describe("Validating webhook", func() {
@@ -194,9 +194,9 @@ Describe("Validating webhook", func() {
 })
 ```
 
-## Testing with Eventually
+## Тестирование с Eventually
 
-Gomega's `Eventually` is perfect for integration tests:
+`Eventually` из Gomega идеально подходит для интеграционных тестов:
 
 ```go
 // Wait for resource to be created
@@ -219,9 +219,9 @@ Eventually(func() int {
 }, timeout, interval).Should(Equal(3))
 ```
 
-## CI/CD Integration
+## Интеграция с CI/CD
 
-### GitHub Actions Example
+### Пример GitHub Actions
 
 ```yaml
 name: Integration Tests
@@ -255,51 +255,51 @@ jobs:
         run: kind delete cluster
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Integration tests** verify end-to-end workflows
-- **Use real clusters** (kind) for integration tests
-- **Ginkgo/Gomega** provide structure and assertions
-- **Eventually** waits for async operations
-- **Test complete workflows** (create, update, delete)
-- **Test webhooks** with real API calls
-- **Integrate with CI/CD** for automated testing
-- **Clean up** resources after tests
+- **Интеграционные тесты** проверяют сквозные рабочие процессы
+- **Используйте реальные кластеры** (kind) для интеграционных тестов
+- **Ginkgo/Gomega** обеспечивают структуру и утверждения
+- **Eventually** ожидает завершения асинхронных операций
+- **Тестируйте полные рабочие процессы** (создание, обновление, удаление)
+- **Тестируйте вебхуки** с реальными вызовами API
+- **Интегрируйте с CI/CD** для автоматизированного тестирования
+- **Очищайте** ресурсы после тестов
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When writing integration tests:
-- Use real Kubernetes clusters
-- Test complete workflows
-- Use Eventually for async operations
-- Test webhook behavior
-- Clean up resources
-- Integrate with CI/CD
-- Test error scenarios
-- Verify resource states
+При написании интеграционных тестов:
+- Используйте реальные кластеры Kubernetes
+- Тестируйте полные рабочие процессы
+- Используйте Eventually для асинхронных операций
+- Тестируйте поведение вебхуков
+- Очищайте ресурсы
+- Интегрируйте с CI/CD
+- Тестируйте сценарии ошибок
+- Проверяйте состояния ресурсов
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 6.3: Creating Integration Tests](../labs/lab-03-integration-testing.md) - Hands-on exercises for this lesson
+- [Лабораторная 6.3: Создание интеграционных тестов](../labs/lab-03-integration-testing.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Ginkgo Documentation](https://onsi.github.io/ginkgo/)
-- [Gomega Matchers](https://onsi.github.io/gomega/)
-- [kind Documentation](https://kind.sigs.k8s.io/)
+### Официальная документация
+- [Документация Ginkgo](https://onsi.github.io/ginkgo/)
+- [Матчеры Gomega](https://onsi.github.io/gomega/)
+- [Документация kind](https://kind.sigs.k8s.io/)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 10: Testing
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 10: Testing
-- [BDD Testing with Ginkgo](https://onsi.github.io/ginkgo/)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 10: Testing
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 10: Testing
+- [BDD-тестирование с Ginkgo](https://onsi.github.io/ginkgo/)
 
-### Related Topics
-- [Integration Testing Patterns](https://martinfowler.com/articles/practical-test-pyramid.html)
+### Смежные темы
+- [Паттерны интеграционного тестирования](https://martinfowler.com/articles/practical-test-pyramid.html)
 - [Test Containers](https://www.testcontainers.org/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand integration testing, let's learn about debugging and observability.
+Теперь, когда вы понимаете интеграционное тестирование, давайте изучим отладку и наблюдаемость.
 
-**Navigation:** [← Previous: Unit Testing with envtest](02-unit-testing-envtest.md) | [Module Overview](../README.md) | [Next: Debugging and Observability →](04-debugging-observability.md)
+**Навигация:** [← Предыдущий: Модульное тестирование с envtest](02-unit-testing-envtest.md) | [Обзор модуля](../README.md) | [Далее: Отладка и наблюдаемость →](04-debugging-observability.md)

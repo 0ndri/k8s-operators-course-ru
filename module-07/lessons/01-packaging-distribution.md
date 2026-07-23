@@ -2,81 +2,81 @@
 layout: default
 title: "07.1 Packaging Distribution"
 nav_order: 1
-parent: "Module 7: Production Considerations"
-grand_parent: Modules
+parent: "Модуль 7: Подготовка к продакшену"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 7.1: Packaging and Distribution
+# Урок 7.1: Упаковка и распространение
 
-**Navigation:** [Module Overview](../README.md) | [Next Lesson: RBAC and Security →](02-rbac-security.md)
+**Навигация:** [Обзор модуля](../README.md) | [Следующий урок: RBAC и безопасность →](02-rbac-security.md)
 
-## Introduction
+## Введение
 
-Before deploying operators to production, they need to be packaged and distributed. This lesson covers building container images, creating Helm charts, and packaging operators for distribution via OLM (Operator Lifecycle Manager).
+Прежде чем развёртывать операторы в продакшене, их нужно упаковать и распространить. Этот урок охватывает сборку образов контейнеров, создание Helm-чартов и упаковку операторов для распространения через OLM (Operator Lifecycle Manager).
 
-## Theory: Packaging and Distribution
+## Теория: упаковка и распространение
 
-Packaging operators enables **reliable, repeatable deployments** across environments.
+Упаковка операторов обеспечивает **надёжные, повторяемые развёртывания** в разных средах.
 
-### Why Packaging Matters
+### Почему упаковка важна
 
-**Reproducibility:**
-- Same operator version everywhere
-- Consistent deployments
-- Version control
-- Rollback capability
+**Воспроизводимость:**
+- Одна и та же версия оператора везде
+- Согласованные развёртывания
+- Контроль версий
+- Возможность отката
 
-**Distribution:**
-- Share operators with teams
-- Deploy to multiple clusters
-- Enable operator marketplace
-- Simplify installation
+**Распространение:**
+- Совместное использование операторов командами
+- Развёртывание в нескольких кластерах
+- Возможность создания маркетплейса операторов
+- Упрощение установки
 
-**Deployment:**
-- Standard deployment methods
-- Helm charts for easy install
-- OLM for operator marketplace
-- Container images for portability
+**Развёртывание:**
+- Стандартные методы развёртывания
+- Helm-чарты для удобной установки
+- OLM для маркетплейса операторов
+- Образы контейнеров для переносимости
 
-### Packaging Strategies
+### Стратегии упаковки
 
-**Container Images:**
-- Standard format
-- Works everywhere
-- Versioned
-- Portable
+**Образы контейнеров:**
+- Стандартный формат
+- Работают везде
+- Версионируются
+- Переносимы
 
-**Helm Charts:**
-- Package operator + dependencies
-- Parameterized configuration
-- Easy upgrades
-- Community standard
+**Helm-чарты:**
+- Упаковывают оператор + зависимости
+- Параметризованная конфигурация
+- Простые обновления
+- Стандарт сообщества
 
-**OLM Bundles:**
-- Operator marketplace format
-- Metadata and manifests
-- Version management
-- Dependency resolution
+**OLM-бандлы:**
+- Формат маркетплейса операторов
+- Метаданные и манифесты
+- Управление версиями
+- Разрешение зависимостей
 
-### Versioning
+### Версионирование
 
-**Semantic Versioning:**
-- Major: Breaking changes
-- Minor: New features
-- Patch: Bug fixes
+**Семантическое версионирование:**
+- Major: несовместимые изменения
+- Minor: новые возможности
+- Patch: исправления багов
 
-**Version Tags:**
-- `latest`: Latest version
-- `v1.2.3`: Specific version
-- `v1.2`: Latest patch of minor version
-- `stable`: Stable release
+**Теги версий:**
+- `latest`: последняя версия
+- `v1.2.3`: конкретная версия
+- `v1.2`: последний патч минорной версии
+- `stable`: стабильный релиз
 
-Understanding packaging helps you distribute operators effectively.
+Понимание упаковки помогает эффективно распространять операторы.
 
-## Operator Packaging Flow
+## Процесс упаковки оператора
 
-Here's how operators are packaged and distributed:
+Вот как операторы упаковываются и распространяются:
 
 ```mermaid
 graph TB
@@ -97,13 +97,13 @@ graph TB
     style REGISTRY fill:#FFB6C1
 ```
 
-## Building Container Images
+## Сборка образов контейнеров
 
-Kubebuilder generates a `Dockerfile` for you when you scaffold a project. It uses multi-stage builds for optimal image size and security.
+Kubebuilder генерирует для вас `Dockerfile` при создании каркаса проекта. Он использует многоэтапную сборку (multi-stage build) для оптимального размера образа и безопасности.
 
-### Kubebuilder-Generated Dockerfile
+### Dockerfile, сгенерированный Kubebuilder
 
-When you run `kubebuilder init`, it creates a Dockerfile in your project root:
+Когда вы запускаете `kubebuilder init`, он создаёт Dockerfile в корне проекта:
 
 ```dockerfile
 # Build stage
@@ -134,13 +134,13 @@ USER 65532:65532
 ENTRYPOINT ["/manager"]
 ```
 
-**Note:** The `internal/` directory is copied entirely because it contains both:
-- `internal/controller/` - Your reconciliation logic
-- `internal/webhook/` - Webhook handlers (if you created webhooks in Module 5)
+**Примечание:** каталог `internal/` копируется целиком, потому что содержит:
+- `internal/controller/` — вашу логику согласования
+- `internal/webhook/` — обработчики вебхуков (если вы создали вебхуки в Модуле 5)
 
-### Building with Kubebuilder's Makefile
+### Сборка с помощью Makefile от Kubebuilder
 
-Kubebuilder provides Makefile targets for building images:
+Kubebuilder предоставляет цели Makefile для сборки образов:
 
 ```bash
 # Build the container image
@@ -153,7 +153,7 @@ make docker-push IMG=<registry>/postgres-operator:v0.1.0
 make docker-build docker-push IMG=<registry>/postgres-operator:v0.1.0
 ```
 
-### Image Build Process
+### Процесс сборки образа
 
 ```mermaid
 sequenceDiagram
@@ -175,9 +175,9 @@ sequenceDiagram
     Note over Docker: Multi-stage build<br/>for smaller images
 ```
 
-### Loading Images to kind
+### Загрузка образов в kind
 
-For local development with kind clusters:
+Для локальной разработки с кластерами kind:
 
 ```bash
 # Build the image
@@ -187,25 +187,25 @@ make docker-build IMG=postgres-operator:latest
 kind load docker-image postgres-operator:latest --name k8s-operators-course
 ```
 
-## Helm Charts for Operators
+## Helm-чарты для операторов
 
-While kubebuilder uses Kustomize for deployment by default (`config/` directory), you can create Helm charts for wider distribution. The manifests generated by kubebuilder can be used as a basis for Helm templates.
+Хотя kubebuilder по умолчанию использует Kustomize для развёртывания (каталог `config/`), вы можете создавать Helm-чарты для более широкого распространения. Манифесты, сгенерированные kubebuilder, можно использовать как основу для Helm-шаблонов.
 
-### What an Operator Helm Chart Needs
+### Что нужно Helm-чарту оператора
 
-A complete operator Helm chart must include **all** components from kubebuilder's `config/` directory:
+Полный Helm-чарт оператора должен включать **все** компоненты из каталога `config/` kubebuilder:
 
-| Component | Source Directory | Purpose |
+| Компонент | Каталог-источник | Назначение |
 |-----------|-----------------|---------|
-| **CRDs** | `config/crd/` | Custom Resource Definitions |
+| **CRD** | `config/crd/` | Определения пользовательских ресурсов |
 | **RBAC** | `config/rbac/` | ServiceAccount, ClusterRole, ClusterRoleBinding |
-| **Deployment** | `config/manager/` | Controller manager pod |
-| **Webhooks** | `config/webhook/` | Validating/Mutating webhooks (if used) |
-| **Certificates** | `config/certmanager/` | Webhook certificates (if using cert-manager) |
+| **Deployment** | `config/manager/` | Под менеджера-контроллера |
+| **Вебхуки** | `config/webhook/` | Валидирующие/мутирующие вебхуки (если используются) |
+| **Сертификаты** | `config/certmanager/` | Сертификаты вебхуков (при использовании cert-manager) |
 
-**Important:** A Helm chart with only the Deployment won't work! The operator needs RBAC permissions to function and CRDs must be installed for the operator to manage custom resources.
+**Важно:** Helm-чарт только с Deployment работать не будет! Оператору нужны разрешения RBAC для работы, а CRD должны быть установлены, чтобы оператор мог управлять пользовательскими ресурсами.
 
-### Chart Structure
+### Структура чарта
 
 ```mermaid
 graph TB
@@ -226,9 +226,9 @@ graph TB
     style RBAC fill:#FFB6C1
 ```
 
-### Kubebuilder's Kustomize vs Helm
+### Kustomize от Kubebuilder против Helm
 
-Kubebuilder generates Kustomize manifests in `config/`:
+Kubebuilder генерирует манифесты Kustomize в `config/`:
 
 ```
 config/
@@ -241,7 +241,7 @@ config/
 └── samples/                # Sample CR manifests
 ```
 
-**To deploy with Kustomize** (recommended for development):
+**Для развёртывания с Kustomize** (рекомендуется для разработки):
 ```bash
 # Deploy the operator
 make deploy IMG=<registry>/postgres-operator:v0.1.0
@@ -249,7 +249,7 @@ make deploy IMG=<registry>/postgres-operator:v0.1.0
 # This runs: kustomize build config/default | kubectl apply -f -
 ```
 
-**To create a Helm chart** (for distribution):
+**Для создания Helm-чарта** (для распространения):
 ```bash
 # Create Helm chart directory
 mkdir -p charts/postgres-operator/templates
@@ -260,9 +260,9 @@ kustomize build config/default > charts/postgres-operator/templates/all.yaml
 # Then split into separate files and add templating
 ```
 
-## OLM Bundles
+## OLM-бандлы
 
-### OLM Bundle Structure
+### Структура OLM-бандла
 
 ```mermaid
 graph TB
@@ -280,9 +280,9 @@ graph TB
     style BUNDLE fill:#FFB6C1
 ```
 
-### Bundle Creation
+### Создание бандла
 
-While kubebuilder focuses on controller development, you can use operator-sdk alongside kubebuilder for OLM bundle generation:
+Хотя kubebuilder сосредоточен на разработке контроллеров, вы можете использовать operator-sdk вместе с kubebuilder для генерации OLM-бандла:
 
 ```bash
 # Initialize operator-sdk integration (if not already done)
@@ -303,11 +303,11 @@ operator-sdk generate bundle \
 #     annotations.yaml
 ```
 
-Note: For most use cases, kubebuilder's built-in `make deploy` with Kustomize is sufficient. OLM bundles are primarily needed when publishing to operator marketplaces like OperatorHub.
+Примечание: для большинства сценариев встроенного `make deploy` с Kustomize из kubebuilder достаточно. OLM-бандлы нужны в основном при публикации в маркетплейсах операторов, таких как OperatorHub.
 
-## Versioning Strategy
+## Стратегия версионирования
 
-### Semantic Versioning
+### Семантическое версионирование
 
 ```mermaid
 graph LR
@@ -324,15 +324,15 @@ graph LR
     style VERSION fill:#90EE90
 ```
 
-**Version format:** `v<major>.<minor>.<patch>`
+**Формат версии:** `v<major>.<minor>.<patch>`
 
-- **Major**: Breaking API changes
-- **Minor**: New features, backward compatible
-- **Patch**: Bug fixes, backward compatible
+- **Major**: несовместимые изменения API
+- **Minor**: новые возможности, обратно совместимые
+- **Patch**: исправления багов, обратно совместимые
 
-## Distribution Strategies
+## Стратегии распространения
 
-### Strategy 1: Container Registry
+### Стратегия 1: реестр контейнеров
 
 ```mermaid
 graph LR
@@ -345,7 +345,7 @@ graph LR
     style REGISTRY fill:#FFB6C1
 ```
 
-### Strategy 2: Helm Repository
+### Стратегия 2: репозиторий Helm
 
 ```mermaid
 graph LR
@@ -356,7 +356,7 @@ graph LR
     style REPO fill:#90EE90
 ```
 
-### Strategy 3: OLM Catalog
+### Стратегия 3: каталог OLM
 
 ```mermaid
 graph LR
@@ -367,9 +367,9 @@ graph LR
     style CATALOG fill:#FFB6C1
 ```
 
-## Image Optimization
+## Оптимизация образа
 
-### Multi-Stage Builds
+### Многоэтапная сборка
 
 ```dockerfile
 # Stage 1: Build
@@ -381,12 +381,12 @@ FROM gcr.io/distroless/static:nonroot
 # ... copy binary only ...
 ```
 
-**Benefits:**
-- Smaller final image
-- No build tools in production
-- Better security (distroless)
+**Преимущества:**
+- Меньший итоговый образ
+- Нет инструментов сборки в продакшене
+- Выше безопасность (distroless)
 
-### Image Size Comparison
+### Сравнение размеров образов
 
 ```mermaid
 graph LR
@@ -399,11 +399,11 @@ graph LR
     style DISTROLESS fill:#90EE90
 ```
 
-## Automating with CI/CD
+## Автоматизация с CI/CD
 
-### GitHub Actions for Releases
+### GitHub Actions для релизов
 
-Automate releases with GitHub Actions:
+Автоматизируйте релизы с помощью GitHub Actions:
 
 ```yaml
 # .github/workflows/release.yaml
@@ -424,9 +424,9 @@ jobs:
           helm push dist/*.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
 ```
 
-### Helm Chart Distribution
+### Распространение Helm-чартов
 
-Modern approach: Push Helm charts to OCI registries (like GHCR):
+Современный подход: публикация Helm-чартов в OCI-реестры (например, GHCR):
 
 ```bash
 # Push chart to OCI registry
@@ -436,52 +436,52 @@ helm push postgres-operator-0.1.0.tgz oci://ghcr.io/myorg/charts
 helm install my-operator oci://ghcr.io/myorg/charts/postgres-operator --version 0.1.0
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Kubebuilder generates** a production-ready Dockerfile
-- **`make docker-build`** builds container images with proper tagging
-- **Kustomize** is the default deployment method in kubebuilder
-- **`make helm-chart`** can generate Helm charts from Kustomize
-- **OCI registries** can host both images AND Helm charts
-- **GitHub Actions** automate releases and chart publishing
-- **Semantic versioning** tracks operator versions
-- **Multi-stage builds** create smaller, secure images
+- **Kubebuilder генерирует** готовый к продакшену Dockerfile
+- **`make docker-build`** собирает образы контейнеров с правильной расстановкой тегов
+- **Kustomize** — метод развёртывания по умолчанию в kubebuilder
+- **`make helm-chart`** может генерировать Helm-чарты из Kustomize
+- **OCI-реестры** могут хранить и образы, И Helm-чарты
+- **GitHub Actions** автоматизируют релизы и публикацию чартов
+- **Семантическое версионирование** отслеживает версии оператора
+- **Многоэтапная сборка** создаёт меньшие и безопасные образы
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When packaging kubebuilder operators:
-- Use `make docker-build IMG=...` to build images
-- Use `make docker-push IMG=...` to push to registry
-- Use `make deploy IMG=...` for Kustomize-based deployment
-- Use `make helm-chart` to generate Helm charts from Kustomize
-- Set up GitHub Actions for automated releases
-- Push Helm charts to OCI registries for distribution
-- Follow semantic versioning for your operator
-- Use kind's image loading for local development
+При упаковке операторов kubebuilder:
+- Используйте `make docker-build IMG=...` для сборки образов
+- Используйте `make docker-push IMG=...` для публикации в реестр
+- Используйте `make deploy IMG=...` для развёртывания на основе Kustomize
+- Используйте `make helm-chart` для генерации Helm-чартов из Kustomize
+- Настройте GitHub Actions для автоматизированных релизов
+- Публикуйте Helm-чарты в OCI-реестры для распространения
+- Следуйте семантическому версионированию для вашего оператора
+- Используйте загрузку образов kind для локальной разработки
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 7.1: Packaging Your Operator](../labs/lab-01-packaging-distribution.md) - Hands-on exercises for this lesson
+- [Лабораторная 7.1: Упаковка вашего оператора](../labs/lab-01-packaging-distribution.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Container Images](https://kubernetes.io/docs/concepts/containers/images/)
-- [Helm Documentation](https://helm.sh/docs/)
-- [OLM Documentation](https://olm.operatorframework.io/)
+### Официальная документация
+- [Образы контейнеров](https://kubernetes.io/docs/concepts/containers/images/)
+- [Документация Helm](https://helm.sh/docs/)
+- [Документация OLM](https://olm.operatorframework.io/)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 12: Packaging
-- **Docker Deep Dive** by Nigel Poulton - Container image best practices
-- [Helm Best Practices](https://helm.sh/docs/chart_best_practices/)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 12: Packaging
+- **Docker Deep Dive**, Nigel Poulton — лучшие практики образов контейнеров
+- [Лучшие практики Helm](https://helm.sh/docs/chart_best_practices/)
 
-### Related Topics
-- [Multi-Stage Docker Builds](https://docs.docker.com/build/building/multi-stage/)
-- [Semantic Versioning](https://semver.org/)
+### Смежные темы
+- [Многоэтапная сборка Docker](https://docs.docker.com/build/building/multi-stage/)
+- [Семантическое версионирование](https://semver.org/)
 - [Operator Lifecycle Manager](https://olm.operatorframework.io/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand packaging, let's learn about RBAC and security.
+Теперь, когда вы понимаете упаковку, давайте изучим RBAC и безопасность.
 
-**Navigation:** [← Module Overview](../README.md) | [Next: RBAC and Security →](02-rbac-security.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Далее: RBAC и безопасность →](02-rbac-security.md)

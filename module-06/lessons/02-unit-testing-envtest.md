@@ -2,22 +2,22 @@
 layout: default
 title: "06.2 Unit Testing Envtest"
 nav_order: 2
-parent: "Module 6: Testing & Debugging"
-grand_parent: Modules
+parent: "Модуль 6: Тестирование и отладка"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 6.2: Unit Testing with envtest
+# Урок 6.2: Модульное тестирование с envtest
 
-**Navigation:** [← Previous: Testing Fundamentals](01-testing-fundamentals.md) | [Module Overview](../README.md) | [Next: Integration Testing →](03-integration-testing.md)
+**Навигация:** [← Предыдущий: Основы тестирования](01-testing-fundamentals.md) | [Обзор модуля](../README.md) | [Далее: Интеграционное тестирование →](03-integration-testing.md)
 
-## Introduction
+## Введение
 
-Unit testing operators requires a Kubernetes API server, but you don't need a full cluster. **envtest** provides a lightweight Kubernetes API server specifically designed for testing. This lesson teaches you how to use envtest to write comprehensive unit tests for your operators.
+Для модульного тестирования операторов нужен API-сервер Kubernetes, но полноценный кластер не требуется. **envtest** предоставляет легковесный API-сервер Kubernetes, специально предназначенный для тестирования. Этот урок научит вас использовать envtest для написания исчерпывающих модульных тестов ваших операторов.
 
-## What is envtest?
+## Что такое envtest?
 
-envtest provides a minimal Kubernetes API server:
+envtest предоставляет минимальный API-сервер Kubernetes:
 
 ```mermaid
 graph TB
@@ -35,15 +35,15 @@ graph TB
     style ENVTEST fill:#90EE90
 ```
 
-**Features:**
-- No kubelet, no scheduler
-- Real Kubernetes API
-- Fast startup
-- Isolated environment
+**Возможности:**
+- Без kubelet, без scheduler
+- Реальный API Kubernetes
+- Быстрый запуск
+- Изолированная среда
 
-## envtest Setup Flow
+## Процесс настройки envtest
 
-Here's how envtest works:
+Вот как работает envtest:
 
 ```mermaid
 sequenceDiagram
@@ -64,9 +64,9 @@ sequenceDiagram
     Test->>Envtest: StopEnvironment
 ```
 
-## Setting Up envtest
+## Настройка envtest
 
-### Step 1: Install Dependencies
+### Шаг 1: установите зависимости
 
 ```bash
 # Install envtest binaries
@@ -76,7 +76,7 @@ go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
 setup-envtest use
 ```
 
-### Step 2: Create Test Setup
+### Шаг 2: создайте настройку теста
 
 ```go
 package controller
@@ -131,9 +131,9 @@ var _ = AfterSuite(func() {
 })
 ```
 
-## Writing Unit Tests
+## Написание модульных тестов
 
-### Example: Test Reconciliation
+### Пример: тестирование согласования
 
 ```go
 var _ = Describe("DatabaseReconciler", func() {
@@ -198,7 +198,7 @@ var _ = Describe("DatabaseReconciler", func() {
 })
 ```
 
-## Table-Driven Tests with envtest
+## Тесты, управляемые таблицей, с envtest
 
 ```go
 Describe("Database validation", func() {
@@ -249,7 +249,7 @@ Describe("Database validation", func() {
 })
 ```
 
-## Testing Error Cases
+## Тестирование случаев ошибок
 
 ```go
 Context("When StatefulSet creation fails", func() {
@@ -278,7 +278,7 @@ Context("When StatefulSet creation fails", func() {
 })
 ```
 
-## Testing Updates
+## Тестирование обновлений
 
 ```go
 Context("When updating a Database", func() {
@@ -306,52 +306,52 @@ Context("When updating a Database", func() {
 })
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **envtest** provides lightweight Kubernetes API for testing
-- **Setup** involves starting test environment and creating client
-- **Write tests** using Ginkgo/Gomega for structure
-- **Test reconciliation** logic with real API
-- **Use table-driven tests** for multiple scenarios
-- **Test error cases** and edge cases
-- **Test updates** and state changes
-- **Clean up** resources in AfterEach
+- **envtest** предоставляет легковесный API Kubernetes для тестирования
+- **Настройка** включает запуск тестовой среды и создание клиента
+- **Пишите тесты** с использованием Ginkgo/Gomega для структуры
+- **Тестируйте логику** согласования с реальным API
+- **Используйте тесты, управляемые таблицей**, для множества сценариев
+- **Тестируйте случаи ошибок** и граничные случаи
+- **Тестируйте обновления** и изменения состояния
+- **Очищайте** ресурсы в AfterEach
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When writing unit tests:
-- Use envtest for Kubernetes API
-- Set up test environment in BeforeSuite
-- Clean up in AfterSuite
-- Test all reconciliation paths
-- Test error cases
-- Use table-driven tests for multiple scenarios
-- Verify resource creation/updates
-- Test state transitions
+При написании модульных тестов:
+- Используйте envtest для API Kubernetes
+- Настраивайте тестовую среду в BeforeSuite
+- Очищайте в AfterSuite
+- Тестируйте все пути согласования
+- Тестируйте случаи ошибок
+- Используйте тесты, управляемые таблицей, для множества сценариев
+- Проверяйте создание/обновление ресурсов
+- Тестируйте переходы состояний
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 6.2: Writing Unit Tests](../labs/lab-02-unit-testing-envtest.md) - Hands-on exercises for this lesson
+- [Лабораторная 6.2: Написание модульных тестов](../labs/lab-02-unit-testing-envtest.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [envtest Documentation](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest)
-- [Kubebuilder Testing Guide](https://book.kubebuilder.io/cronjob-tutorial/writing-tests.html)
-- [Go Testing Package](https://pkg.go.dev/testing)
+### Официальная документация
+- [Документация envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest)
+- [Руководство по тестированию Kubebuilder](https://book.kubebuilder.io/cronjob-tutorial/writing-tests.html)
+- [Пакет testing в Go](https://pkg.go.dev/testing)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 10: Testing
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 10: Testing
-- [Go Testing Best Practices](https://golang.org/doc/effective_go#testing)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 10: Testing
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 10: Testing
+- [Лучшие практики тестирования на Go](https://golang.org/doc/effective_go#testing)
 
-### Related Topics
-- [Table-Driven Tests](https://go.dev/wiki/TableDrivenTests)
-- [Test Coverage](https://go.dev/blog/cover)
-- [Benchmarking in Go](https://golang.org/pkg/testing/#hdr-Benchmarks)
+### Смежные темы
+- [Тесты, управляемые таблицей](https://go.dev/wiki/TableDrivenTests)
+- [Покрытие тестами](https://go.dev/blog/cover)
+- [Бенчмаркинг в Go](https://golang.org/pkg/testing/#hdr-Benchmarks)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand unit testing, let's learn about integration testing with real clusters.
+Теперь, когда вы понимаете модульное тестирование, давайте изучим интеграционное тестирование с реальными кластерами.
 
-**Navigation:** [← Previous: Testing Fundamentals](01-testing-fundamentals.md) | [Module Overview](../README.md) | [Next: Integration Testing →](03-integration-testing.md)
+**Навигация:** [← Предыдущий: Основы тестирования](01-testing-fundamentals.md) | [Обзор модуля](../README.md) | [Далее: Интеграционное тестирование →](03-integration-testing.md)

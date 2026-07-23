@@ -2,59 +2,59 @@
 layout: default
 title: "02.4 First Operator"
 nav_order: 4
-parent: "Module 2: Introduction to Operators"
-grand_parent: Modules
+parent: "Модуль 2: Введение в операторы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 2.4: Your First Operator
+# Урок 2.4: Ваш первый оператор
 
-**Navigation:** [← Previous: Dev Environment](03-dev-environment.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущий: Среда разработки](03-dev-environment.md) | [Обзор модуля](../README.md)
 
-## Introduction
+## Введение
 
-Now you're ready to build your first operator! We'll create a "Hello World" operator that manages a simple Custom Resource. This operator will demonstrate all the concepts from [Module 1](../../module-01/README.md): CRDs, controllers, and reconciliation.
+Теперь вы готовы создать свой первый оператор! Мы создадим оператор «Hello World», который управляет простым пользовательским ресурсом. Этот оператор продемонстрирует все концепции из [Модуля 1](../../module-01/README.md): CRD, контроллеры и согласование.
 
-## Theory: Your First Operator
+## Теория: ваш первый оператор
 
-Building your first operator helps you understand the complete operator lifecycle and structure.
+Создание первого оператора помогает понять полный жизненный цикл и структуру оператора.
 
-### Core Concepts
+### Основные концепции
 
-**Operator Components:**
-- **CRD**: Defines your custom resource
-- **Controller**: Reconciliation logic
-- **Manager**: Coordinates controllers and clients
-- **RBAC**: Permissions for the operator
+**Компоненты оператора:**
+- **CRD**: определяет ваш пользовательский ресурс
+- **Контроллер**: логика согласования
+- **Менеджер (Manager)**: координирует контроллеры и клиентов
+- **RBAC**: разрешения для оператора
 
-**Generated Code Structure:**
-- API types (spec/status)
-- Controller reconciliation logic
-- Manager setup
-- RBAC manifests
+**Структура сгенерированного кода:**
+- Типы API (spec/status)
+- Логика согласования контроллера
+- Настройка менеджера
+- Манифесты RBAC
 
-**Operator Lifecycle:**
-1. User creates Custom Resource
-2. Controller watches and reconciles
-3. Controller creates/manages Kubernetes resources
-4. Controller updates status
-5. Continuous reconciliation loop
+**Жизненный цикл оператора:**
+1. Пользователь создаёт пользовательский ресурс
+2. Контроллер отслеживает и согласовывает
+3. Контроллер создаёт ресурсы Kubernetes и управляет ими
+4. Контроллер обновляет статус
+5. Непрерывный цикл согласования
 
-**Why Start Simple:**
-- Understand fundamentals before complexity
-- Learn generated code structure
-- Build confidence with working example
-- Foundation for more complex operators
+**Почему начинать с простого:**
+- Понять основы до перехода к сложности
+- Изучить структуру сгенерированного кода
+- Обрести уверенность на рабочем примере
+- Заложить основу для более сложных операторов
 
-Starting with a simple operator helps you understand the pattern before building complex ones.
+Начало с простого оператора помогает понять паттерн до создания сложных.
 
-## What We'll Build
+## Что мы создадим
 
-A simple operator that:
-- Defines a `HelloWorld` Custom Resource
-- Watches for HelloWorld resources
-- Creates a ConfigMap when a HelloWorld is created
-- Updates status to reflect the current state
+Простой оператор, который:
+- Определяет пользовательский ресурс `HelloWorld`
+- Отслеживает ресурсы HelloWorld
+- Создаёт ConfigMap при создании HelloWorld
+- Обновляет статус, отражая текущее состояние
 
 ```mermaid
 graph TB
@@ -68,9 +68,9 @@ graph TB
     style CM fill:#FFE4B5
 ```
 
-## Step 1: Initialize Project
+## Шаг 1: инициализация проекта
 
-Create a new directory and initialize the kubebuilder project:
+Создайте новый каталог и инициализируйте проект kubebuilder:
 
 ```bash
 # Create project directory
@@ -81,29 +81,29 @@ cd hello-world-operator
 kubebuilder init --domain example.com --repo github.com/example/hello-world-operator
 ```
 
-This creates the basic project structure you learned about in [Lesson 2.2](02-kubebuilder-fundamentals.md).
+Это создаёт базовую структуру проекта, о которой вы узнали в [Уроке 2.2](02-kubebuilder-fundamentals.md).
 
-## Step 2: Create API
+## Шаг 2: создание API
 
-Create the HelloWorld API (CRD):
+Создайте API HelloWorld (CRD):
 
 ```bash
 # Create API with kubebuilder
 kubebuilder create api --group hello --version v1 --kind HelloWorld
 ```
 
-When prompted:
+При запросах:
 - Create Resource [y/n]: **y**
 - Create Controller [y/n]: **y**
 
-This generates:
-- API types in `api/v1/`
-- Controller in `internal/controller/`
-- CRD manifests in `config/crd/`
+Это генерирует:
+- Типы API в `api/v1/`
+- Контроллер в `internal/controller/`
+- Манифесты CRD в `config/crd/`
 
-## Step 3: Define API Types
+## Шаг 3: определение типов API
 
-Edit `api/v1/helloworld_types.go`:
+Отредактируйте `api/v1/helloworld_types.go`:
 
 ```go
 package v1
@@ -156,9 +156,9 @@ func init() {
 }
 ```
 
-## Step 4: Generate Code
+## Шаг 4: генерация кода
 
-Generate CRD manifests and deep copy methods:
+Сгенерируйте манифесты CRD и методы глубокого копирования:
 
 ```bash
 # Generate code
@@ -168,13 +168,13 @@ make generate
 make manifests
 ```
 
-This creates:
-- CRD YAML in `config/crd/bases/`
-- RBAC manifests in `config/rbac/`
+Это создаёт:
+- YAML CRD в `config/crd/bases/`
+- Манифесты RBAC в `config/rbac/`
 
-## Step 5: Implement Controller
+## Шаг 5: реализация контроллера
 
-Edit `internal/controller/helloworld_controller.go`:
+Отредактируйте `internal/controller/helloworld_controller.go`:
 
 ```go
 package controller
@@ -279,9 +279,9 @@ func (r *HelloWorldReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-## Step 6: Install CRD
+## Шаг 6: установка CRD
 
-Install the CRD to your cluster:
+Установите CRD в ваш кластер:
 
 ```bash
 # Install CRD
@@ -291,20 +291,20 @@ make install
 kubectl get crd helloworlds.hello.example.com
 ```
 
-## Step 7: Run Operator Locally
+## Шаг 7: локальный запуск оператора
 
-Run the operator on your machine (connects to kind cluster):
+Запустите оператор на своей машине (он подключается к кластеру kind):
 
 ```bash
 # Run operator
 make run
 ```
 
-The operator is now running and watching for HelloWorld resources!
+Оператор теперь запущен и отслеживает ресурсы HelloWorld!
 
-## Step 8: Create a HelloWorld Resource
+## Шаг 8: создание ресурса HelloWorld
 
-In another terminal, create a HelloWorld Custom Resource:
+В другом терминале создайте пользовательский ресурс HelloWorld:
 
 ```bash
 # Create HelloWorld resource
@@ -319,9 +319,9 @@ spec:
 EOF
 ```
 
-## Step 9: Observe Reconciliation
+## Шаг 9: наблюдение за согласованием
 
-Watch what happens:
+Посмотрите, что происходит:
 
 ```bash
 # Check HelloWorld resource
@@ -334,28 +334,28 @@ kubectl get configmap hello-example-config -o yaml
 # You should see reconciliation logs
 ```
 
-## Understanding the Code
+## Понимание кода
 
-### Reconcile Function
+### Функция Reconcile
 
-The `Reconcile` function implements the pattern from [Lesson 1.3](../../module-01/lessons/03-controller-pattern.md):
+Функция `Reconcile` реализует паттерн из [Урока 1.3](../../module-01/lessons/03-controller-pattern.md):
 
-1. **Read** the Custom Resource
-2. **Compare** desired vs actual state
-3. **Take action** (create/update ConfigMap)
-4. **Update status**
+1. **Читает (Read)** пользовательский ресурс
+2. **Сравнивает (Compare)** желаемое и фактическое состояние
+3. **Предпринимает действие (Take action)** (создаёт/обновляет ConfigMap)
+4. **Обновляет статус (Update status)**
 
-### Owner References
+### Ссылки-владельцы (Owner References)
 
-We set an owner reference (from [Lesson 1.3](../../module-01/lessons/03-controller-pattern.md)) so the ConfigMap is automatically deleted when HelloWorld is deleted.
+Мы устанавливаем ссылку-владельца (из [Урока 1.3](../../module-01/lessons/03-controller-pattern.md)), чтобы ConfigMap автоматически удалялся при удалении HelloWorld.
 
-### Status Updates
+### Обновления статуса
 
-We update the status subresource (from [Lesson 1.4](../../module-01/lessons/04-custom-resources.md)) to reflect the current state.
+Мы обновляем подресурс status (из [Урока 1.4](../../module-01/lessons/04-custom-resources.md)), чтобы отразить текущее состояние.
 
-## Project Structure
+## Структура проекта
 
-Your project now looks like:
+Ваш проект теперь выглядит так:
 
 ```
 hello-world-operator/
@@ -374,50 +374,50 @@ hello-world-operator/
 └── go.mod
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- Kubebuilder scaffolds the project structure
-- You define API types (spec and status)
-- You implement the Reconcile function
-- The operator follows the reconciliation pattern from Module 1
-- Owner references manage resource lifecycle
-- Status updates reflect actual state
+- Kubebuilder генерирует каркас структуры проекта
+- Вы определяете типы API (spec и status)
+- Вы реализуете функцию Reconcile
+- Оператор следует паттерну согласования из Модуля 1
+- Ссылки-владельцы управляют жизненным циклом ресурсов
+- Обновления статуса отражают фактическое состояние
 
-## What You've Learned
+## Что вы изучили
 
-You've now built an operator that:
-- ✅ Defines a Custom Resource (CRD)
-- ✅ Watches for Custom Resources
-- ✅ Reconciles desired vs actual state
-- ✅ Creates Kubernetes resources
-- ✅ Updates status
-- ✅ Uses owner references
+Вы создали оператор, который:
+- ✅ Определяет пользовательский ресурс (CRD)
+- ✅ Отслеживает пользовательские ресурсы
+- ✅ Согласовывает желаемое и фактическое состояние
+- ✅ Создаёт ресурсы Kubernetes
+- ✅ Обновляет статус
+- ✅ Использует ссылки-владельцы
 
-This is the foundation for all operators!
+Это основа для всех операторов!
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 2.4: Building Hello World Operator](../labs/lab-04-first-operator.md) - Complete step-by-step guide
+- [Лабораторная 2.4: Создание оператора Hello World](../labs/lab-04-first-operator.md) — полное пошаговое руководство
 
-## References
+## Источники
 
-### Official Documentation
-- [Kubebuilder Tutorial](https://book.kubebuilder.io/quick-start)
-- [Creating a New Project](https://book.kubebuilder.io/quick-start.html#create-a-project)
-- [Implementing a Controller](https://book.kubebuilder.io/cronjob-tutorial/controller-implementation.html)
+### Официальная документация
+- [Туториал Kubebuilder](https://book.kubebuilder.io/quick-start)
+- [Создание нового проекта](https://book.kubebuilder.io/quick-start.html#create-a-project)
+- [Реализация контроллера](https://book.kubebuilder.io/cronjob-tutorial/controller-implementation.html)
 
-### Further Reading
-- **Kubebuilder Book** - Complete tutorial and reference
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 3: Your First Operator
-- [Kubebuilder Examples](https://github.com/kubernetes-sigs/kubebuilder/tree/master/docs/book/src/cronjob-tutorial/testdata)
+### Дополнительное чтение
+- **Kubebuilder Book** — полный туториал и справочник
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 3: Your First Operator
+- [Примеры Kubebuilder](https://github.com/kubernetes-sigs/kubebuilder/tree/master/docs/book/src/cronjob-tutorial/testdata)
 
-### Related Topics
-- [Controller Runtime Patterns](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg)
-- [Reconciliation Best Practices](https://book.kubebuilder.io/reference/good-practices)
-- [Generated Code Explanation](https://book.kubebuilder.io/cronjob-tutorial/basic-project)
+### Смежные темы
+- [Паттерны Controller Runtime](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg)
+- [Лучшие практики согласования](https://book.kubebuilder.io/reference/good-practices)
+- [Объяснение сгенерированного кода](https://book.kubebuilder.io/cronjob-tutorial/basic-project)
 
-## Next Steps
+## Дальнейшие шаги
 
-Congratulations! You've built your first operator. In [Module 3](../../module-03/README.md), you'll learn to build more sophisticated controllers with advanced patterns.
+Поздравляем! Вы создали свой первый оператор. В [Модуле 3](../../module-03/README.md) вы научитесь создавать более совершенные контроллеры с продвинутыми паттернами.
 
-**Navigation:** [← Previous: Dev Environment](03-dev-environment.md) | [Module Overview](../README.md) | [Next: Module 3 →](../../module-03/README.md)
+**Навигация:** [← Предыдущий: Среда разработки](03-dev-environment.md) | [Обзор модуля](../README.md) | [Далее: Модуль 3 →](../../module-03/README.md)

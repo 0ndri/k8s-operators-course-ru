@@ -2,49 +2,49 @@
 layout: default
 title: "1.2 API Machinery"
 nav_order: 2
-parent: "Module 1: Kubernetes Architecture"
-grand_parent: Modules
+parent: "Модуль 1: Архитектура Kubernetes"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 1.2: Kubernetes API Machinery
+# Урок 1.2: Механизмы API Kubernetes
 
-**Navigation:** [← Previous: Control Plane](01-control-plane.md) | [Module Overview](../README.md) | [Next: Controller Pattern →](03-controller-pattern.md)
+**Навигация:** [← Предыдущий: Управляющий слой](01-control-plane.md) | [Обзор модуля](../README.md) | [Далее: Паттерн контроллера →](03-controller-pattern.md)
 
-## Introduction
+## Введение
 
-The Kubernetes API is RESTful and follows specific conventions. Understanding these conventions is essential for building operators, as you'll be creating and managing resources through this same API.
+API Kubernetes построен по принципам REST и следует определённым соглашениям. Понимание этих соглашений необходимо для создания операторов, поскольку вы будете создавать ресурсы и управлять ими через этот же API.
 
-## Theory: Kubernetes API Design Principles
+## Теория: принципы проектирования API Kubernetes
 
-The Kubernetes API follows RESTful principles but extends them with Kubernetes-specific concepts:
+API Kubernetes следует принципам REST, но расширяет их концепциями, специфичными для Kubernetes:
 
-### RESTful Principles
-- **Resources** are represented as URLs (e.g., `/api/v1/namespaces/default/pods`)
-- **HTTP methods** map to operations (GET, POST, PUT, PATCH, DELETE)
-- **Stateless** - each request contains all information needed
-- **Uniform interface** - consistent patterns across all resources
+### Принципы REST
+- **Ресурсы** представлены в виде URL (например, `/api/v1/namespaces/default/pods`)
+- **HTTP-методы** соответствуют операциям (GET, POST, PUT, PATCH, DELETE)
+- **Отсутствие состояния (stateless)** — каждый запрос содержит всю необходимую информацию
+- **Единообразный интерфейс** — согласованные паттерны для всех ресурсов
 
-### Kubernetes Extensions
-- **API Groups** - organize related resources (core, apps, rbac, etc.)
-- **API Versions** - support multiple versions of the same resource
-- **Subresources** - status, scale, exec (extend resource behavior)
-- **Watch** - long-lived connections for change notifications
-- **Field Selectors** - filter resources by field values
+### Расширения Kubernetes
+- **Группы API (API Groups)** — объединяют связанные ресурсы (core, apps, rbac и т. д.)
+- **Версии API (API Versions)** — поддерживают несколько версий одного ресурса
+- **Подресурсы (subresources)** — status, scale, exec (расширяют поведение ресурса)
+- **Watch** — долгоживущие соединения для уведомлений об изменениях
+- **Селекторы полей (field selectors)** — фильтрация ресурсов по значениям полей
 
-### Resource Structure
-Every Kubernetes resource follows a consistent structure:
-- **apiVersion**: API group and version
-- **kind**: Resource type
-- **metadata**: Identity and labels
-- **spec**: Desired state (user-provided)
-- **status**: Actual state (system-managed)
+### Структура ресурса
+Каждый ресурс Kubernetes имеет единообразную структуру:
+- **apiVersion**: группа и версия API
+- **kind**: тип ресурса
+- **metadata**: идентификация и метки
+- **spec**: желаемое состояние (задаётся пользователем)
+- **status**: фактическое состояние (управляется системой)
 
-Understanding these principles helps you design Custom Resources that feel native to Kubernetes.
+Понимание этих принципов помогает проектировать пользовательские ресурсы (Custom Resources), которые ощущаются как «родные» для Kubernetes.
 
-## RESTful API Design
+## Проектирование REST API
 
-Kubernetes uses a RESTful API where resources are represented as URLs:
+Kubernetes использует REST API, в котором ресурсы представлены в виде URL:
 
 ```
 /api/v1/namespaces/{namespace}/pods/{name}
@@ -52,7 +52,7 @@ Kubernetes uses a RESTful API where resources are represented as URLs:
 /apps/v1/namespaces/{namespace}/deployments/{name}
 ```
 
-### API Structure
+### Структура API
 
 ```mermaid
 graph TB
@@ -85,13 +85,13 @@ graph TB
     CUSTOM --> CRD
 ```
 
-## API Versioning
+## Версионирование API
 
-Kubernetes uses three versioning schemes:
+Kubernetes использует три схемы версионирования:
 
-1. **API Version**: The version of the API group (e.g., `v1`, `v1beta1`)
-2. **Resource Version**: Internal version for optimistic concurrency
-3. **Object Version**: The version stored in etcd
+1. **Версия API (API Version)**: версия группы API (например, `v1`, `v1beta1`)
+2. **Версия ресурса (Resource Version)**: внутренняя версия для оптимистичного управления конкурентным доступом
+3. **Версия объекта (Object Version)**: версия, хранящаяся в etcd
 
 ```mermaid
 flowchart LR
@@ -107,9 +107,9 @@ flowchart LR
     style CONVERT2 fill:#e1f5ff
 ```
 
-## Resource Types
+## Типы ресурсов
 
-Kubernetes resources have a consistent structure:
+Ресурсы Kubernetes имеют единообразную структуру:
 
 ```mermaid
 graph TB
@@ -133,16 +133,16 @@ graph TB
     style STATUS fill:#FFB6C1
 ```
 
-### Spec vs Status
+### Spec против Status
 
-- **Spec**: Describes the desired state (what you want)
-- **Status**: Describes the actual state (what exists)
+- **Spec**: описывает желаемое состояние (что вы хотите получить)
+- **Status**: описывает фактическое состояние (что существует на самом деле)
 
-This separation is fundamental to the declarative model and reconciliation pattern.
+Это разделение лежит в основе декларативной модели и паттерна согласования (reconciliation).
 
-## API Discovery
+## Обнаружение API (API Discovery)
 
-Kubernetes provides API discovery endpoints:
+Kubernetes предоставляет эндпоинты для обнаружения API:
 
 ```mermaid
 sequenceDiagram
@@ -162,9 +162,9 @@ sequenceDiagram
     API-->>Client: Deployment schema
 ```
 
-## Hands-on Exercise: Working with the Kubernetes API
+## Практическое упражнение: работа с API Kubernetes
 
-### Step 1: API Discovery
+### Шаг 1: обнаружение API
 
 ```bash
 # List all API versions
@@ -180,7 +180,7 @@ kubectl api-resources -o wide
 kubectl get --raw /apis/apps/v1
 ```
 
-### Step 2: Direct API Calls
+### Шаг 2: прямые вызовы API
 
 ```bash
 # Start a proxy to access the API directly
@@ -220,7 +220,7 @@ kubectl get pod api-pod
 pkill -f "kubectl proxy"
 ```
 
-### Step 3: Understanding Resource Structure
+### Шаг 3: понимание структуры ресурса
 
 ```bash
 # Get a pod and examine its structure
@@ -240,7 +240,7 @@ kubectl get pod api-pod -o jsonpath='{.spec}'
 kubectl get pod api-pod -o jsonpath='{.status}'
 ```
 
-### Step 4: API Groups and Versions
+### Шаг 4: группы и версии API
 
 ```bash
 # See which API groups are available
@@ -253,7 +253,7 @@ kubectl get --raw /apis/apps/v1 | jq '.'
 kubectl get --raw /apis/apps/v1 | jq '.resources[].name'
 ```
 
-### Step 5: Subresources
+### Шаг 5: подресурсы
 
 ```mermaid
 graph LR
@@ -266,7 +266,7 @@ graph LR
     style SCALE fill:#90EE90
 ```
 
-Some resources have subresources:
+У некоторых ресурсов есть подресурсы:
 
 ```bash
 # create nginx deployment
@@ -282,9 +282,9 @@ kubectl get deployment nginx -o jsonpath='{.status}'
 kubectl exec -it api-pod -- /bin/sh
 ```
 
-## Resource Version and Optimistic Concurrency
+## Версия ресурса и оптимистичное управление конкурентным доступом
 
-Every resource has a `resourceVersion` that changes on each update:
+У каждого ресурса есть `resourceVersion`, который меняется при каждом обновлении:
 
 ```mermaid
 sequenceDiagram
@@ -314,9 +314,9 @@ sequenceDiagram
     API-->>Client2: 409 Conflict
 ```
 
-This prevents lost updates and ensures consistency.
+Это предотвращает потерю обновлений и обеспечивает согласованность.
 
-## Hands-on: Resource Version
+## Практика: версия ресурса
 
 ```bash
 # Get a resource and note its resourceVersion
@@ -329,49 +329,48 @@ kubectl label pod api-pod test=value
 kubectl get pod api-pod -o jsonpath='{.metadata.resourceVersion}'
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- Kubernetes API is RESTful with consistent URL patterns
-- Resources are organized into API groups and versions
-- Every resource has: apiVersion, kind, metadata, spec, status
-- **Spec** = desired state, **Status** = actual state
-- `resourceVersion` enables optimistic concurrency control
-- Subresources extend resource functionality (status, scale, exec, etc.)
+- API Kubernetes построен по принципам REST с единообразными шаблонами URL
+- Ресурсы организованы в группы и версии API
+- Каждый ресурс имеет: apiVersion, kind, metadata, spec, status
+- **Spec** = желаемое состояние, **Status** = фактическое состояние
+- `resourceVersion` обеспечивает оптимистичное управление конкурентным доступом
+- Подресурсы расширяют функциональность ресурса (status, scale, exec и т. д.)
 
-## Understanding for Operators
+## Что это значит для операторов
 
-When building operators:
-- Your CRDs will follow the same API structure
-- You'll use the same spec/status pattern
-- Resource versions help prevent conflicts
-- API discovery helps clients understand your resources
-- Subresources (like status) are useful for your custom resources
+При создании операторов:
+- Ваши CRD будут следовать той же структуре API
+- Вы будете использовать тот же паттерн spec/status
+- Версии ресурсов помогают предотвращать конфликты
+- Обнаружение API помогает клиентам понимать ваши ресурсы
+- Подресурсы (например, status) полезны для ваших пользовательских ресурсов
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 1.2: Working with the Kubernetes API](../labs/lab-02-api-machinery.md) - Hands-on exercises for this lesson
+- [Лабораторная 1.2: Работа с API Kubernetes](../labs/lab-02-api-machinery.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Kubernetes API Overview](https://kubernetes.io/docs/reference/using-api/)
-- [API Concepts](https://kubernetes.io/docs/reference/using-api/api-concepts/)
-- [API Versioning](https://kubernetes.io/docs/reference/using-api/api-concepts/#versioning)
-- [Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+### Официальная документация
+- [Обзор API Kubernetes](https://kubernetes.io/docs/reference/using-api/)
+- [Концепции API](https://kubernetes.io/docs/reference/using-api/api-concepts/)
+- [Версионирование API](https://kubernetes.io/docs/reference/using-api/api-concepts/#versioning)
+- [Пользовательские ресурсы](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
 
-### Further Reading
-- **Kubernetes in Action** by Marko Lukša - Chapter 3: Understanding Kubernetes API
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Deep dive into API machinery
-- [Kubernetes API Reference](https://kubernetes.io/docs/reference/kubernetes-api/)
+### Дополнительное чтение
+- **Kubernetes in Action**, Marko Lukša — глава 3: Understanding Kubernetes API
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глубокое погружение в механизмы API
+- [Справочник API Kubernetes](https://kubernetes.io/docs/reference/kubernetes-api/)
 
-### Related Topics
-- [Resource Versioning and Concurrency](https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions)
-- [Field Selectors](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/)
-- [API Discovery](https://kubernetes.io/docs/reference/using-api/api-concepts/#api-discovery)
+### Смежные темы
+- [Версионирование ресурсов и конкурентный доступ](https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions)
+- [Селекторы полей](https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/)
+- [Обнаружение API](https://kubernetes.io/docs/reference/using-api/api-concepts/#api-discovery)
 
-## Next Steps
+## Дальнейшие шаги
 
-In the next lesson, we'll explore the controller pattern - the foundation of how operators work.
+В следующем уроке мы разберём паттерн контроллера — основу того, как работают операторы.
 
-**Navigation:** [← Previous: Control Plane](01-control-plane.md) | [Module Overview](../README.md) | [Next: Controller Pattern →](03-controller-pattern.md)
-
+**Навигация:** [← Предыдущий: Управляющий слой](01-control-plane.md) | [Обзор модуля](../README.md) | [Далее: Паттерн контроллера →](03-controller-pattern.md)

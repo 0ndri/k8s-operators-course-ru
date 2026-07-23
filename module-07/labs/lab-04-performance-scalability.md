@@ -2,36 +2,36 @@
 layout: default
 title: "Lab 07.4: Performance Scalability"
 nav_order: 14
-parent: "Module 7: Production Considerations"
-grand_parent: Modules
+parent: "Модуль 7: Подготовка к продакшену"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 7.4: Optimizing Performance
+# Лабораторная 7.4: Оптимизация производительности
 
-**Related Lesson:** [Lesson 7.4: Performance and Scalability](../lessons/04-performance-scalability.md)  
-**Navigation:** [← Previous Lab: HA](lab-03-high-availability.md) | [Module Overview](../README.md)
+**Связанный урок:** [Урок 7.4: Производительность и масштабируемость](../lessons/04-performance-scalability.md)  
+**Навигация:** [← Предыдущая лабораторная: HA](lab-03-high-availability.md) | [Обзор модуля](../README.md)
 
-## Objectives
+## Цели
 
-- Implement rate limiting
-- Add caching strategies
-- Optimize reconciliation
-- Profile and optimize performance
+- Реализовать ограничение частоты (rate limiting)
+- Добавить стратегии кеширования
+- Оптимизировать согласование
+- Профилировать и оптимизировать производительность
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 7.3](lab-03-high-availability.md)
-- Operator with HA setup
-- Understanding of performance concepts
+- Завершение [Лабораторной 7.3](lab-03-high-availability.md)
+- Оператор с настройкой HA
+- Понимание концепций производительности
 
-## Exercise 1: Configure Controller Rate Limiting
+## Упражнение 1: настройка ограничения частоты контроллера
 
-Controller-runtime (used by kubebuilder) has built-in rate limiting. Let's configure it.
+У Controller-runtime (используемого kubebuilder) есть встроенное ограничение частоты. Настроим его.
 
-### Task 1.1: Configure MaxConcurrentReconciles
+### Задача 1.1: настройте MaxConcurrentReconciles
 
-Update your controller's `SetupWithManager` in `internal/controller/database_controller.go`:
+Обновите `SetupWithManager` вашего контроллера в `internal/controller/database_controller.go`:
 
 ```go
 import (
@@ -62,9 +62,9 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-### Task 1.2: Add Rate Limiting for External API Calls (Optional)
+### Задача 1.2: добавьте ограничение частоты для внешних вызовов API (опционально)
 
-If your operator calls external APIs, add rate limiting:
+Если ваш оператор вызывает внешние API, добавьте ограничение частоты:
 
 ```go
 import (
@@ -97,13 +97,13 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Exercise 2: Add Field Indexing for Fast Lookups
+## Упражнение 2: добавление индексирования полей для быстрого поиска
 
-Controller-runtime provides automatic caching. You can add custom indexes for fast lookups.
+Controller-runtime обеспечивает автоматическое кеширование. Вы можете добавить пользовательские индексы для быстрого поиска.
 
-### Task 2.1: Create Field Indexer
+### Задача 2.1: создайте индексатор полей
 
-Add indexing in `cmd/main.go` before starting the manager:
+Добавьте индексирование в `cmd/main.go` до запуска менеджера:
 
 ```go
 // In cmd/main.go, after creating manager but before SetupWithManager
@@ -126,7 +126,7 @@ if err := mgr.GetFieldIndexer().IndexField(
 }
 ```
 
-### Task 2.2: Use Indexes in Controller
+### Задача 2.2: используйте индексы в контроллере
 
 ```go
 // In your reconciler, use MatchingFields for indexed queries
@@ -149,9 +149,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Exercise 3: Optimize Reconciliation
+## Упражнение 3: оптимизация согласования
 
-### Task 3.1: Batch Operations
+### Задача 3.1: пакетные операции
 
 ```go
 func (r *DatabaseReconciler) reconcileBatch(ctx context.Context, databases []databasev1.Database) error {
@@ -184,13 +184,13 @@ func (r *DatabaseReconciler) reconcileBatch(ctx context.Context, databases []dat
 }
 ```
 
-## Exercise 4: Monitor Performance with Built-in Metrics
+## Упражнение 4: мониторинг производительности со встроенными метриками
 
-Controller-runtime automatically exposes metrics. Your postgres-operator already has custom metrics configured!
+Controller-runtime автоматически экспонирует метрики. У вашего postgres-operator уже настроены пользовательские метрики!
 
-### Task 4.1: Review Existing Metrics Code
+### Задача 4.1: изучите существующий код метрик
 
-Your operator already has metrics in `internal/controller/metrics.go`:
+У вашего оператора уже есть метрики в `internal/controller/metrics.go`:
 
 ```bash
 cd ~/postgres-operator
@@ -199,7 +199,7 @@ cd ~/postgres-operator
 cat internal/controller/metrics.go
 ```
 
-You should see these custom metrics already defined:
+Вы должны увидеть уже определённые пользовательские метрики:
 
 ```go
 var (
@@ -252,16 +252,16 @@ func init() {
 }
 ```
 
-### Task 4.2: Review Metrics Usage in Controller
+### Задача 4.2: изучите использование метрик в контроллере
 
-Check how metrics are used in the Reconcile function:
+Проверьте, как метрики используются в функции Reconcile:
 
 ```bash
 # See how metrics are recorded in the reconcile loop
 grep -A 10 "Defer metrics" internal/controller/database_controller.go
 ```
 
-You should see:
+Вы должны увидеть:
 
 ```go
 // Defer metrics recording
@@ -272,7 +272,7 @@ defer func() {
 }()
 ```
 
-And database info metrics being set:
+И установку метрик информации о базе данных:
 
 ```go
 DatabaseInfo.WithLabelValues(
@@ -283,9 +283,9 @@ DatabaseInfo.WithLabelValues(
 ).Set(1)
 ```
 
-### Task 4.3: Access Metrics Endpoint
+### Задача 4.3: доступ к эндпоинту метрик
 
-The metrics endpoint requires authentication with a bearer token. We'll use a ServiceAccount token to authenticate.
+Эндпоинт метрик требует аутентификации с bearer-токеном. Мы используем токен ServiceAccount для аутентификации.
 
 ```bash
 # For Docker: Build and Deploy the operator with network policies enabled
@@ -341,11 +341,11 @@ curl -sk -H "Authorization: Bearer $TOKEN" https://localhost:8443/metrics | head
 pkill -f "port-forward.*8443"
 ```
 
-**Note:** The metrics endpoint uses Kubernetes RBAC for authorization. The ServiceAccount must have the `metrics-reader` ClusterRole (configured in Lab 7.2).
+**Примечание:** эндпоинт метрик использует RBAC Kubernetes для авторизации. У ServiceAccount должна быть ClusterRole `metrics-reader` (настроена в Лабораторной 7.2).
 
-### Task 4.4: View Metrics in Prometheus
+### Задача 4.4: просмотр метрик в Prometheus
 
-If you have Prometheus set up (from Lab 7.2), view metrics there:
+Если у вас настроен Prometheus (из Лабораторной 7.2), просмотрите метрики там:
 
 ```bash
 # Port forward to Prometheus
@@ -361,20 +361,20 @@ kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 909
 pkill -f "port-forward.*9090"
 ```
 
-**Example Prometheus queries:**
+**Примеры запросов Prometheus:**
 
-| Query | Description |
+| Запрос | Описание |
 |-------|-------------|
-| `database_reconcile_total` | Total reconciliations by result |
-| `rate(database_reconcile_total[5m])` | Reconciliations per second |
-| `database_reconcile_duration_seconds_bucket` | Reconciliation latency histogram |
-| `histogram_quantile(0.99, rate(database_reconcile_duration_seconds_bucket[5m]))` | p99 latency |
-| `database_resources_total` | Current databases by phase |
-| `database_info` | Info about each database |
+| `database_reconcile_total` | Всего согласований по результату |
+| `rate(database_reconcile_total[5m])` | Согласований в секунду |
+| `database_reconcile_duration_seconds_bucket` | Гистограмма задержки согласования |
+| `histogram_quantile(0.99, rate(database_reconcile_duration_seconds_bucket[5m]))` | Задержка p99 |
+| `database_resources_total` | Текущие базы данных по фазе |
+| `database_info` | Информация о каждой базе данных |
 
-## Exercise 5: Load Testing
+## Упражнение 5: нагрузочное тестирование
 
-### Task 5.1: Create Many Resources
+### Задача 5.1: создайте много ресурсов
 
 ```bash
 # Create multiple databases for load testing
@@ -398,9 +398,9 @@ done
 echo "Created 50 test databases"
 ```
 
-### Task 5.2: Monitor Performance Under Load
+### Задача 5.2: отслеживайте производительность под нагрузкой
 
-**Note:** `kubectl top` requires metrics-server to be installed. The course setup script (`scripts/setup-kind-cluster.sh`) installs it automatically. If you get "Metrics API not available", install it manually:
+**Примечание:** `kubectl top` требует установленного metrics-server. Скрипт настройки курса (`scripts/setup-kind-cluster.sh`) устанавливает его автоматически. Если вы получаете «Metrics API not available», установите его вручную:
 
 ```bash
 # Install metrics-server (if not already installed)
@@ -416,7 +416,7 @@ kubectl patch deployment metrics-server -n kube-system --type='json' -p='[
 kubectl rollout status deployment/metrics-server -n kube-system
 ```
 
-Now monitor performance:
+Теперь отслеживайте производительность:
 
 ```bash
 # Watch operator resource usage (requires metrics-server)
@@ -445,7 +445,7 @@ curl -sk -H "Authorization: Bearer $TOKEN" https://localhost:8443/metrics | grep
 kubectl logs -n postgres-operator-system -l control-plane=controller-manager --tail=20 -f
 ```
 
-### Task 5.3: Verify All Resources Are Reconciled
+### Задача 5.3: убедитесь, что все ресурсы согласованы
 
 ```bash
 # Check status of all databases
@@ -455,7 +455,7 @@ kubectl get databases -o custom-columns=NAME:.metadata.name,PHASE:.status.phase,
 kubectl get databases -o jsonpath='{range .items[*]}{.status.phase}{"\n"}{end}' | sort | uniq -c
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete test resources
@@ -465,39 +465,39 @@ kubectl delete databases --all
 make undeploy
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Configured controller-runtime rate limiting
-- Added field indexing for fast lookups
-- Optimized reconciliation with MaxConcurrentReconciles
-- Added custom performance metrics
-- Load tested the operator with many resources
+В этой лабораторной вы:
+- Настроили ограничение частоты controller-runtime
+- Добавили индексирование полей для быстрого поиска
+- Оптимизировали согласование с помощью MaxConcurrentReconciles
+- Добавили пользовательские метрики производительности
+- Провели нагрузочное тестирование оператора с множеством ресурсов
 
-## Key Learnings
+## Ключевые уроки
 
-1. Controller-runtime has built-in rate limiting via RateLimiter option
-2. MaxConcurrentReconciles controls parallelism
-3. Field indexes enable fast filtered queries
-4. Built-in metrics are available at `:8443/metrics`
-5. Custom metrics use prometheus client with metrics.Registry
-6. Load testing validates operator performance at scale
-7. `client.MatchingFields{}` leverages indexes for fast lookups
+1. У Controller-runtime есть встроенное ограничение частоты через опцию RateLimiter
+2. MaxConcurrentReconciles контролирует параллелизм
+3. Индексы полей обеспечивают быстрые фильтрованные запросы
+4. Встроенные метрики доступны на `:8443/metrics`
+5. Пользовательские метрики используют клиент prometheus с metrics.Registry
+6. Нагрузочное тестирование подтверждает производительность оператора при масштабе
+7. `client.MatchingFields{}` задействует индексы для быстрого поиска
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Rate Limiter](../solutions/ratelimiter.go) - Complete rate limiting implementation
-- [Performance Optimizations](../solutions/performance.go) - Batch processing, caching, metrics
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Rate Limiter](../solutions/ratelimiter.go) — полная реализация ограничения частоты
+- [Performance Optimizations](../solutions/performance.go) — пакетная обработка, кеширование, метрики
 
-## Congratulations!
+## Поздравляем!
 
-You've completed Module 7! You now understand:
-- Packaging and distribution
-- RBAC and security
-- High availability
-- Performance optimization
+Вы завершили Модуль 7! Теперь вы понимаете:
+- Упаковку и распространение
+- RBAC и безопасность
+- Высокую доступность
+- Оптимизацию производительности
 
-In Module 8, you'll learn about advanced topics and real-world patterns!
+В Модуле 8 вы изучите продвинутые темы и практические паттерны!
 
-**Navigation:** [← Previous Lab: HA](lab-03-high-availability.md) | [Related Lesson](../lessons/04-performance-scalability.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущая лабораторная: HA](lab-03-high-availability.md) | [Связанный урок](../lessons/04-performance-scalability.md) | [Обзор модуля](../README.md)

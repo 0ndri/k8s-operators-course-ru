@@ -2,55 +2,55 @@
 layout: default
 title: "02.3 Dev Environment"
 nav_order: 3
-parent: "Module 2: Introduction to Operators"
-grand_parent: Modules
+parent: "Модуль 2: Введение в операторы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 2.3: Development Environment Setup
+# Урок 2.3: Настройка среды разработки
 
-**Navigation:** [← Previous: Kubebuilder Fundamentals](02-kubebuilder-fundamentals.md) | [Module Overview](../README.md) | [Next: First Operator →](04-first-operator.md)
+**Навигация:** [← Предыдущий: Основы Kubebuilder](02-kubebuilder-fundamentals.md) | [Обзор модуля](../README.md) | [Далее: Первый оператор →](04-first-operator.md)
 
-## Introduction
+## Введение
 
-Before building your first operator, you need a complete development environment. This lesson covers setting up everything you need: Go, kubebuilder, kind cluster, and your IDE. We'll verify everything works together.
+Прежде чем создавать свой первый оператор, вам нужна полноценная среда разработки. Этот урок охватывает настройку всего необходимого: Go, kubebuilder, кластера kind и вашей IDE. Мы проверим, что всё работает вместе.
 
-## Theory: Development Environment Setup
+## Теория: настройка среды разработки
 
-A proper development environment is crucial for efficient operator development and testing.
+Правильная среда разработки критически важна для эффективной разработки и тестирования операторов.
 
-### Core Concepts
+### Основные концепции
 
-**Local Development:**
-- Run operators locally (outside cluster)
-- Connect to remote or local Kubernetes cluster
-- Faster iteration than building/deploying images
-- Easier debugging
+**Локальная разработка:**
+- Запуск операторов локально (вне кластера)
+- Подключение к удалённому или локальному кластеру Kubernetes
+- Более быстрые итерации, чем сборка/развёртывание образов
+- Более простая отладка
 
-**Kind Cluster:**
-- Kubernetes in Docker
-- Perfect for local development and testing
-- No cloud resources needed
-- Fast cluster creation/destruction
+**Кластер kind:**
+- Kubernetes в Docker
+- Идеален для локальной разработки и тестирования
+- Не требует облачных ресурсов
+- Быстрое создание/удаление кластера
 
-**Development Workflow:**
-1. Write code locally
-2. Run operator locally (go run)
-3. Test against kind cluster
-4. Iterate quickly
-5. Build image when ready
+**Рабочий процесс разработки:**
+1. Пишете код локально
+2. Запускаете оператор локально (go run)
+3. Тестируете на кластере kind
+4. Быстро итерируете
+5. Собираете образ, когда готовы
 
-**Why This Matters:**
-- **Speed**: Local development is faster than container builds
-- **Debugging**: Easier to debug local processes
-- **Cost**: No cloud resources needed for development
-- **Isolation**: Test without affecting production
+**Почему это важно:**
+- **Скорость**: локальная разработка быстрее сборки контейнеров
+- **Отладка**: локальные процессы проще отлаживать
+- **Стоимость**: облачные ресурсы для разработки не нужны
+- **Изоляция**: тестирование без влияния на продакшен
 
-Setting up a good development environment accelerates your operator development.
+Настройка хорошей среды разработки ускоряет создание операторов.
 
-## Development Environment Components
+## Компоненты среды разработки
 
-Your operator development environment consists of:
+Ваша среда разработки операторов состоит из:
 
 ```mermaid
 graph TB
@@ -80,9 +80,9 @@ graph TB
     style KIND_CLUSTER fill:#FFE4B5
 ```
 
-## Setup Process
+## Процесс настройки
 
-The setup follows this flow:
+Настройка следует такому процессу:
 
 ```mermaid
 sequenceDiagram
@@ -105,17 +105,17 @@ sequenceDiagram
     Script-->>Dev: Environment ready
 ```
 
-## Required Tools
+## Необходимые инструменты
 
 ### 1. Go 1.21+
 
-Go is the programming language for kubebuilder operators.
+Go — это язык программирования для операторов kubebuilder.
 
-**Installation:**
-- Download from [golang.org](https://go.dev/dl/)
-- Or use package manager: `brew install go` (macOS)
+**Установка:**
+- Скачайте с [golang.org](https://go.dev/dl/)
+- Или используйте менеджер пакетов: `brew install go` (macOS)
 
-**Verification:**
+**Проверка:**
 ```bash
 go version
 # Should show: go version go1.21.x or higher
@@ -123,9 +123,9 @@ go version
 
 ### 2. Kubebuilder
 
-Kubebuilder CLI for scaffolding and code generation.
+CLI Kubebuilder для генерации каркаса и кодогенерации.
 
-**Installation:**
+**Установка:**
 ```bash
 # macOS/Linux
 curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)
@@ -133,81 +133,81 @@ chmod +x kubebuilder
 sudo mv kubebuilder /usr/local/bin/
 ```
 
-**Verification:**
+**Проверка:**
 ```bash
 kubebuilder version
 ```
 
 ### 3. kubectl
 
-Kubernetes command-line tool.
+Инструмент командной строки Kubernetes.
 
-**Installation:**
-- Already covered in Module 1 setup
-- Verify: `kubectl version --client`
+**Установка:**
+- Уже рассмотрена в настройке Модуля 1
+- Проверьте: `kubectl version --client`
 
 ### 4. kind
 
-Kubernetes in Docker for local clusters.
+Kubernetes в Docker для локальных кластеров.
 
-**Installation:**
+**Установка:**
 ```bash
 go install sigs.k8s.io/kind@latest
 ```
 
-**Verification:**
+**Проверка:**
 ```bash
 kind version
 ```
 
-### 5. Docker or Podman
+### 5. Docker или Podman
 
-Container runtime for kind.
+Среда выполнения контейнеров для kind.
 
-**Installation:**
+**Установка:**
 - Docker: [docker.com](https://www.docker.com/)
 - Podman: [podman.io](https://podman.io/)
 
-**Verification:**
+**Проверка:**
 ```bash
 docker --version
 # or
 podman --version
 ```
 
-## Using the Setup Script
+## Использование скрипта настройки
 
-We provide a setup script that checks and installs everything:
+Мы предоставляем скрипт настройки, который проверяет и устанавливает всё необходимое:
 
 ```bash
 # Run the setup script
 ./scripts/setup-dev-environment.sh
 ```
 
-The script:
-1. Checks each tool
-2. Installs missing tools
-3. Verifies installations
-4. Reports status
+Скрипт:
+1. Проверяет каждый инструмент
+2. Устанавливает недостающие инструменты
+3. Проверяет установки
+4. Сообщает о статусе
 
-## Kind Cluster Setup
+## Настройка кластера kind
 
-After setting up tools, create a kind cluster:
+После настройки инструментов создайте кластер kind:
 
 ```bash
 # Use the provided script
 ./scripts/setup-kind-cluster.sh
 ```
 
-Or manually:
+Или вручную:
 ```bash
 kind create cluster --name k8s-operators-course
 kubectl cluster-info --context kind-k8s-operators-course
 ```
 
-## Development Workflow
+## Рабочий процесс разработки
 
-Here's how you'll develop operators:
+Вот как вы будете разрабатывать операторы:
 
 ```mermaid
 graph LR
@@ -221,15 +221,15 @@ graph LR
     style TEST fill:#FFB6C1
 ```
 
-1. **Write Code**: Define API types, implement controller
-2. **Generate Code**: Run `make generate` and `make manifests`
-3. **Test Locally**: Run operator with `make run`
-4. **Deploy to Cluster**: Apply CRDs, create Custom Resources
-5. **Observe**: Watch logs, check resources, verify behavior
+1. **Пишете код**: определяете типы API, реализуете контроллер
+2. **Генерируете код**: запускаете `make generate` и `make manifests`
+3. **Тестируете локально**: запускаете оператор через `make run`
+4. **Развёртываете в кластер**: применяете CRD, создаёте пользовательские ресурсы
+5. **Наблюдаете**: смотрите логи, проверяете ресурсы, подтверждаете поведение
 
-## Local Development Setup
+## Настройка локальной разработки
 
-For local development, you'll run the operator on your machine:
+Для локальной разработки вы будете запускать оператор на своей машине:
 
 ```mermaid
 graph TB
@@ -253,89 +253,89 @@ graph TB
     style API fill:#90EE90
 ```
 
-The operator runs locally but connects to your kind cluster.
+Оператор запускается локально, но подключается к вашему кластеру kind.
 
-## IDE Setup
+## Настройка IDE
 
 ### VS Code
 
-Recommended extensions:
-- Go extension
-- Kubernetes extension
-- YAML extension
+Рекомендуемые расширения:
+- Расширение Go
+- Расширение Kubernetes
+- Расширение YAML
 
 ### GoLand
 
-Built-in support for:
-- Go development
-- Kubernetes resources
-- Debugging
+Встроенная поддержка:
+- Разработки на Go
+- Ресурсов Kubernetes
+- Отладки
 
-## Environment Verification Checklist
+## Чек-лист проверки среды
 
-Before starting Module 2, verify:
+Перед началом Модуля 2 убедитесь:
 
-- [ ] Go 1.21+ installed and working
-- [ ] kubebuilder installed and in PATH
-- [ ] kubectl configured and working
-- [ ] kind installed
-- [ ] Docker/Podman running
-- [ ] Kind cluster created and accessible
-- [ ] kubectl context points to kind cluster
+- [ ] Go 1.21+ установлен и работает
+- [ ] kubebuilder установлен и находится в PATH
+- [ ] kubectl настроен и работает
+- [ ] kind установлен
+- [ ] Docker/Podman запущен
+- [ ] Кластер kind создан и доступен
+- [ ] Контекст kubectl указывает на кластер kind
 
-## Troubleshooting
+## Устранение неполадок
 
-### kubebuilder not found
+### kubebuilder не найден
 ```bash
 # Add to PATH
 export PATH=$PATH:/usr/local/bin
 # Or reinstall
 ```
 
-### kind cluster issues
+### Проблемы с кластером kind
 ```bash
 # Delete and recreate
 kind delete cluster --name k8s-operators-course
 ./scripts/setup-kind-cluster.sh
 ```
 
-### Go module issues
+### Проблемы с Go-модулями
 ```bash
 # Enable Go modules
 export GO111MODULE=on
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- Complete development environment includes: Go, kubebuilder, kubectl, kind, Docker/Podman
-- Use provided setup scripts for easy installation
-- Kind cluster provides local Kubernetes for testing
-- Local development: operator runs on your machine, connects to cluster
-- Verify all tools before starting operator development
+- Полноценная среда разработки включает: Go, kubebuilder, kubectl, kind, Docker/Podman
+- Используйте предоставленные скрипты настройки для простой установки
+- Кластер kind предоставляет локальный Kubernetes для тестирования
+- Локальная разработка: оператор запускается на вашей машине и подключается к кластеру
+- Проверьте все инструменты перед началом разработки операторов
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 2.3: Setting Up Your Environment](../labs/lab-03-dev-environment.md) - Hands-on exercises for this lesson
+- [Лабораторная 2.3: Настройка вашей среды](../labs/lab-03-dev-environment.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Kind Documentation](https://kind.sigs.k8s.io/)
-- [Kubebuilder Installation](https://book.kubebuilder.io/quick-start.html#installation)
-- [Go Installation](https://go.dev/doc/install)
+### Официальная документация
+- [Документация kind](https://kind.sigs.k8s.io/)
+- [Установка Kubebuilder](https://book.kubebuilder.io/quick-start.html#installation)
+- [Установка Go](https://go.dev/doc/install)
 
-### Further Reading
-- **Kubernetes: Up and Running** by Kelsey Hightower, Brendan Burns, and Joe Beda - Chapter 1: Introduction
-- [Kind Quick Start](https://kind.sigs.k8s.io/docs/user/quick-start/)
-- [Kubectl Installation](https://kubernetes.io/docs/tasks/tools/)
+### Дополнительное чтение
+- **Kubernetes: Up and Running**, Kelsey Hightower, Brendan Burns и Joe Beda — глава 1: Introduction
+- [Быстрый старт kind](https://kind.sigs.k8s.io/docs/user/quick-start/)
+- [Установка kubectl](https://kubernetes.io/docs/tasks/tools/)
 
-### Related Topics
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) - For running kind
-- [VS Code Go Extension](https://marketplace.visualstudio.com/items?itemName=golang.Go) - Go development
-- [Kubernetes Development Tools](https://kubernetes.io/docs/tasks/tools/)
+### Смежные темы
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) — для запуска kind
+- [Расширение Go для VS Code](https://marketplace.visualstudio.com/items?itemName=golang.Go) — разработка на Go
+- [Инструменты разработки Kubernetes](https://kubernetes.io/docs/tasks/tools/)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that your environment is ready, let's build your first operator!
+Теперь, когда ваша среда готова, давайте создадим ваш первый оператор!
 
-**Navigation:** [← Previous: Kubebuilder Fundamentals](02-kubebuilder-fundamentals.md) | [Module Overview](../README.md) | [Next: First Operator →](04-first-operator.md)
+**Навигация:** [← Предыдущий: Основы Kubebuilder](02-kubebuilder-fundamentals.md) | [Обзор модуля](../README.md) | [Далее: Первый оператор →](04-first-operator.md)

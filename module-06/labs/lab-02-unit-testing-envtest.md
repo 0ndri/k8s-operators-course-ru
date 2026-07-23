@@ -2,42 +2,42 @@
 layout: default
 title: "Lab 06.2: Unit Testing Envtest"
 nav_order: 12
-parent: "Module 6: Testing & Debugging"
-grand_parent: Modules
+parent: "Модуль 6: Тестирование и отладка"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 6.2: Writing Unit Tests
+# Лабораторная 6.2: Написание модульных тестов
 
-**Related Lesson:** [Lesson 6.2: Unit Testing with envtest](../lessons/02-unit-testing-envtest.md)  
-**Navigation:** [← Previous Lab: Testing Fundamentals](lab-01-testing-fundamentals.md) | [Module Overview](../README.md) | [Next Lab: Integration Testing →](lab-03-integration-testing.md)
+**Связанный урок:** [Урок 6.2: Модульное тестирование с envtest](../lessons/02-unit-testing-envtest.md)  
+**Навигация:** [← Предыдущая лабораторная: Основы тестирования](lab-01-testing-fundamentals.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Интеграционное тестирование →](lab-03-integration-testing.md)
 
-## Objectives
+## Цели
 
-- Write unit tests for reconciliation logic
-- Test resource creation and updates
-- Test error cases
-- Understand state machine testing patterns
-- Achieve good test coverage
+- Написать модульные тесты для логики согласования
+- Протестировать создание и обновление ресурсов
+- Протестировать случаи ошибок
+- Понять паттерны тестирования конечного автомата
+- Достичь хорошего покрытия тестами
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 6.1](lab-01-testing-fundamentals.md)
-- Test environment set up
-- Database operator ready
+- Завершение [Лабораторной 6.1](lab-01-testing-fundamentals.md)
+- Настроенная среда тестирования
+- Готовый оператор Database
 
-## Understanding the Controller
+## Понимание контроллера
 
-Before writing tests, understand that the `DatabaseReconciler` uses a **state machine pattern** with phases:
+Перед написанием тестов учтите, что `DatabaseReconciler` использует **паттерн конечного автомата** с фазами:
 - `Pending` → `Provisioning` → `Configuring` → `Deploying` → `Verifying` → `Ready`
 
-Each `Reconcile()` call advances the state by one phase. This means multiple reconcile calls are needed to fully provision a database.
+Каждый вызов `Reconcile()` продвигает состояние на одну фазу. Это означает, что для полного развёртывания базы данных нужно несколько вызовов reconcile.
 
-## Exercise 1: Test Basic Reconciliation
+## Упражнение 1: тестирование базового согласования
 
-### Task 1.1: Test Initial State Transition
+### Задача 1.1: протестируйте начальный переход состояния
 
-Update `internal/controller/database_controller_test.go` to add a new test Context. Note how we use unique resource names with `GenerateName` to avoid conflicts between tests:
+Обновите `internal/controller/database_controller_test.go`, добавив новый Context теста. Обратите внимание, как мы используем уникальные имена ресурсов с `GenerateName`, чтобы избежать конфликтов между тестами:
 
 ```go
 Context("When reconciling a new Database", func() {
@@ -107,7 +107,7 @@ Context("When reconciling a new Database", func() {
 })
 ```
 
-**Required imports** (add to your import block):
+**Необходимые импорты** (добавьте в блок import):
 
 ```go
 import (
@@ -130,11 +130,11 @@ import (
 )
 ```
 
-## Exercise 2: Test Resource Creation Through State Machine
+## Упражнение 2: тестирование создания ресурсов через конечный автомат
 
-### Task 2.1: Test StatefulSet Creation
+### Задача 2.1: протестируйте создание StatefulSet
 
-The StatefulSet is created during the `Provisioning` phase. Test this by running multiple reconcile calls:
+StatefulSet создаётся во время фазы `Provisioning`. Протестируйте это, выполнив несколько вызовов reconcile:
 
 ```go
 Context("When progressing through provisioning", func() {
@@ -212,9 +212,9 @@ Context("When progressing through provisioning", func() {
 })
 ```
 
-## Exercise 3: Test Error Cases
+## Упражнение 3: тестирование случаев ошибок
 
-### Task 3.1: Test Missing Resource
+### Задача 3.1: протестируйте отсутствующий ресурс
 
 ```go
 Context("When Database is not found", func() {
@@ -239,7 +239,7 @@ Context("When Database is not found", func() {
 })
 ```
 
-### Task 3.2: Test Finalizer Addition
+### Задача 3.2: протестируйте добавление финализатора
 
 ```go
 var _ = Describe("Database validation", func() {
@@ -301,9 +301,9 @@ var _ = Describe("Database validation", func() {
 })
 ```
 
-## Exercise 4: Test Service Creation
+## Упражнение 4: тестирование создания Service
 
-### Task 4.1: Test Service Creation in Configuring Phase
+### Задача 4.1: протестируйте создание Service в фазе Configuring
 
 ```go
 Context("When in Configuring phase", func() {
@@ -372,9 +372,9 @@ Context("When in Configuring phase", func() {
 })
 ```
 
-## Exercise 5: Test Coverage
+## Упражнение 5: покрытие тестами
 
-### Task 5.1: Check Coverage
+### Задача 5.1: проверьте покрытие
 
 ```bash
 # Run tests with coverage
@@ -391,48 +391,48 @@ go tool cover -html=coverage.out -o coverage.html
 open coverage.html  # macOS
 ```
 
-### Task 5.2: Improve Coverage
+### Задача 5.2: улучшите покрытие
 
-Add tests for:
-- Deletion handling with finalizer cleanup
-- Status condition updates
-- Different replica counts
-- Image changes
+Добавьте тесты для:
+- Обработки удаления с очисткой финализатора
+- Обновлений условий статуса
+- Разного количества реплик
+- Изменений образа
 
-## Cleanup
+## Очистка
 
-The `AfterEach` blocks in each test Context handle cleanup automatically by:
-1. Removing finalizers (to allow deletion)
-2. Deleting the test Database resource
+Блоки `AfterEach` в каждом Context теста обрабатывают очистку автоматически, выполняя:
+1. Удаление финализаторов (чтобы разрешить удаление)
+2. Удаление тестового ресурса Database
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Wrote unit tests following the Kubebuilder scaffolding pattern
-- Tested state machine transitions
-- Tested resource creation (Secret, StatefulSet, Service)
-- Tested error cases (missing resources)
-- Tested finalizer addition
-- Checked test coverage
+В этой лабораторной вы:
+- Написали модульные тесты по паттерну каркаса Kubebuilder
+- Протестировали переходы конечного автомата
+- Протестировали создание ресурсов (Secret, StatefulSet, Service)
+- Протестировали случаи ошибок (отсутствующие ресурсы)
+- Протестировали добавление финализатора
+- Проверили покрытие тестами
 
-## Key Learnings
+## Ключевые уроки
 
-1. **State machine testing** - Controllers with phases need multiple reconcile calls
-2. **Use unique resource names** - Avoid test conflicts with unique names per test
-3. **Proper cleanup** - Remove finalizers before deletion in `AfterEach`
-4. **Use `k8sClient.Scheme()`** - Not `scheme.Scheme` for reconciler initialization
-5. **Use `reconcile.Request`** - The standard type for test requests
-6. **Use `k8s.io/utils/ptr`** - For pointer helpers like `ptr.To(int32(1))`
-7. **envtest provides real API** - Tests run against actual Kubernetes API server
+1. **Тестирование конечного автомата** — контроллерам с фазами нужно несколько вызовов reconcile
+2. **Используйте уникальные имена ресурсов** — избегайте конфликтов тестов с уникальными именами для каждого теста
+3. **Правильная очистка** — удаляйте финализаторы перед удалением в `AfterEach`
+4. **Используйте `k8sClient.Scheme()`** — а не `scheme.Scheme` для инициализации реконсайлера
+5. **Используйте `reconcile.Request`** — стандартный тип для тестовых запросов
+6. **Используйте `k8s.io/utils/ptr`** — для помощников указателей, таких как `ptr.To(int32(1))`
+7. **envtest предоставляет реальный API** — тесты выполняются на настоящем API-сервере Kubernetes
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Test Suite Setup](../solutions/suite_test.go) - Complete test suite with envtest
-- [Unit Test Examples](../solutions/database_controller_test.go) - Basic controller test structure
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Test Suite Setup](../solutions/suite_test.go) — полный набор тестов с envtest
+- [Unit Test Examples](../solutions/database_controller_test.go) — базовая структура теста контроллера
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's create integration tests for end-to-end scenarios!
+Теперь давайте создадим интеграционные тесты для сквозных сценариев!
 
-**Navigation:** [← Previous Lab: Testing Fundamentals](lab-01-testing-fundamentals.md) | [Related Lesson](../lessons/02-unit-testing-envtest.md) | [Next Lab: Integration Testing →](lab-03-integration-testing.md)
+**Навигация:** [← Предыдущая лабораторная: Основы тестирования](lab-01-testing-fundamentals.md) | [Связанный урок](../lessons/02-unit-testing-envtest.md) | [Следующая лабораторная: Интеграционное тестирование →](lab-03-integration-testing.md)

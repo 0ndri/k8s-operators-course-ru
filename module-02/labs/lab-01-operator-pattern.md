@@ -2,45 +2,45 @@
 layout: default
 title: "Lab 02.1: Operator Pattern"
 nav_order: 11
-parent: "Module 2: Introduction to Operators"
-grand_parent: Modules
+parent: "Модуль 2: Введение в операторы"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 2.1: Exploring Existing Operators
+# Лабораторная 2.1: Исследование существующих операторов
 
-**Related Lesson:** [Lesson 2.1: The Operator Pattern](../lessons/01-operator-pattern.md)  
-**Navigation:** [Module Overview](../README.md) | [Next Lab: Kubebuilder Fundamentals →](lab-02-kubebuilder-fundamentals.md)
+**Связанный урок:** [Урок 2.1: Паттерн оператора](../lessons/01-operator-pattern.md)  
+**Навигация:** [Обзор модуля](../README.md) | [Следующая лабораторная: Основы Kubebuilder →](lab-02-kubebuilder-fundamentals.md)
 
-## Objectives
+## Цели
 
-- Explore existing operators in the Kubernetes ecosystem
-- Understand operator structure and behavior
-- Compare operator vs Helm deployments
-- Identify use cases for operators
+- Исследовать существующие операторы в экосистеме Kubernetes
+- Понять структуру и поведение оператора
+- Сравнить развёртывание через оператор и через Helm
+- Определить сценарии использования операторов
 
-## Prerequisites
+## Предварительные требования
 
-- Kind cluster running
-- kubectl configured
-- Understanding of CRDs from [Module 1](../module-01/README.md)
+- Запущенный кластер kind
+- Настроенный kubectl
+- Понимание CRD из [Модуля 1](../module-01/README.md)
 
-## Exercise 1: Explore OperatorHub
+## Упражнение 1: изучение OperatorHub
 
-### Task 1.1: Browse OperatorHub
+### Задача 1.1: просмотрите OperatorHub
 
-1. Visit [OperatorHub.io](https://operatorhub.io/)
-2. Browse available operators
-3. Look for operators you recognize (Prometheus, PostgreSQL, etc.)
+1. Зайдите на [OperatorHub.io](https://operatorhub.io/)
+2. Просмотрите доступные операторы
+3. Найдите знакомые вам операторы (Prometheus, PostgreSQL и т. д.)
 
-**Questions to Answer:**
-1. What categories of operators exist?
-2. What are some popular operators?
-3. What problems do they solve?
+**Вопросы для ответа:**
+1. Какие категории операторов существуют?
+2. Какие популярные операторы есть?
+3. Какие проблемы они решают?
 
-### Task 1.2: Examine Operator Structure
+### Задача 1.2: изучите структуру оператора
 
-Pick an operator (e.g., Prometheus Operator) and examine:
+Выберите оператор (например, Prometheus Operator) и изучите:
 
 ```bash
 # Search for operator documentation
@@ -50,11 +50,11 @@ Pick an operator (e.g., Prometheus Operator) and examine:
 # - Use cases
 ```
 
-## Exercise 2: Install and Explore an Operator
+## Упражнение 2: установка и исследование оператора
 
-### Task 2.1: Install Prometheus Operator (Optional)
+### Задача 2.1: установите Prometheus Operator (опционально)
 
-If you want to explore a real operator:
+Если вы хотите исследовать реальный оператор:
 
 ```bash
 # Install using Helm (for exploration)
@@ -65,9 +65,9 @@ helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack
 ```
 
-**Note:** This is just for exploration. We'll build our own operators in this course.
+**Примечание:** это только для ознакомления. Собственные операторы мы будем создавать в этом курсе.
 
-### Task 2.2: Examine Operator Resources
+### Задача 2.2: изучите ресурсы оператора
 
 ```bash
 # List CRDs created by operator
@@ -80,49 +80,49 @@ kubectl get crd prometheuses.monitoring.coreos.com -o yaml | head -50
 kubectl get deployments -n default | grep prometheus
 ```
 
-## Exercise 3: Compare Operator vs Helm
+## Упражнение 3: сравнение оператора и Helm
 
-### Task 3.1: Understand the Difference
+### Задача 3.1: разберитесь в различии
 
-**Helm Deployment:**
+**Развёртывание через Helm:**
 ```bash
 # Helm installs once
 helm install my-app ./chart
 # No ongoing management
 ```
 
-**Operator Deployment:**
+**Развёртывание через оператор:**
 ```bash
 # Operator continuously manages
 kubectl apply -f custom-resource.yaml
 # Operator reconciles continuously
 ```
 
-### Task 3.2: Identify Use Cases
+### Задача 3.2: определите сценарии использования
 
-For each scenario, decide: Operator or Helm?
+Для каждого сценария решите: оператор или Helm?
 
-1. **Simple web application deployment**
-   - Answer: Helm (one-time setup)
+1. **Развёртывание простого веб-приложения**
+   - Ответ: Helm (разовая настройка)
 
-2. **PostgreSQL database with backups**
-   - Answer: Operator (complex lifecycle)
+2. **База данных PostgreSQL с резервным копированием**
+   - Ответ: оператор (сложный жизненный цикл)
 
-3. **Redis cache cluster**
-   - Answer: Operator (stateful, needs management)
+3. **Кластер кеша Redis**
+   - Ответ: оператор (stateful, требует управления)
 
-4. **Static website**
-   - Answer: Helm (simple deployment)
+4. **Статический сайт**
+   - Ответ: Helm (простое развёртывание)
 
-## Exercise 4: Analyze Operator Patterns
+## Упражнение 4: анализ паттернов операторов
 
-### Task 4.1: Operator Components
+### Задача 4.1: компоненты оператора
 
-Based on what you learned in [Module 1](../module-01/README.md), operators have:
+На основе изученного в [Модуле 1](../module-01/README.md), операторы имеют:
 
-1. **CRD** - Custom Resource Definition
-2. **Controller** - Reconciliation logic
-3. **RBAC** - Permissions
+1. **CRD** — определение пользовательского ресурса
+2. **Контроллер** — логика согласования
+3. **RBAC** — разрешения
 
 ```bash
 # If you installed an operator, examine these:
@@ -131,9 +131,9 @@ kubectl get deployments
 kubectl get clusterroles | grep <operator-name>
 ```
 
-### Task 4.2: Reconciliation Pattern
+### Задача 4.2: паттерн согласования
 
-Operators follow the same pattern you learned:
+Операторы следуют тому же паттерну, который вы изучили:
 
 ```mermaid
 graph LR
@@ -143,33 +143,33 @@ graph LR
     RESOURCES --> STATUS[Update Status]
 ```
 
-This is the same pattern from [Lesson 1.3](../../module-01/lessons/03-controller-pattern.md)!
+Это тот же паттерн из [Урока 1.3](../../module-01/lessons/03-controller-pattern.md)!
 
-## Exercise 5: Operator Capability Levels
+## Упражнение 5: уровни зрелости операторов
 
-### Task 5.1: Identify Capability Levels
+### Задача 5.1: определите уровни зрелости
 
-For each operator you explored, identify its capability level:
+Для каждого исследованного оператора определите его уровень зрелости:
 
-- **Level 1**: Basic Install
-- **Level 2**: Seamless Upgrades
-- **Level 3**: Full Lifecycle
-- **Level 4**: Deep Insights
-- **Level 5**: Auto Pilot
+- **Уровень 1**: базовая установка
+- **Уровень 2**: бесшовные обновления
+- **Уровень 3**: полный жизненный цикл
+- **Уровень 4**: глубокая аналитика
+- **Уровень 5**: автопилот
 
-### Task 5.2: Document Findings
+### Задача 5.2: задокументируйте выводы
 
-Create a simple comparison:
+Составьте простое сравнение:
 
-| Operator | Capability Level | Key Features |
+| Оператор | Уровень зрелости | Ключевые возможности |
 |----------|-----------------|--------------|
-| Example  | Level 3         | Backup, Restore |
+| Example  | Уровень 3       | Резервное копирование, восстановление |
 
-## Exercise 6: When to Build an Operator
+## Упражнение 6: когда создавать оператор
 
-### Task 6.1: Decision Tree
+### Задача 6.1: дерево решений
 
-Use the decision tree from the lesson:
+Используйте дерево решений из урока:
 
 ```mermaid
 flowchart TD
@@ -179,18 +179,18 @@ flowchart TD
     Q2 -->|Yes| OPERATOR[Use Operator]
 ```
 
-### Task 6.2: Your Use Cases
+### Задача 6.2: ваши сценарии использования
 
-Think of applications you manage. Which would benefit from operators?
+Подумайте о приложениях, которыми вы управляете. Какие из них выиграли бы от операторов?
 
-**Examples:**
-- Database with automated backups → Operator
-- Simple API service → Helm
-- Message queue cluster → Operator
+**Примеры:**
+- База данных с автоматическим резервным копированием → оператор
+- Простой API-сервис → Helm
+- Кластер очереди сообщений → оператор
 
-## Cleanup
+## Очистка
 
-If you installed operators for exploration:
+Если вы устанавливали операторы для ознакомления:
 
 ```bash
 # Remove Helm releases
@@ -201,25 +201,25 @@ helm uninstall <release-name>
 kubectl delete crd --all
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Explored existing operators in the ecosystem
-- Understood operator structure and components
-- Compared operators vs Helm charts
-- Identified when to use operators
-- Analyzed operator capability levels
+В этой лабораторной вы:
+- Исследовали существующие операторы в экосистеме
+- Разобрались в структуре и компонентах оператора
+- Сравнили операторы и Helm-чарты
+- Определили, когда использовать операторы
+- Проанализировали уровни зрелости операторов
 
-## Key Learnings
+## Ключевые уроки
 
-1. Operators are controllers that manage Custom Resources
-2. Operators encode domain knowledge for application management
-3. Use operators for complex, stateful applications
-4. Operators follow the same reconciliation pattern as built-in controllers
-5. Operators provide continuous management vs one-time deployment
+1. Операторы — это контроллеры, которые управляют пользовательскими ресурсами
+2. Операторы кодируют знания предметной области для управления приложениями
+3. Используйте операторы для сложных stateful-приложений
+4. Операторы следуют тому же паттерну согласования, что и встроенные контроллеры
+5. Операторы обеспечивают непрерывное управление, а не разовое развёртывание
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand what operators are, let's learn about Kubebuilder - the tool we'll use to build them!
+Теперь, когда вы понимаете, что такое операторы, давайте изучим Kubebuilder — инструмент, который мы будем использовать для их создания!
 
-**Navigation:** [← Module Overview](../README.md) | [Related Lesson](../lessons/01-operator-pattern.md) | [Next Lab: Kubebuilder Fundamentals →](lab-02-kubebuilder-fundamentals.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Связанный урок](../lessons/01-operator-pattern.md) | [Следующая лабораторная: Основы Kubebuilder →](lab-02-kubebuilder-fundamentals.md)

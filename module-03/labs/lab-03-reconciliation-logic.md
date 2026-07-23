@@ -2,35 +2,35 @@
 layout: default
 title: "Lab 03.3: Reconciliation Logic"
 nav_order: 13
-parent: "Module 3: Building Custom Controllers"
-grand_parent: Modules
+parent: "Модуль 3: Создание кастомных контроллеров"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 3.3: Building PostgreSQL Operator
+# Лабораторная 3.3: Создание оператора PostgreSQL
 
-**Related Lesson:** [Lesson 3.3: Implementing Reconciliation Logic](../lessons/03-reconciliation-logic.md)  
-**Navigation:** [← Previous Lab: Designing API](lab-02-designing-api.md) | [Module Overview](../README.md) | [Next Lab: Client-Go →](lab-04-client-go.md)
+**Связанный урок:** [Урок 3.3: Реализация логики согласования](../lessons/03-reconciliation-logic.md)  
+**Навигация:** [← Предыдущая лабораторная: Проектирование API](lab-02-designing-api.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Client-Go →](lab-04-client-go.md)
 
-## Objectives
+## Цели
 
-- Implement reconciliation logic for PostgreSQL operator
-- Handle resource creation and updates
-- Use owner references
-- Manage Secrets for database credentials
-- Test idempotency
+- Реализовать логику согласования для оператора PostgreSQL
+- Обрабатывать создание и обновление ресурсов
+- Использовать ссылки-владельцы
+- Управлять Secret для учётных данных базы данных
+- Протестировать идемпотентность
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 3.2](lab-02-designing-api.md)
-- Database API defined
-- Understanding of reconciliation patterns
+- Завершение [Лабораторной 3.2](lab-02-designing-api.md)
+- Определённый API Database
+- Понимание паттернов согласования
 
-## Exercise 1: Implement Basic Reconciliation
+## Упражнение 1: реализация базового согласования
 
-### Task 1.1: Set Up Controller Structure
+### Задача 1.1: настройте структуру контроллера
 
-Edit `internal/controller/database_controller.go`:
+Отредактируйте `internal/controller/database_controller.go`:
 
 ```go
 package controller
@@ -105,14 +105,14 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Exercise 2: Implement Secret Management
+## Упражнение 2: реализация управления Secret
 
-The controller automatically generates a random password and stores it in a Kubernetes Secret.
-This is more secure than requiring users to specify passwords in plain text.
+Контроллер автоматически генерирует случайный пароль и хранит его в Secret Kubernetes.
+Это безопаснее, чем требовать от пользователей указывать пароли в открытом виде.
 
-### Task 2.1: Helper Functions
+### Задача 2.1: вспомогательные функции
 
-Add helper functions for Secret management:
+Добавьте вспомогательные функции для управления Secret:
 
 ```go
 // secretName returns the name of the Secret for this Database
@@ -130,7 +130,7 @@ func generatePassword(length int) (string, error) {
 }
 ```
 
-### Task 2.2: Reconcile Secret
+### Задача 2.2: согласование Secret
 
 ```go
 // reconcileSecret ensures the credentials Secret exists
@@ -181,11 +181,11 @@ func (r *DatabaseReconciler) reconcileSecret(ctx context.Context, db *databasev1
 }
 ```
 
-## Exercise 3: Implement StatefulSet Reconciliation
+## Упражнение 3: реализация согласования StatefulSet
 
-### Task 3.1: Build StatefulSet
+### Задача 3.1: постройте StatefulSet
 
-Add helper function to build StatefulSet. Note how we reference the password from the Secret:
+Добавьте вспомогательную функцию для построения StatefulSet. Обратите внимание, как мы ссылаемся на пароль из Secret:
 
 ```go
 func (r *DatabaseReconciler) buildStatefulSet(db *databasev1.Database) *appsv1.StatefulSet {
@@ -290,7 +290,7 @@ func (r *DatabaseReconciler) buildStatefulSet(db *databasev1.Database) *appsv1.S
 }
 ```
 
-### Task 3.2: Reconcile StatefulSet
+### Задача 3.2: согласование StatefulSet
 
 ```go
 func (r *DatabaseReconciler) reconcileStatefulSet(ctx context.Context, db *databasev1.Database) error {
@@ -327,9 +327,9 @@ func (r *DatabaseReconciler) reconcileStatefulSet(ctx context.Context, db *datab
 }
 ```
 
-## Exercise 4: Implement Service Reconciliation
+## Упражнение 4: реализация согласования Service
 
-### Task 4.1: Build Service
+### Задача 4.1: постройте Service
 
 ```go
 func (r *DatabaseReconciler) buildService(db *databasev1.Database) *corev1.Service {
@@ -354,7 +354,7 @@ func (r *DatabaseReconciler) buildService(db *databasev1.Database) *corev1.Servi
 }
 ```
 
-### Task 4.2: Reconcile Service
+### Задача 4.2: согласование Service
 
 ```go
 func (r *DatabaseReconciler) reconcileService(ctx context.Context, db *databasev1.Database) error {
@@ -380,11 +380,11 @@ func (r *DatabaseReconciler) reconcileService(ctx context.Context, db *databasev
 }
 ```
 
-## Exercise 5: Update Status
+## Упражнение 5: обновление статуса
 
-### Task 5.1: Implement Status Update
+### Задача 5.1: реализуйте обновление статуса
 
-The status includes the Secret name so users know where to find credentials:
+Статус включает имя Secret, чтобы пользователи знали, где найти учётные данные:
 
 ```go
 func (r *DatabaseReconciler) updateStatus(ctx context.Context, db *databasev1.Database) error {
@@ -416,13 +416,13 @@ func (r *DatabaseReconciler) updateStatus(ctx context.Context, db *databasev1.Da
 }
 ```
 
-## Exercise 6: Set Up the Controller Manager
+## Упражнение 6: настройка Controller Manager
 
-For the controller to receive events when owned resources change (e.g., when StatefulSet becomes ready), we must tell the manager to watch those resources.
+Чтобы контроллер получал события при изменении подчинённых (owned) ресурсов (например, когда StatefulSet становится готовым), нужно указать менеджеру отслеживать эти ресурсы.
 
-### Task 6.1: Configure Watches
+### Задача 6.1: настройте отслеживание
 
-Add the `SetupWithManager` function at the end of your controller:
+Добавьте функцию `SetupWithManager` в конце вашего контроллера:
 
 ```go
 // SetupWithManager sets up the controller with the Manager.
@@ -436,17 +436,17 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-**Key Points:**
-- `For(&databasev1.Database{})` - Watch Database resources (primary resource)
-- `Owns(&appsv1.StatefulSet{})` - Watch StatefulSets owned by Database (via owner reference)
-- `Owns(&corev1.Service{})` - Watch Services owned by Database
-- `Owns(&corev1.Secret{})` - Watch Secrets owned by Database
+**Ключевые моменты:**
+- `For(&databasev1.Database{})` — отслеживает ресурсы Database (основной ресурс)
+- `Owns(&appsv1.StatefulSet{})` — отслеживает StatefulSet, принадлежащие Database (через ссылку-владельца)
+- `Owns(&corev1.Service{})` — отслеживает Service, принадлежащие Database
+- `Owns(&corev1.Secret{})` — отслеживает Secret, принадлежащие Database
 
-This ensures that when a StatefulSet's status changes (pods become ready), the controller is notified and reconciles the parent Database to update its status.
+Это гарантирует, что при изменении статуса StatefulSet (поды становятся готовы) контроллер получает уведомление и согласовывает родительский Database, чтобы обновить его статус.
 
-## Exercise 7: Test the Operator
+## Упражнение 7: тестирование оператора
 
-### Task 7.1: Install and Run
+### Задача 7.1: установите и запустите
 
 ```bash
 # Install CRD
@@ -456,7 +456,7 @@ make install
 make run
 ```
 
-### Task 7.2: Create Database
+### Задача 7.2: создайте Database
 
 ```bash
 # Create Database resource (no password needed - it's auto-generated!)
@@ -475,7 +475,7 @@ spec:
 EOF
 ```
 
-### Task 7.3: Observe Reconciliation
+### Задача 7.3: наблюдайте за согласованием
 
 ```bash
 # Watch Database status
@@ -496,9 +496,9 @@ kubectl get secret my-database-credentials -o jsonpath='{.data.password}' | base
 # Check operator logs
 ```
 
-## Exercise 8: Test Idempotency
+## Упражнение 8: тестирование идемпотентности
 
-### Task 8.1: Apply Multiple Times
+### Задача 8.1: примените несколько раз
 
 ```bash
 # Apply the same resource multiple times
@@ -511,7 +511,7 @@ done
 kubectl get statefulsets | grep my-database
 ```
 
-### Task 8.2: Test Updates
+### Задача 8.2: протестируйте обновления
 
 ```bash
 # Update replicas
@@ -521,7 +521,7 @@ kubectl patch database my-database --type merge -p '{"spec":{"replicas":2}}'
 kubectl get statefulset my-database -o jsonpath='{.spec.replicas}'
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete Database (should cascade delete StatefulSet, Service, and Secret)
@@ -533,37 +533,37 @@ kubectl get service my-database
 kubectl get secret my-database-credentials
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Implemented complete reconciliation logic
-- Created Secret with auto-generated password
-- Created StatefulSet and Service
-- Used owner references for all resources
-- Configured watches with `Owns()` to react to owned resource changes
-- Updated status with Secret name
-- Tested idempotency
-- Verified cascade deletion
+В этой лабораторной вы:
+- Реализовали полную логику согласования
+- Создали Secret с автоматически сгенерированным паролем
+- Создали StatefulSet и Service
+- Использовали ссылки-владельцы для всех ресурсов
+- Настроили отслеживание с помощью `Owns()`, чтобы реагировать на изменения подчинённых ресурсов
+- Обновили статус именем Secret
+- Протестировали идемпотентность
+- Проверили каскадное удаление
 
-## Key Learnings
+## Ключевые уроки
 
-1. Reconciliation follows: read, compare, create/update, status
-2. Owner references ensure cascade deletion
-3. **Use `Owns()` to watch owned resources** - without this, the controller won't be notified when StatefulSet/Service/Secret status changes
-4. Idempotency is crucial
-5. Secrets should be auto-generated, not user-provided in plain text
-6. Status updates reflect actual state and provide useful info (like Secret name)
-7. Error handling is important
-8. Logging helps debugging
+1. Согласование следует схеме: чтение, сравнение, создание/обновление, статус
+2. Ссылки-владельцы обеспечивают каскадное удаление
+3. **Используйте `Owns()` для отслеживания подчинённых ресурсов** — без этого контроллер не получит уведомление при изменении статуса StatefulSet/Service/Secret
+4. Идемпотентность критически важна
+5. Secret должны генерироваться автоматически, а не предоставляться пользователем в открытом виде
+6. Обновления статуса отражают фактическое состояние и предоставляют полезную информацию (например, имя Secret)
+7. Обработка ошибок важна
+8. Логирование помогает при отладке
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Database Types](../solutions/database-types.go) - Complete Database API type definitions
-- [Database Controller](../solutions/database-controller.go) - Complete controller with Secret/StatefulSet/Service reconciliation
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Database Types](../solutions/database-types.go) — полные определения типов API Database
+- [Database Controller](../solutions/database-controller.go) — полный контроллер с согласованием Secret/StatefulSet/Service
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's learn advanced client operations for more sophisticated controllers!
+Теперь давайте изучим продвинутые операции клиента для более совершенных контроллеров!
 
-**Navigation:** [← Previous Lab: Designing API](lab-02-designing-api.md) | [Related Lesson](../lessons/03-reconciliation-logic.md) | [Next Lab: Client-Go →](lab-04-client-go.md)
+**Навигация:** [← Предыдущая лабораторная: Проектирование API](lab-02-designing-api.md) | [Связанный урок](../lessons/03-reconciliation-logic.md) | [Следующая лабораторная: Client-Go →](lab-04-client-go.md)

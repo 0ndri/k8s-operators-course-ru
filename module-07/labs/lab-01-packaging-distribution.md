@@ -2,37 +2,37 @@
 layout: default
 title: "Lab 07.1: Packaging Distribution"
 nav_order: 11
-parent: "Module 7: Production Considerations"
-grand_parent: Modules
+parent: "Модуль 7: Подготовка к продакшену"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 7.1: Packaging Your Operator
+# Лабораторная 7.1: Упаковка вашего оператора
 
-**Related Lesson:** [Lesson 7.1: Packaging and Distribution](../lessons/01-packaging-distribution.md)  
-**Navigation:** [Module Overview](../README.md) | [Next Lab: RBAC →](lab-02-rbac-security.md)
+**Связанный урок:** [Урок 7.1: Упаковка и распространение](../lessons/01-packaging-distribution.md)  
+**Навигация:** [Обзор модуля](../README.md) | [Следующая лабораторная: RBAC →](lab-02-rbac-security.md)
 
-## Objectives
+## Цели
 
-- Build container image for operator
-- Create Helm chart for deployment
-- Tag and version images properly
-- Push to container registry
+- Собрать образ контейнера для оператора
+- Создать Helm-чарт для развёртывания
+- Правильно расставить теги и версии образов
+- Опубликовать в реестр контейнеров
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Module 6](../../module-06/README.md)
-- Database operator ready
-- Docker or Podman installed
-- Access to container registry (or use kind for local)
+- Завершение [Модуля 6](../../module-06/README.md)
+- Готовый оператор Database
+- Установленный Docker или Podman
+- Доступ к реестру контейнеров (или используйте kind локально)
 
-## Exercise 1: Build Container Image
+## Упражнение 1: сборка образа контейнера
 
-Kubebuilder already generated a production-ready Dockerfile when you scaffolded your project. Let's explore and use it.
+Kubebuilder уже сгенерировал готовый к продакшену Dockerfile при создании каркаса вашего проекта. Изучим и используем его.
 
-### Task 1.1: Review the Kubebuilder-Generated Dockerfile
+### Задача 1.1: изучите Dockerfile, сгенерированный Kubebuilder
 
-Kubebuilder creates a `Dockerfile` in your project root. Review it:
+Kubebuilder создаёт `Dockerfile` в корне проекта. Изучите его:
 
 ```bash
 # Navigate to your operator project from module 3
@@ -42,7 +42,7 @@ cd ~/postgres-operator
 cat Dockerfile
 ```
 
-The generated Dockerfile should look like:
+Сгенерированный Dockerfile должен выглядеть так:
 
 ```dockerfile
 # Build stage
@@ -72,13 +72,13 @@ USER 65532:65532
 ENTRYPOINT ["/manager"]
 ```
 
-**Important:** The entire `internal/` directory is copied, which includes:
-- `internal/controller/` - Your controller reconciliation logic
-- `internal/webhook/` - Webhook handlers (created in Module 5)
+**Важно:** копируется весь каталог `internal/`, который включает:
+- `internal/controller/` — логику согласования вашего контроллера
+- `internal/webhook/` — обработчики вебхуков (созданные в Модуле 5)
 
-### Task 1.2: Build Image Using Makefile
+### Задача 1.2: соберите образ с помощью Makefile
 
-Kubebuilder provides Makefile targets for building images:
+Kubebuilder предоставляет цели Makefile для сборки образов:
 
 ```bash
 # Build the image using kubebuilder's make target
@@ -91,11 +91,11 @@ kind load docker-image postgres-operator:v0.1.0 --name k8s-operators-course
 docker exec -it k8s-operators-course-control-plane crictl images | grep postgres-operator
 ```
 
-## Exercise 2: Deploy Using Kubebuilder's Kustomize (Recommended)
+## Упражнение 2: развёртывание с помощью Kustomize от Kubebuilder (рекомендуется)
 
-Kubebuilder uses Kustomize for deployment by default. This is the recommended approach.
+Kubebuilder по умолчанию использует Kustomize для развёртывания. Это рекомендуемый подход.
 
-### Task 2.1: Review Kustomize Configuration
+### Задача 2.1: изучите конфигурацию Kustomize
 
 ```bash
 # Explore the config directory structure
@@ -108,7 +108,7 @@ ls -la config/
 # config/rbac/      - RBAC rules
 ```
 
-### Task 2.2: Deploy with Kustomize
+### Задача 2.2: разверните с помощью Kustomize
 
 ```bash
 # Install CRDs
@@ -122,7 +122,7 @@ kubectl get deployment -n postgres-operator-system
 kubectl get pods -n postgres-operator-system
 ```
 
-### Task 2.3: View Generated Manifests
+### Задача 2.3: просмотрите сгенерированные манифесты
 
 ```bash
 # Preview what will be deployed
@@ -132,20 +132,20 @@ kustomize build config/default
 make build-installer IMG=postgres-operator:v0.1.0
 ```
 
-## Exercise 3: Create Helm Chart from Kustomize
+## Упражнение 3: создание Helm-чарта из Kustomize
 
-For wider distribution, you can generate a Helm chart from your Kustomize manifests. The chart must include **all operator components**:
+Для более широкого распространения вы можете сгенерировать Helm-чарт из ваших манифестов Kustomize. Чарт должен включать **все компоненты оператора**:
 
-- **CRDs** - Custom Resource Definitions (from `config/crd/`)
-- **RBAC** - ServiceAccount, ClusterRole, ClusterRoleBinding (from `config/rbac/`)
-- **Deployment** - Controller manager (from `config/manager/`)
-- **Webhooks** - If created in Module 5 (from `config/webhook/`)
+- **CRD** — определения пользовательских ресурсов (из `config/crd/`)
+- **RBAC** — ServiceAccount, ClusterRole, ClusterRoleBinding (из `config/rbac/`)
+- **Deployment** — менеджер-контроллер (из `config/manager/`)
+- **Вебхуки** — если созданы в Модуле 5 (из `config/webhook/`)
 
-**Important:** A Helm chart with only the Deployment won't work! The operator needs all these components to function.
+**Важно:** Helm-чарт только с Deployment работать не будет! Оператору нужны все эти компоненты для работы.
 
-### Task 3.1: Add Helm Chart Make Target
+### Задача 3.1: добавьте цель Makefile для Helm-чарта
 
-Add these targets to your `Makefile`:
+Добавьте эти цели в ваш `Makefile`:
 
 ```makefile
 # Helm chart configuration
@@ -220,7 +220,7 @@ helm-uninstall: ## Uninstall Helm chart
 	helm uninstall $(CHART_NAME) --namespace $(CHART_NAME)-system
 ```
 
-### Task 3.2: Generate and Verify the Helm Chart
+### Задача 3.2: сгенерируйте и проверьте Helm-чарт
 
 ```bash
 # Generate Helm chart from Kustomize
@@ -249,7 +249,7 @@ make helm-lint
 make helm-template | head -100
 ```
 
-### Task 3.3: Package and Test the Chart
+### Задача 3.3: упакуйте и протестируйте чарт
 
 ```bash
 # Package the chart
@@ -268,13 +268,13 @@ kubectl get pods -n postgres-operator-system
 make helm-uninstall
 ```
 
-## Exercise 4: GitHub Actions for CI/CD
+## Упражнение 4: GitHub Actions для CI/CD
 
-Automate chart publishing with GitHub Actions.
+Автоматизируйте публикацию чарта с помощью GitHub Actions.
 
-### Task 4.1: Create GitHub Actions Workflow
+### Задача 4.1: создайте workflow GitHub Actions
 
-Create `.github/workflows/release.yaml`:
+Создайте `.github/workflows/release.yaml`:
 
 ```yaml
 name: Release
@@ -366,9 +366,9 @@ jobs:
           files: dist/*.tgz
 ```
 
-### Task 4.2: Create Helm Chart Repository (Alternative)
+### Задача 4.2: создайте репозиторий Helm-чартов (альтернатива)
 
-For a traditional Helm repository using GitHub Pages, create `.github/workflows/helm-release.yaml`:
+Для традиционного репозитория Helm на GitHub Pages создайте `.github/workflows/helm-release.yaml`:
 
 ```yaml
 name: Helm Chart Release
@@ -409,9 +409,9 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 ```
 
-### Task 4.3: Add Repository Documentation
+### Задача 4.3: добавьте документацию репозитория
 
-Create `charts/README.md`:
+Создайте `charts/README.md`:
 
 ```markdown
 # Database Operator Helm Chart
@@ -449,7 +449,7 @@ helm install postgres-operator postgres-operator/postgres-operator
 | `resources.limits.memory` | Memory limit | `128Mi` |
 
 
-### Task 4.4: Test the Workflow Locally (Optional)
+### Задача 4.4: протестируйте workflow локально (опционально)
 
 ```bash
 # Create a test tag
@@ -459,11 +459,11 @@ git push origin v0.1.0
 # Watch the Actions tab in GitHub for workflow execution
 ```
 
-## Exercise 5: Version and Tag
+## Упражнение 5: версионирование и теги
 
-### Task 5.1: Version Your Operator
+### Задача 5.1: задайте версию вашего оператора
 
-Update the version in `Makefile`:
+Обновите версию в `Makefile`:
 
 ```makefile
 # Image URL to use all building/pushing image targets
@@ -471,7 +471,7 @@ IMG ?= postgres-operator:v0.1.0
 VERSION ?= 0.1.0
 ```
 
-Or specify at build time:
+Или укажите её при сборке:
 
 ```bash
 # Build with specific version
@@ -481,7 +481,7 @@ make docker-build IMG=postgres-operator:v0.1.0
 make docker-buildx IMG=postgres-operator:v0.1.0
 ```
 
-### Task 5.2: Push to Registry
+### Задача 5.2: опубликуйте в реестр
 
 ```bash
 # Tag for your registry
@@ -494,7 +494,7 @@ docker push ghcr.io/your-username/postgres-operator:v0.1.0
 make docker-push IMG=ghcr.io/your-username/postgres-operator:v0.1.0
 ```
 
-### Task 5.3: Deploy Specific Version
+### Задача 5.3: разверните конкретную версию
 
 ```bash
 # Deploy with Kustomize
@@ -507,7 +507,7 @@ make helm-install IMG=ghcr.io/your-username/postgres-operator:v0.1.0
 kubectl get deployment -n postgres-operator-system -o yaml | grep image:
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Undeploy the operator (Kustomize)
@@ -526,35 +526,35 @@ docker rmi postgres-operator:v0.1.0
 rm -rf charts/ dist/
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Reviewed kubebuilder's generated Dockerfile
-- Built container images using `make docker-build`
-- Deployed using kubebuilder's Kustomize configuration
-- Created a make target to generate Helm charts from Kustomize
-- Set up GitHub Actions for automated releases
-- Tagged and versioned images properly
+В этой лабораторной вы:
+- Изучили Dockerfile, сгенерированный kubebuilder
+- Собрали образы контейнеров с помощью `make docker-build`
+- Развернули с использованием конфигурации Kustomize от kubebuilder
+- Создали цель make для генерации Helm-чартов из Kustomize
+- Настроили GitHub Actions для автоматизированных релизов
+- Правильно расставили теги и версии образов
 
-## Key Learnings
+## Ключевые уроки
 
-1. Kubebuilder generates a production-ready Dockerfile
-2. Use `make docker-build` and `make docker-push` for images
-3. Use `make deploy` for Kustomize-based deployment
-4. `make helm-chart` generates Helm charts from Kustomize manifests
-5. GitHub Actions automate image and chart publishing
-6. OCI registries (like GHCR) can host both images AND Helm charts
-7. Semantic versioning tracks operator releases
+1. Kubebuilder генерирует готовый к продакшену Dockerfile
+2. Используйте `make docker-build` и `make docker-push` для образов
+3. Используйте `make deploy` для развёртывания на основе Kustomize
+4. `make helm-chart` генерирует Helm-чарты из манифестов Kustomize
+5. GitHub Actions автоматизируют публикацию образов и чартов
+6. OCI-реестры (например, GHCR) могут хранить и образы, И Helm-чарты
+7. Семантическое версионирование отслеживает релизы оператора
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Dockerfile](../solutions/Dockerfile) - Production-ready multi-stage Dockerfile
-- [Helm Chart](../solutions/helm-chart/) - Complete Helm chart (Chart.yaml, values.yaml, templates)
-- [GitHub Actions](../solutions/github-actions/) - CI/CD workflows for releases
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Dockerfile](../solutions/Dockerfile) — готовый к продакшену многоэтапный Dockerfile
+- [Helm Chart](../solutions/helm-chart/) — полный Helm-чарт (Chart.yaml, values.yaml, templates)
+- [GitHub Actions](../solutions/github-actions/) — CI/CD-workflows для релизов
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's configure proper RBAC and security!
+Теперь давайте настроим корректный RBAC и безопасность!
 
-**Navigation:** [← Module Overview](../README.md) | [Related Lesson](../lessons/01-packaging-distribution.md) | [Next Lab: RBAC →](lab-02-rbac-security.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Связанный урок](../lessons/01-packaging-distribution.md) | [Следующая лабораторная: RBAC →](lab-02-rbac-security.md)

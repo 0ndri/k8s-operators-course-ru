@@ -1,110 +1,109 @@
 ---
 layout: default
-title: "Module 3: Building Custom Controllers"
+title: "Модуль 3: Создание кастомных контроллеров"
 nav_order: 3
-parent: Modules
+parent: Модули
 has_children: true
 has_toc: false
 permalink: /module-03/
 mermaid: true
 ---
 
-# Module 3: Building Custom Controllers
+# Модуль 3: Создание кастомных контроллеров
 
-## Overview
+## Обзор
 
-Now that you've built your first operator in [Module 2](../module-02/README.md), it's time to dive deeper into building sophisticated controllers. This module teaches you the advanced patterns and techniques needed to build production-ready operators that manage complex applications.
+Теперь, когда вы создали свой первый оператор в [Модуле 2](../module-02/README.md), пришло время глубже погрузиться в создание совершенных контроллеров. Этот модуль обучает продвинутым паттернам и приёмам, необходимым для создания готовых к продакшену операторов, управляющих сложными приложениями.
 
-**Duration:** 6-7 hours  
-**Prerequisites:** 
-- Completion of [Module 1: Kubernetes Architecture Deep Dive](../module-01/README.md)
-- Completion of [Module 2: Introduction to Operators](../module-02/README.md)
-- Understanding of the basic operator pattern
+**Продолжительность:** 6–7 часов  
+**Предварительные требования:** 
+- Завершение [Модуля 1: Глубокое погружение в архитектуру Kubernetes](../module-01/README.md)
+- Завершение [Модуля 2: Введение в операторы](../module-02/README.md)
+- Понимание базового паттерна оператора
 
-## Learning Objectives
+## Цели обучения
 
-By the end of this module, you will:
+К концу этого модуля вы:
 
-- Understand controller-runtime architecture in depth
-- Design well-structured APIs for your operators
-- Implement robust reconciliation logic
-- Work effectively with the Kubernetes client
-- Build a database operator that manages PostgreSQL
+- Глубоко разберётесь в архитектуре controller-runtime
+- Спроектируете хорошо структурированные API для своих операторов
+- Реализуете надёжную логику согласования
+- Научитесь эффективно работать с клиентом Kubernetes
+- Создадите оператор базы данных, управляющий PostgreSQL
 
-## Module Structure
+## Структура модуля
 
-1. **[Lesson 3.1: Controller Runtime Deep Dive](lessons/01-controller-runtime.md)**
-   - [Lab 3.1: Exploring Controller Runtime](labs/lab-01-controller-runtime.md)
+1. **[Урок 3.1: Глубокое погружение в Controller Runtime](lessons/01-controller-runtime.md)**
+   - [Лабораторная 3.1: Исследование Controller Runtime](labs/lab-01-controller-runtime.md)
 
-2. **[Lesson 3.2: Designing Your API](lessons/02-designing-api.md)**
-   - [Lab 3.2: API Design for Database Operator](labs/lab-02-designing-api.md)
+2. **[Урок 3.2: Проектирование вашего API](lessons/02-designing-api.md)**
+   - [Лабораторная 3.2: Проектирование API для оператора базы данных](labs/lab-02-designing-api.md)
 
-3. **[Lesson 3.3: Implementing Reconciliation Logic](lessons/03-reconciliation-logic.md)**
-   - [Lab 3.3: Building PostgreSQL Operator](labs/lab-03-reconciliation-logic.md)
+3. **[Урок 3.3: Реализация логики согласования](lessons/03-reconciliation-logic.md)**
+   - [Лабораторная 3.3: Создание оператора PostgreSQL](labs/lab-03-reconciliation-logic.md)
 
-4. **[Lesson 3.4: Working with Client-Go](lessons/04-client-go.md)**
-   - [Lab 3.4: Advanced Client Operations](labs/lab-04-client-go.md)
+4. **[Урок 3.4: Работа с Client-Go](lessons/04-client-go.md)**
+   - [Лабораторная 3.4: Продвинутые операции клиента](labs/lab-04-client-go.md)
 
-## Prerequisites Check
+## Проверка предварительных требований
 
-Before starting, ensure you've completed:
+Перед началом убедитесь, что вы завершили:
 
-- ✅ [Module 1](../module-01/README.md): Understand CRDs, controllers, and reconciliation
-- ✅ [Module 2](../module-02/README.md): Built your first "Hello World" operator
-- ✅ Can scaffold kubebuilder projects
-- ✅ Understand the Reconcile function basics
+- ✅ [Модуль 1](../module-01/README.md): понимание CRD, контроллеров и согласования
+- ✅ [Модуль 2](../module-02/README.md): создание вашего первого оператора «Hello World»
+- ✅ Умение генерировать каркас проектов kubebuilder
+- ✅ Понимание основ функции Reconcile
 
-If you haven't completed Module 2, start with [Module 2: Introduction to Operators](../module-02/README.md).
+Если вы не завершили Модуль 2, начните с [Модуля 2: Введение в операторы](../module-02/README.md).
 
-## What You'll Build
+## Что вы создадите
 
-Throughout this module, you'll build a **PostgreSQL operator** that:
+На протяжении этого модуля вы будете создавать **оператор PostgreSQL**, который:
 
-- Manages PostgreSQL database instances
-- Handles database creation and configuration
-- Manages StatefulSets and Services
-- Implements proper reconciliation logic
-- Uses owner references for resource management
+- Управляет экземплярами баз данных PostgreSQL
+- Обрабатывает создание и конфигурацию базы данных
+- Управляет StatefulSet и Service
+- Реализует корректную логику согласования
+- Использует ссылки-владельцы для управления ресурсами
 
-This builds on your "Hello World" operator from Module 2, adding complexity and real-world patterns.
+Это развивает ваш оператор «Hello World» из Модуля 2, добавляя сложность и реальные паттерны.
 
-## Setup
+## Настройка
 
-Before starting this module:
+Перед началом этого модуля:
 
-1. **Verify Module 2 completion:**
-   - You should have built a "Hello World" operator
-   - You understand kubebuilder project structure
-   - You can run operators locally
+1. **Проверьте завершение Модуля 2:**
+   - Вы должны были создать оператор «Hello World»
+   - Вы понимаете структуру проекта kubebuilder
+   - Вы умеете запускать операторы локально
 
-2. **Ensure development environment is ready:**
+2. **Убедитесь, что среда разработки готова:**
    ```bash
    ./scripts/setup-dev-environment.sh
    ```
 
-3. **Have a kind cluster running:**
+3. **Запущенный кластер kind:**
    ```bash
    ./scripts/setup-kind-cluster.sh
    ```
 
-## Hands-on Labs
+## Практические лабораторные работы
 
-Each lesson includes hands-on exercises building toward a complete PostgreSQL operator.
+Каждый урок включает практические упражнения, ведущие к созданию полноценного оператора PostgreSQL.
 
-- [Lab 3.1: Exploring Controller Runtime](labs/lab-01-controller-runtime.md)
-- [Lab 3.2: API Design for Database Operator](labs/lab-02-designing-api.md)
-- [Lab 3.3: Building PostgreSQL Operator](labs/lab-03-reconciliation-logic.md)
-- [Lab 3.4: Advanced Client Operations](labs/lab-04-client-go.md)
+- [Лабораторная 3.1: Исследование Controller Runtime](labs/lab-01-controller-runtime.md)
+- [Лабораторная 3.2: Проектирование API для оператора базы данных](labs/lab-02-designing-api.md)
+- [Лабораторная 3.3: Создание оператора PostgreSQL](labs/lab-03-reconciliation-logic.md)
+- [Лабораторная 3.4: Продвинутые операции клиента](labs/lab-04-client-go.md)
 
-## Solutions
+## Решения
 
-Complete working solutions for all labs are available in the [solutions directory](solutions/):
-- [Lab 3.3 Solutions](solutions/) - Complete Database operator (types, controller with StatefulSet/Service)
+Полные рабочие решения для всех лабораторных доступны в [каталоге решений](solutions/):
+- [Решения лабораторной 3.3](solutions/) — полный оператор Database (типы, контроллер с StatefulSet/Service)
 
 
-## Navigation
+## Навигация
 
-- [← Previous: Module 2 - Introduction to Operators](../module-02/README.md)
-- [Course Overview](../README.md)
-- [Next: Module 4 - Advanced Reconciliation Patterns →](../module-04/README.md)
-
+- [← Предыдущий: Модуль 2 — Введение в операторы](../module-02/README.md)
+- [Обзор курса](../README.md)
+- [Далее: Модуль 4 — Продвинутые паттерны согласования →](../module-04/README.md)
