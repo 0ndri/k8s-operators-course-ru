@@ -2,34 +2,34 @@
 layout: default
 title: "Lab 03.4: Client Go"
 nav_order: 14
-parent: "Module 3: Building Custom Controllers"
-grand_parent: Modules
+parent: "Модуль 3: Создание кастомных контроллеров"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 3.4: Advanced Client Operations
+# Лабораторная 3.4: Продвинутые операции клиента
 
-**Related Lesson:** [Lesson 3.4: Working with Client-Go](../lessons/04-client-go.md)  
-**Navigation:** [← Previous Lab: Reconciliation Logic](lab-03-reconciliation-logic.md) | [Module Overview](../README.md)
+**Связанный урок:** [Урок 3.4: Работа с Client-Go](../lessons/04-client-go.md)  
+**Навигация:** [← Предыдущая лабораторная: Логика согласования](lab-03-reconciliation-logic.md) | [Обзор модуля](../README.md)
 
-## Objectives
+## Цели
 
-- Use advanced client operations
-- Implement watches for dependent resources
-- Use strategic merge patches
-- Handle conflicts with retries
+- Использовать продвинутые операции клиента
+- Реализовать отслеживание зависимых ресурсов
+- Использовать strategic merge patch
+- Обрабатывать конфликты с повторами
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 3.3](lab-03-reconciliation-logic.md)
-- PostgreSQL operator from previous lab
-- Understanding of client operations
+- Завершение [Лабораторной 3.3](lab-03-reconciliation-logic.md)
+- Оператор PostgreSQL из предыдущей лабораторной
+- Понимание операций клиента
 
-## Exercise 1: List Resources with Filters
+## Упражнение 1: получение списка ресурсов с фильтрами
 
-### Task 1.1: List by Namespace
+### Задача 1.1: список по пространству имён
 
-Add a function to list all databases in a namespace:
+Добавьте функцию для получения списка всех баз данных в пространстве имён:
 
 ```go
 func (r *DatabaseReconciler) listDatabasesInNamespace(ctx context.Context, namespace string) (*databasev1.DatabaseList, error) {
@@ -39,7 +39,7 @@ func (r *DatabaseReconciler) listDatabasesInNamespace(ctx context.Context, names
 }
 ```
 
-### Task 1.2: List by Labels
+### Задача 1.2: список по меткам
 
 ```go
 func (r *DatabaseReconciler) listDatabasesByLabel(ctx context.Context, labels map[string]string) (*databasev1.DatabaseList, error) {
@@ -49,11 +49,11 @@ func (r *DatabaseReconciler) listDatabasesByLabel(ctx context.Context, labels ma
 }
 ```
 
-## Exercise 2: Implement Strategic Merge Patch
+## Упражнение 2: реализация strategic merge patch
 
-### Task 2.1: Patch StatefulSet Replicas
+### Задача 2.1: патч реплик StatefulSet
 
-Instead of full update, use patch:
+Вместо полного обновления используйте патч:
 
 ```go
 func (r *DatabaseReconciler) patchStatefulSetReplicas(ctx context.Context, statefulSet *appsv1.StatefulSet, replicas int32) error {
@@ -63,9 +63,9 @@ func (r *DatabaseReconciler) patchStatefulSetReplicas(ctx context.Context, state
 }
 ```
 
-### Task 2.2: Use in Reconciliation
+### Задача 2.2: используйте в согласовании
 
-Update your reconcileStatefulSet to use patch when only replicas change:
+Обновите свою функцию reconcileStatefulSet, чтобы использовать патч, когда меняются только реплики:
 
 ```go
 // If only replicas changed, use patch
@@ -74,11 +74,11 @@ if statefulSet.Spec.Replicas != desiredStatefulSet.Spec.Replicas {
 }
 ```
 
-## Exercise 3: Handle Conflicts
+## Упражнение 3: обработка конфликтов
 
-### Task 3.1: Implement Retry Logic
+### Задача 3.1: реализуйте логику повторов
 
-Add a helper function for conflict retries:
+Добавьте вспомогательную функцию для повторов при конфликтах:
 
 ```go
 func (r *DatabaseReconciler) updateWithRetry(ctx context.Context, obj client.Object, maxRetries int) error {
@@ -104,7 +104,7 @@ func (r *DatabaseReconciler) updateWithRetry(ctx context.Context, obj client.Obj
 }
 ```
 
-### Task 3.2: Use in Reconciliation
+### Задача 3.2: используйте в согласовании
 
 ```go
 // Use retry logic for updates
@@ -113,11 +113,11 @@ if err := r.updateWithRetry(ctx, statefulSet, 3); err != nil {
 }
 ```
 
-## Exercise 4: Watch Dependent Resources
+## Упражнение 4: отслеживание зависимых ресурсов
 
-### Task 4.1: Set Up Watch
+### Задача 4.1: настройте отслеживание
 
-Modify SetupWithManager to watch StatefulSets:
+Измените SetupWithManager, чтобы отслеживать StatefulSet:
 
 ```go
 func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -130,13 +130,13 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-### Task 4.2: Handle Watch Events
+### Задача 4.2: обработка событий отслеживания
 
-When StatefulSet changes, Database will be reconciled automatically!
+Когда StatefulSet меняется, Database будет согласован автоматически!
 
-## Exercise 5: Field Selectors
+## Упражнение 5: селекторы полей
 
-### Task 5.1: Find Databases by Owner
+### Задача 5.1: найдите базы данных по владельцу
 
 ```go
 func (r *DatabaseReconciler) findDatabasesByOwner(ctx context.Context, ownerName string) (*databasev1.DatabaseList, error) {
@@ -148,9 +148,9 @@ func (r *DatabaseReconciler) findDatabasesByOwner(ctx context.Context, ownerName
 }
 ```
 
-## Exercise 6: Test Advanced Operations
+## Упражнение 6: тестирование продвинутых операций
 
-### Task 6.1: Test Patch
+### Задача 6.1: протестируйте патч
 
 ```bash
 # Create database
@@ -178,7 +178,7 @@ kubectl get database my-database -o jsonpath='{.spec.replicas}'
 kubectl get statefulset my-database
 ```
 
-### Task 6.2: Test Conflict Handling
+### Задача 6.2: протестируйте обработку конфликтов
 
 ```bash
 # Quickly update multiple times to trigger conflicts
@@ -193,7 +193,7 @@ kubectl get database my-database -o jsonpath='{.spec.replicas}'
 kubectl get statefulset my-database
 ```
 
-### Task 6.3: Test Watch
+### Задача 6.3: протестируйте отслеживание
 
 ```bash
 # Manually delete StatefulSet
@@ -203,7 +203,7 @@ kubectl delete statefulset my-database
 kubectl get statefulset my-database
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete test resources
@@ -216,33 +216,33 @@ kubectl get service my-database
 kubectl get secret my-database-credentials
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Used advanced list operations with filters
-- Implemented strategic merge patches
-- Added conflict retry logic
-- Set up watches for dependent resources
-- Used field selectors
-- Tested all operations
+В этой лабораторной вы:
+- Использовали продвинутые операции получения списка с фильтрами
+- Реализовали strategic merge patch
+- Добавили логику повторов при конфликтах
+- Настроили отслеживание зависимых ресурсов
+- Использовали селекторы полей
+- Протестировали все операции
 
-## Key Learnings
+## Ключевые уроки
 
-1. List operations can be filtered efficiently
-2. Patches are better for partial updates
-3. Conflicts need retry logic
-4. Watches enable reactive reconciliation
-5. Field selectors provide powerful queries
-6. Advanced operations improve operator efficiency
+1. Операции получения списка можно эффективно фильтровать
+2. Патчи лучше подходят для частичных обновлений
+3. Конфликты требуют логики повторов
+4. Отслеживание обеспечивает реактивное согласование
+5. Селекторы полей предоставляют мощные запросы
+6. Продвинутые операции повышают эффективность оператора
 
-## Congratulations!
+## Поздравляем!
 
-You've completed Module 3! You now understand:
-- Controller-runtime architecture
-- API design principles
-- Reconciliation logic
-- Advanced client operations
+Вы завершили Модуль 3! Теперь вы понимаете:
+- Архитектуру controller-runtime
+- Принципы проектирования API
+- Логику согласования
+- Продвинутые операции клиента
 
-In Module 4, you'll learn advanced patterns like conditions, finalizers, and multi-phase reconciliation.
+В Модуле 4 вы изучите продвинутые паттерны, такие как условия (conditions), финализаторы и многофазное согласование.
 
-**Navigation:** [← Previous Lab: Reconciliation Logic](lab-03-reconciliation-logic.md) | [Related Lesson](../lessons/04-client-go.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущая лабораторная: Логика согласования](lab-03-reconciliation-logic.md) | [Связанный урок](../lessons/04-client-go.md) | [Обзор модуля](../README.md)

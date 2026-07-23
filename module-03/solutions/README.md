@@ -1,35 +1,34 @@
-# Module 3 Solutions
+# Решения Модуля 3
 
-This directory contains complete, working solutions for Module 3 labs.
+Этот каталог содержит полные рабочие решения для лабораторных Модуля 3.
 
-## Files
+## Файлы
 
-- [**database-types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-03/solutions/database-types.go): Complete Database API type definitions
-- [**database-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-03/solutions/database-controller.go): Complete Database controller implementation
+- [**database-types.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-03/solutions/database-types.go): полные определения типов API Database
+- [**database-controller.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-03/solutions/database-controller.go): полная реализация контроллера Database
 
-## Usage
+## Использование
 
-These solutions can be used as:
-- Reference when building the PostgreSQL operator
-- Starting point if you get stuck
-- Examples of advanced reconciliation patterns
+Эти решения можно использовать как:
+- Справочный материал при создании оператора PostgreSQL
+- Отправную точку, если вы застряли
+- Примеры продвинутых паттернов согласования
 
-## Integration
+## Интеграция
 
-To use these solutions:
+Чтобы использовать эти решения:
 
-1. Create a new kubebuilder project: `kubebuilder init --domain database.example.com --repo github.com/example/postgres-operator`
-2. Create the API: `kubebuilder create api --group database --version v1 --kind Database`
-3. Replace generated files with these solutions
-4. Run `make generate` and `make manifests`
-5. Install CRD: `make install`
-6. Run operator: `make run`
+1. Создайте новый проект kubebuilder: `kubebuilder init --domain database.example.com --repo github.com/example/postgres-operator`
+2. Создайте API: `kubebuilder create api --group database --version v1 --kind Database`
+3. Замените сгенерированные файлы этими решениями
+4. Запустите `make generate` и `make manifests`
+5. Установите CRD: `make install`
+6. Запустите оператор: `make run`
 
-## Notes
+## Примечания
 
-- These are complete, working examples
-- StatefulSet and Service reconciliation implemented
-- Owner references for cascade deletion
-- Status updates based on actual state
-- Ready for Module 4 enhancements (conditions, finalizers)
-
+- Это полные рабочие примеры
+- Реализовано согласование StatefulSet и Service
+- Ссылки-владельцы для каскадного удаления
+- Обновления статуса на основе фактического состояния
+- Готовы к доработкам из Модуля 4 (условия, финализаторы)

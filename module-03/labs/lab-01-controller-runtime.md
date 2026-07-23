@@ -2,32 +2,32 @@
 layout: default
 title: "Lab 03.1: Controller Runtime"
 nav_order: 11
-parent: "Module 3: Building Custom Controllers"
-grand_parent: Modules
+parent: "Модуль 3: Создание кастомных контроллеров"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 3.1: Exploring Controller Runtime
+# Лабораторная 3.1: Исследование Controller Runtime
 
-**Related Lesson:** [Lesson 3.1: Controller Runtime Deep Dive](../lessons/01-controller-runtime.md)  
-**Navigation:** [Module Overview](../README.md) | [Next Lab: Designing API →](lab-02-designing-api.md)
+**Связанный урок:** [Урок 3.1: Глубокое погружение в Controller Runtime](../lessons/01-controller-runtime.md)  
+**Навигация:** [Обзор модуля](../README.md) | [Следующая лабораторная: Проектирование API →](lab-02-designing-api.md)
 
-## Objectives
+## Цели
 
-- Explore controller-runtime architecture
-- Understand Manager setup
-- Implement different requeue scenarios
-- Trace reconciliation calls
+- Изучить архитектуру controller-runtime
+- Понять настройку Manager
+- Реализовать разные сценарии повтора (requeue)
+- Отследить вызовы согласования
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Module 2](../module-02/README.md)
-- Kind cluster running
-- Understanding of basic operator structure
+- Завершение [Модуля 2](../module-02/README.md)
+- Запущенный кластер kind
+- Понимание базовой структуры оператора
 
-## Exercise 1: Examine Manager Setup
+## Упражнение 1: изучение настройки Manager
 
-### Task 1.1: Review Your Hello World Operator
+### Задача 1.1: просмотрите ваш оператор Hello World
 
 ```bash
 # Navigate to your hello-world-operator from Module 2
@@ -37,12 +37,12 @@ cd ~/hello-world-operator
 cat main.go
 ```
 
-**Questions:**
-1. How is the Manager created?
-2. What options are configured?
-3. How is the reconciler set up?
+**Вопросы:**
+1. Как создаётся Manager?
+2. Какие опции настроены?
+3. Как настраивается реконсайлер?
 
-### Task 1.2: Understand Manager Options
+### Задача 1.2: разберитесь в опциях Manager
 
 ```go
 // In main.go, examine the Manager options:
@@ -55,29 +55,29 @@ mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 })
 ```
 
-**Questions:**
-1. What does each option do?
-2. Why is leader election important?
-3. What's the purpose of metrics and health probes?
+**Вопросы:**
+1. Что делает каждая опция?
+2. Почему выбор лидера важен?
+3. Каково назначение метрик и проб здоровья (health probes)?
 
-## Exercise 2: Explore Reconcile Function
+## Упражнение 2: изучение функции Reconcile
 
-### Task 2.1: Examine Current Reconcile Function
+### Задача 2.1: изучите текущую функцию Reconcile
 
 ```bash
 # Look at your controller
 cat internal/controller/helloworld_controller.go
 ```
 
-**Observe:**
-- Function signature
-- How it reads resources
-- How it returns results
-- Error handling
+**Обратите внимание:**
+- Сигнатуру функции
+- Как она читает ресурсы
+- Как она возвращает результаты
+- Обработку ошибок
 
-### Task 2.2: Add Logging
+### Задача 2.2: добавьте логирование
 
-Add detailed logging to understand the flow:
+Добавьте подробное логирование, чтобы понять процесс:
 
 ```go
 func (r *HelloWorldReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -92,11 +92,11 @@ func (r *HelloWorldReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 }
 ```
 
-## Exercise 3: Implement Different Requeue Scenarios
+## Упражнение 3: реализация разных сценариев повтора
 
-### Task 3.1: Immediate Requeue
+### Задача 3.1: немедленный повтор
 
-Modify your controller to requeue immediately on certain conditions:
+Измените ваш контроллер, чтобы повторять немедленно при определённых условиях:
 
 ```go
 // If ConfigMap is being created, requeue to check status
@@ -106,9 +106,9 @@ if !configMapCreated {
 }
 ```
 
-### Task 3.2: Delayed Requeue
+### Задача 3.2: отложенный повтор
 
-Add a delayed requeue for rate limiting:
+Добавьте отложенный повтор для ограничения частоты:
 
 ```go
 // If external dependency is not ready, check again in 10 seconds
@@ -118,9 +118,9 @@ if !dependencyReady {
 }
 ```
 
-### Task 3.3: No Requeue
+### Задача 3.3: без повтора
 
-Ensure success cases don't requeue:
+Убедитесь, что успешные случаи не вызывают повтор:
 
 ```go
 // Everything is in desired state
@@ -128,9 +128,9 @@ log.Info("Reconciliation successful")
 return ctrl.Result{}, nil
 ```
 
-## Exercise 4: Trace Reconciliation Calls
+## Упражнение 4: трассировка вызовов согласования
 
-### Task 4.1: Run Operator with Verbose Logging
+### Задача 4.1: запустите оператор с подробным логированием
 
 ```bash
 # Run operator
@@ -148,13 +148,13 @@ spec:
 EOF
 ```
 
-**Observe:**
-- When Reconcile is called
-- What request is passed
-- What result is returned
-- How often it's called
+**Обратите внимание:**
+- Когда вызывается Reconcile
+- Какой запрос передаётся
+- Какой результат возвращается
+- Как часто он вызывается
 
-### Task 4.2: Modify Resource and Observe
+### Задача 4.2: измените ресурс и понаблюдайте
 
 ```bash
 # Update the resource
@@ -163,19 +163,19 @@ kubectl patch helloworld trace-test --type merge -p '{"spec":{"count":5}}'
 # Watch logs - see reconciliation triggered
 ```
 
-## Exercise 5: Understand Client Usage
+## Упражнение 5: понимание использования клиента
 
-### Task 5.1: Examine Client Operations
+### Задача 5.1: изучите операции клиента
 
-In your controller, identify:
-- `r.Get()` calls
-- `r.Create()` calls
-- `r.Update()` calls
-- `r.Status().Update()` calls
+В вашем контроллере найдите:
+- Вызовы `r.Get()`
+- Вызовы `r.Create()`
+- Вызовы `r.Update()`
+- Вызовы `r.Status().Update()`
 
-### Task 5.2: Add Client Error Handling
+### Задача 5.2: добавьте обработку ошибок клиента
 
-Improve error handling:
+Улучшите обработку ошибок:
 
 ```go
 // Get resource with proper error handling
@@ -189,9 +189,9 @@ if err := r.Get(ctx, req.NamespacedName, helloWorld); err != nil {
 }
 ```
 
-## Exercise 6: Test Different Scenarios
+## Упражнение 6: тестирование разных сценариев
 
-### Task 6.1: Test Resource Deletion
+### Задача 6.1: протестируйте удаление ресурса
 
 ```bash
 # Delete resource
@@ -200,7 +200,7 @@ kubectl delete helloworld trace-test
 # Observe logs - see reconciliation on deletion
 ```
 
-### Task 6.2: Test Concurrent Updates
+### Задача 6.2: протестируйте конкурентные обновления
 
 ```bash
 # Create resource
@@ -214,33 +214,33 @@ kubectl patch helloworld test --type merge -p '{"spec":{"count":3}}'
 # Observe how reconciliation handles rapid changes
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete test resources
 kubectl delete helloworld trace-test test 2>/dev/null || true
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Explored Manager setup and configuration
-- Understood Reconcile function flow
-- Implemented different requeue strategies
-- Traced reconciliation calls
-- Improved error handling
+В этой лабораторной вы:
+- Изучили настройку и конфигурацию Manager
+- Разобрались в процессе работы функции Reconcile
+- Реализовали разные стратегии повтора
+- Отследили вызовы согласования
+- Улучшили обработку ошибок
 
-## Key Learnings
+## Ключевые уроки
 
-1. Manager coordinates all controller components
-2. Reconcile function is called for each resource change
-3. Different requeue strategies for different scenarios
-4. Client provides type-safe access to resources
-5. Proper error handling is crucial
-6. Logging helps understand reconciliation flow
+1. Manager координирует все компоненты контроллера
+2. Функция Reconcile вызывается при каждом изменении ресурса
+3. Разные стратегии повтора для разных сценариев
+4. Client предоставляет типобезопасный доступ к ресурсам
+5. Правильная обработка ошибок критически важна
+6. Логирование помогает понять процесс согласования
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand controller-runtime, let's design a proper API for a database operator!
+Теперь, когда вы понимаете controller-runtime, давайте спроектируем корректный API для оператора базы данных!
 
-**Navigation:** [← Module Overview](../README.md) | [Related Lesson](../lessons/01-controller-runtime.md) | [Next Lab: Designing API →](lab-02-designing-api.md)
+**Навигация:** [← Обзор модуля](../README.md) | [Связанный урок](../lessons/01-controller-runtime.md) | [Следующая лабораторная: Проектирование API →](lab-02-designing-api.md)

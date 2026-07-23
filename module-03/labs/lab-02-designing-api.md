@@ -2,32 +2,32 @@
 layout: default
 title: "Lab 03.2: Designing Api"
 nav_order: 12
-parent: "Module 3: Building Custom Controllers"
-grand_parent: Modules
+parent: "Модуль 3: Создание кастомных контроллеров"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 3.2: API Design for Database Operator
+# Лабораторная 3.2: Проектирование API для оператора базы данных
 
-**Related Lesson:** [Lesson 3.2: Designing Your API](../lessons/02-designing-api.md)  
-**Navigation:** [← Previous Lab: Controller Runtime](lab-01-controller-runtime.md) | [Module Overview](../README.md) | [Next Lab: Reconciliation Logic →](lab-03-reconciliation-logic.md)
+**Связанный урок:** [Урок 3.2: Проектирование вашего API](../lessons/02-designing-api.md)  
+**Навигация:** [← Предыдущая лабораторная: Controller Runtime](lab-01-controller-runtime.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Логика согласования →](lab-03-reconciliation-logic.md)
 
-## Objectives
+## Цели
 
-- Design API for a PostgreSQL database operator
-- Use kubebuilder markers for validation
-- Generate CRD with proper schema
-- Test API validation
+- Спроектировать API для оператора базы данных PostgreSQL
+- Использовать маркеры kubebuilder для валидации
+- Сгенерировать CRD с корректной схемой
+- Протестировать валидацию API
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Module 2](../../module-02/README.md)
-- Understanding of API design principles
-- kubebuilder installed
+- Завершение [Модуля 2](../../module-02/README.md)
+- Понимание принципов проектирования API
+- Установленный kubebuilder
 
-## Exercise 1: Initialize Database Operator Project
+## Упражнение 1: инициализация проекта оператора базы данных
 
-### Task 1.1: Create Project
+### Задача 1.1: создайте проект
 
 ```bash
 # Create new project
@@ -38,7 +38,7 @@ cd ~/postgres-operator
 kubebuilder init --domain example.com --repo github.com/example/postgres-operator
 ```
 
-### Task 1.2: Create Database API
+### Задача 1.2: создайте API Database
 
 ```bash
 # Create Database API
@@ -49,11 +49,11 @@ kubebuilder create api --group database --version v1 --kind Database
 # Create Controller [y/n]: y
 ```
 
-## Exercise 2: Design Database Spec
+## Упражнение 2: проектирование Spec базы данных
 
-### Task 2.1: Define DatabaseSpec
+### Задача 2.1: определите DatabaseSpec
 
-Edit `api/v1/database_types.go`:
+Отредактируйте `api/v1/database_types.go`:
 
 ```go
 package v1
@@ -103,7 +103,7 @@ type StorageSpec struct {
 }
 ```
 
-### Task 2.2: Define DatabaseStatus
+### Задача 2.2: определите DatabaseStatus
 
 ```go
 // DatabaseStatus defines the observed state of Database
@@ -123,7 +123,7 @@ type DatabaseStatus struct {
 }
 ```
 
-### Task 2.3: Complete Database Type
+### Задача 2.3: завершите тип Database
 
 ```go
 // +kubebuilder:object:root=true
@@ -156,9 +156,9 @@ func init() {
 }
 ```
 
-## Exercise 3: Generate and Verify CRD
+## Упражнение 3: генерация и проверка CRD
 
-### Task 3.1: Generate Code
+### Задача 3.1: сгенерируйте код
 
 ```bash
 # Generate code
@@ -168,21 +168,21 @@ make generate
 make manifests
 ```
 
-### Task 3.2: Examine Generated CRD
+### Задача 3.2: изучите сгенерированный CRD
 
 ```bash
 # Check CRD was generated and verify validation rules
 cat config/crd/bases/database.example.com_databases.yaml | head -100
 ```
 
-**Questions:**
-1. Are validation rules present?
-2. Are default values set?
-3. Are print columns defined?
+**Вопросы:**
+1. Присутствуют ли правила валидации?
+2. Установлены ли значения по умолчанию?
+3. Определены ли столбцы вывода?
 
-## Exercise 4: Test API Validation
+## Упражнение 4: тестирование валидации API
 
-### Task 4.1: Install CRD
+### Задача 4.1: установите CRD
 
 ```bash
 # Install CRD
@@ -192,7 +192,7 @@ make install
 kubectl get crd databases.database.example.com
 ```
 
-### Task 4.2: Test Valid Resource
+### Задача 4.2: протестируйте корректный ресурс
 
 ```bash
 # Create valid Database resource
@@ -214,7 +214,7 @@ EOF
 kubectl get database test-db
 ```
 
-### Task 4.3: Test Invalid Resources
+### Задача 4.3: протестируйте некорректные ресурсы
 
 ```bash
 # Test missing required field
@@ -264,9 +264,9 @@ EOF
 # Should fail validation
 ```
 
-## Exercise 5: Test Print Columns
+## Упражнение 5: тестирование столбцов вывода
 
-### Task 5.1: Create Multiple Databases
+### Задача 5.1: создайте несколько баз данных
 
 ```bash
 # Create a few databases
@@ -297,7 +297,7 @@ spec:
 EOF
 ```
 
-### Task 5.2: Verify Print Columns
+### Задача 5.2: проверьте столбцы вывода
 
 ```bash
 # List databases - should show print columns
@@ -306,9 +306,9 @@ kubectl get databases
 # Should show: NAME, PHASE, REPLICAS, READY, AGE
 ```
 
-## Exercise 6: Test Default Values
+## Упражнение 6: тестирование значений по умолчанию
 
-### Task 6.1: Create Resource with Minimal Spec
+### Задача 6.1: создайте ресурс с минимальным Spec
 
 ```bash
 # Create with only required fields
@@ -326,7 +326,7 @@ spec:
 EOF
 ```
 
-### Task 6.2: Verify Defaults
+### Задача 6.2: проверьте значения по умолчанию
 
 ```bash
 # Check if defaults were applied
@@ -334,7 +334,7 @@ kubectl get database minimal-db -o jsonpath='{.spec.image}'
 kubectl get database minimal-db -o jsonpath='{.spec.replicas}'
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete test resources
@@ -344,32 +344,32 @@ kubectl delete databases --all
 make uninstall
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Designed a complete API for a database operator
-- Used kubebuilder markers for validation
-- Generated CRD with proper schema
-- Tested API validation rules
-- Verified print columns work
-- Tested default values
+В этой лабораторной вы:
+- Спроектировали полноценный API для оператора базы данных
+- Использовали маркеры kubebuilder для валидации
+- Сгенерировали CRD с корректной схемой
+- Протестировали правила валидации API
+- Убедились, что столбцы вывода работают
+- Протестировали значения по умолчанию
 
-## Key Learnings
+## Ключевые уроки
 
-1. API design follows Kubernetes conventions
-2. Spec contains desired state, Status contains actual state
-3. Validation markers enforce constraints
-4. Print columns improve user experience
-5. Default values make APIs easier to use
-6. Proper versioning is important
+1. Дизайн API следует соглашениям Kubernetes
+2. Spec содержит желаемое состояние, Status — фактическое
+3. Маркеры валидации обеспечивают соблюдение ограничений
+4. Столбцы вывода улучшают пользовательский опыт
+5. Значения по умолчанию упрощают использование API
+6. Правильное версионирование важно
 
-## Solutions
+## Решения
 
-The API design from this lab is used in the complete Database operator solution:
-- [Database Types](../solutions/database-types.go) - Complete API type definitions with validation markers
+Дизайн API из этой лабораторной используется в полном решении оператора Database:
+- [Database Types](../solutions/database-types.go) — полные определения типов API с маркерами валидации
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you have a well-designed API, let's implement the reconciliation logic to make it work!
+Теперь, когда у вас есть хорошо спроектированный API, давайте реализуем логику согласования, чтобы он заработал!
 
-**Navigation:** [← Previous Lab: Controller Runtime](lab-01-controller-runtime.md) | [Related Lesson](../lessons/02-designing-api.md) | [Next Lab: Reconciliation Logic →](lab-03-reconciliation-logic.md)
+**Навигация:** [← Предыдущая лабораторная: Controller Runtime](lab-01-controller-runtime.md) | [Связанный урок](../lessons/02-designing-api.md) | [Следующая лабораторная: Логика согласования →](lab-03-reconciliation-logic.md)
