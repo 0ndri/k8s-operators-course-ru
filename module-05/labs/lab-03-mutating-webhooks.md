@@ -2,42 +2,42 @@
 layout: default
 title: "Lab 05.3: Mutating Webhooks"
 nav_order: 13
-parent: "Module 5: Webhooks & Admission Control"
-grand_parent: Modules
+parent: "Модуль 5: Вебхуки и контроль допуска"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 5.3: Building Mutating Webhook
+# Лабораторная 5.3: Создание мутирующего вебхука
 
-**Related Lesson:** [Lesson 5.3: Implementing Mutating Webhooks](../lessons/03-mutating-webhooks.md)  
-**Navigation:** [← Previous Lab: Validating Webhooks](lab-02-validating-webhooks.md) | [Module Overview](../README.md) | [Next Lab: Webhook Deployment →](lab-04-webhook-deployment.md)
+**Связанный урок:** [Урок 5.3: Реализация мутирующих вебхуков](../lessons/03-mutating-webhooks.md)  
+**Навигация:** [← Предыдущая лабораторная: Валидирующие вебхуки](lab-02-validating-webhooks.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Развёртывание вебхуков →](lab-04-webhook-deployment.md)
 
-## Objectives
+## Цели
 
-- Add mutating webhook to existing validating webhook
-- Implement defaulting logic
-- Test mutation scenarios
-- Ensure idempotency
+- Добавить мутирующий вебхук к существующему валидирующему
+- Реализовать логику установки значений по умолчанию
+- Протестировать сценарии мутации
+- Обеспечить идемпотентность
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 5.2](lab-02-validating-webhooks.md)
-- Database operator with validating webhook
-- Understanding of defaulting patterns
+- Завершение [Лабораторной 5.2](lab-02-validating-webhooks.md)
+- Оператор Database с валидирующим вебхуком
+- Понимание паттернов установки значений по умолчанию
 
-## Exercise 1: Add Mutating Webhook
+## Упражнение 1: добавление мутирующего вебхука
 
-Since we already created a validating webhook in Lab 5.2, our webhook file already exists at `internal/webhook/v1/database_webhook.go`. We'll add the mutating (defaulting) logic to this file.
+Поскольку мы уже создали валидирующий вебхук в Лабораторной 5.2, наш файл вебхука уже существует в `internal/webhook/v1/database_webhook.go`. Мы добавим мутирующую логику (установку значений по умолчанию) в этот файл.
 
-> **Note:** If you were starting fresh, you would run:
+> **Примечание:** если бы вы начинали с нуля, вы бы запустили:
 > ```bash
 > kubebuilder create webhook --group database --version v1 --kind Database --defaulting
 > ```
-> But since we already have a webhook, we'll add the defaulter manually.
+> Но поскольку у нас уже есть вебхук, мы добавим дефолтер вручную.
 
-### Task 1.1: Understand the CustomDefaulter Interface
+### Задача 1.1: разберитесь в интерфейсе CustomDefaulter
 
-The new kubebuilder pattern uses `webhook.CustomDefaulter` interface:
+Новый паттерн kubebuilder использует интерфейс `webhook.CustomDefaulter`:
 
 ```go
 type CustomDefaulter interface {
@@ -45,9 +45,9 @@ type CustomDefaulter interface {
 }
 ```
 
-### Task 1.2: Add Defaulter to Webhook Setup
+### Задача 1.2: добавьте дефолтер в настройку вебхука
 
-Edit `internal/webhook/v1/database_webhook.go` to update the webhook setup function:
+Отредактируйте `internal/webhook/v1/database_webhook.go`, чтобы обновить функцию настройки вебхука:
 
 ```go
 // SetupDatabaseWebhookWithManager registers the webhook for Database in the manager.
@@ -59,9 +59,9 @@ func SetupDatabaseWebhookWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-### Task 1.3: Add the Defaulter Struct and Marker
+### Задача 1.3: добавьте структуру дефолтера и маркер
 
-Add the following to `internal/webhook/v1/database_webhook.go`:
+Добавьте следующее в `internal/webhook/v1/database_webhook.go`:
 
 ```go
 // +kubebuilder:webhook:path=/mutate-database-example-com-v1-database,mutating=true,failurePolicy=fail,sideEffects=None,groups=database.example.com,resources=databases,verbs=create;update,versions=v1,name=mdatabase-v1.kb.io,admissionReviewVersions=v1
@@ -74,11 +74,11 @@ type DatabaseCustomDefaulter struct {
 var _ webhook.CustomDefaulter = &DatabaseCustomDefaulter{}
 ```
 
-## Exercise 2: Implement Defaulting Logic
+## Упражнение 2: реализация логики установки значений по умолчанию
 
-### Task 2.1: Add Default Method
+### Задача 2.1: добавьте метод Default
 
-Add the `Default` method to `internal/webhook/v1/database_webhook.go`:
+Добавьте метод `Default` в `internal/webhook/v1/database_webhook.go`:
 
 ```go
 // Default implements webhook.CustomDefaulter so a webhook will be registered for the type Database.
@@ -109,9 +109,9 @@ func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Objec
 }
 ```
 
-### Task 2.2: Add Context-Aware Defaults
+### Задача 2.2: добавьте значения по умолчанию с учётом контекста
 
-Enhance the Default method with namespace-based defaults:
+Дополните метод Default значениями по умолчанию на основе пространства имён:
 
 ```go
 func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Object) error {
@@ -157,13 +157,13 @@ func (d *DatabaseCustomDefaulter) Default(ctx context.Context, obj runtime.Objec
 }
 ```
 
-> **Note:** We check `< 3` instead of `nil` for replicas because CRD schema defaults (via `+kubebuilder:default=1`) are applied before webhooks run. This ensures production namespaces always get at least 3 replicas.
+> **Примечание:** мы проверяем `< 3`, а не `nil`, для реплик, потому что значения по умолчанию схемы CRD (через `+kubebuilder:default=1`) применяются до запуска вебхуков. Это гарантирует, что продакшен-пространства всегда получают минимум 3 реплики.
 
-## Exercise 3: Ensure Idempotency
+## Упражнение 3: обеспечение идемпотентности
 
-### Task 3.1: Understand Idempotency
+### Задача 3.1: разберитесь в идемпотентности
 
-Mutations must be **idempotent** - applying them multiple times should have the same effect:
+Мутации должны быть **идемпотентными** — их многократное применение должно давать один и тот же результат:
 
 ```go
 // Idempotent: Only set if not already set
@@ -179,11 +179,11 @@ if _, exists := database.Labels["managed-by"]; !exists {
 // If already exists, doesn't add again
 ```
 
-## Exercise 4: Deploy and Test Mutating Webhook
+## Упражнение 4: развёртывание и тестирование мутирующего вебхука
 
-### Task 4.1: Enable MutatingWebhookConfiguration in Kustomization
+### Задача 4.1: включите MutatingWebhookConfiguration в Kustomization
 
-Since we added a mutating webhook manually, we need to uncomment the MutatingWebhookConfiguration replacements in `config/default/kustomization.yaml` so cert-manager can inject the CA bundle:
+Поскольку мы добавили мутирующий вебхук вручную, нужно раскомментировать замены (replacements) MutatingWebhookConfiguration в `config/default/kustomization.yaml`, чтобы cert-manager мог внедрить CA bundle:
 
 ```bash
 cd ~/postgres-operator
@@ -196,7 +196,7 @@ cd ~/postgres-operator
 grep -A 5 "DefaultingWebhook" config/default/kustomization.yaml
 ```
 
-### Task 4.2: Generate Manifests
+### Задача 4.2: сгенерируйте манифесты
 
 ```bash
 # Generate manifests (includes new mutating webhook configuration)
@@ -206,9 +206,9 @@ make manifests
 grep "mutating" config/webhook/manifests.yaml
 ```
 
-### Task 4.3: Undeploy and Clean Up Stale Webhooks
+### Задача 4.3: снимите развёртывание и удалите устаревшие вебхуки
 
-Since we added a new webhook, we need to fully redeploy. Also clean up any stale webhook configurations from previous deployments:
+Поскольку мы добавили новый вебхук, нужно полностью переразвернуть. Также удалите любые устаревшие конфигурации вебхуков от предыдущих развёртываний:
 
 ```bash
 # Remove existing deployment
@@ -228,7 +228,7 @@ kubectl get all -n postgres-operator-system
 # Should show "No resources found"
 ```
 
-### Task 4.4: Rebuild and Deploy
+### Задача 4.4: пересоберите и разверните
 
 ```bash
 # Rebuild the image
@@ -255,9 +255,9 @@ make deploy IMG=postgres-operator:latest
 make deploy IMG=localhost/postgres-operator:latest
 ```
 
-### Task 4.5: Wait for Certificates
+### Задача 4.5: дождитесь сертификатов
 
-cert-manager needs time to generate certificates and inject the CA bundle:
+cert-manager нужно время, чтобы сгенерировать сертификаты и внедрить CA bundle:
 
 ```bash
 # Wait for certificate to be ready
@@ -271,7 +271,7 @@ kubectl wait --for=condition=Ready pod -l control-plane=controller-manager \
 kubectl logs -n postgres-operator-system deployment/postgres-operator-controller-manager | grep -i webhook
 ```
 
-### Task 4.6: Verify Both Webhooks are Registered
+### Задача 4.6: проверьте, что оба вебхука зарегистрированы
 
 ```bash
 # Check both webhooks are configured
@@ -283,7 +283,7 @@ kubectl get mutatingwebhookconfigurations
 # - postgres-operator-mutating-webhook-configuration
 ```
 
-### Task 4.7: Test Minimal Resource
+### Задача 4.7: протестируйте минимальный ресурс
 
 ```bash
 # Create resource with minimal spec (missing image, replicas)
@@ -315,9 +315,9 @@ kubectl get database minimal-db -o jsonpath='{.metadata.labels.managed-by}'
 echo
 ```
 
-### Task 4.8: Test Namespace-Based Defaults
+### Задача 4.8: протестируйте значения по умолчанию на основе пространства имён
 
-Our webhook checks `replicas < 3` (not just `nil`) for production namespace, so it works even when CRD schema defaults have already set `replicas=1`.
+Наш вебхук проверяет `replicas < 3` (а не просто `nil`) для продакшен-пространства, поэтому он работает, даже когда значения по умолчанию схемы CRD уже установили `replicas=1`.
 
 ```bash
 # Clean up previous test resources
@@ -363,11 +363,11 @@ kubectl get database prod-db -n production -o jsonpath='Replicas: {.spec.replica
 echo
 ```
 
-> **Key Learning:** CRD schema defaults (`+kubebuilder:default`) are applied before webhooks. To override them, check for the default value (e.g., `< 3`) instead of just checking for `nil`.
+> **Ключевой вывод:** значения по умолчанию схемы CRD (`+kubebuilder:default`) применяются до вебхуков. Чтобы переопределить их, проверяйте значение по умолчанию (например, `< 3`), а не просто наличие `nil`.
 
-## Exercise 5: Test Mutation Order
+## Упражнение 5: тестирование порядка мутаций
 
-### Task 5.1: Verify Mutation Before Validation
+### Задача 5.1: проверьте, что мутация выполняется до валидации
 
 ```bash
 # Create resource that would fail validation without defaults
@@ -391,7 +391,7 @@ kubectl get database test-order -o jsonpath='{.spec.image}'
 echo
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete test resources
@@ -399,33 +399,33 @@ kubectl delete databases --all -A
 kubectl delete namespace production --ignore-not-found
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Added mutating webhook to existing validating webhook
-- Implemented defaulting logic using `CustomDefaulter` interface
-- Added context-aware defaults
-- Ensured idempotency
-- Tested mutation scenarios
-- Verified mutation order
+В этой лабораторной вы:
+- Добавили мутирующий вебхук к существующему валидирующему
+- Реализовали логику установки значений по умолчанию с помощью интерфейса `CustomDefaulter`
+- Добавили значения по умолчанию с учётом контекста
+- Обеспечили идемпотентность
+- Протестировали сценарии мутации
+- Проверили порядок мутаций
 
-## Key Learnings
+## Ключевые уроки
 
-1. Add mutating webhook to existing `internal/webhook/v1/database_webhook.go`
-2. Use `webhook.CustomDefaulter` interface with separate struct
-3. `Default` method receives `context.Context` and `runtime.Object`
-4. Register defaulter with `.WithDefaulter(&DatabaseCustomDefaulter{})`
-5. Defaults can be context-aware (namespace, etc.)
-6. Mutations must be idempotent
-7. Mutating webhooks run before validating webhooks
+1. Добавляйте мутирующий вебхук в существующий `internal/webhook/v1/database_webhook.go`
+2. Используйте интерфейс `webhook.CustomDefaulter` с отдельной структурой
+3. Метод `Default` получает `context.Context` и `runtime.Object`
+4. Регистрируйте дефолтер через `.WithDefaulter(&DatabaseCustomDefaulter{})`
+5. Значения по умолчанию могут учитывать контекст (пространство имён и т. д.)
+6. Мутации должны быть идемпотентными
+7. Мутирующие вебхуки запускаются до валидирующих
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Mutating Webhook](../solutions/mutating-webhook.go) - Complete mutating webhook implementation with defaulting logic
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Mutating Webhook](../solutions/mutating-webhook.go) — полная реализация мутирующего вебхука с логикой установки значений по умолчанию
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's learn about certificate management and deployment!
+Теперь давайте изучим управление сертификатами и развёртывание!
 
-**Navigation:** [← Previous Lab: Validating Webhooks](lab-02-validating-webhooks.md) | [Related Lesson](../lessons/03-mutating-webhooks.md) | [Next Lab: Webhook Deployment →](lab-04-webhook-deployment.md)
+**Навигация:** [← Предыдущая лабораторная: Валидирующие вебхуки](lab-02-validating-webhooks.md) | [Связанный урок](../lessons/03-mutating-webhooks.md) | [Следующая лабораторная: Развёртывание вебхуков →](lab-04-webhook-deployment.md)

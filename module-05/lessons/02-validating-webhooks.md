@@ -2,22 +2,22 @@
 layout: default
 title: "05.2 Validating Webhooks"
 nav_order: 2
-parent: "Module 5: Webhooks & Admission Control"
-grand_parent: Modules
+parent: "Модуль 5: Вебхуки и контроль допуска"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 5.2: Implementing Validating Webhooks
+# Урок 5.2: Реализация валидирующих вебхуков
 
-**Navigation:** [← Previous: Admission Control](01-admission-control.md) | [Module Overview](../README.md) | [Next: Mutating Webhooks →](03-mutating-webhooks.md)
+**Навигация:** [← Предыдущий: Контроль допуска](01-admission-control.md) | [Обзор модуля](../README.md) | [Далее: Мутирующие вебхуки →](03-mutating-webhooks.md)
 
-## Introduction
+## Введение
 
-Validating webhooks allow you to implement custom validation logic that goes beyond CRD schema validation. You can validate cross-field relationships, check against external systems, and enforce complex business rules. In this lesson, you'll learn how to implement validating webhooks using kubebuilder.
+Валидирующие вебхуки позволяют реализовать пользовательскую логику валидации, выходящую за рамки валидации схемы CRD. Вы можете проверять взаимосвязи между полями, сверяться с внешними системами и обеспечивать сложные бизнес-правила. В этом уроке вы научитесь реализовывать валидирующие вебхуки с помощью kubebuilder.
 
-## Validating Webhook Flow
+## Процесс работы валидирующего вебхука
 
-Here's how a validating webhook works:
+Вот как работает валидирующий вебхук:
 
 ```mermaid
 sequenceDiagram
@@ -35,23 +35,23 @@ sequenceDiagram
     Note over Webhook: Allowed: true/false<br/>Result: Error message if invalid
 ```
 
-## Creating Validating Webhook with Kubebuilder
+## Создание валидирующего вебхука с помощью Kubebuilder
 
-Kubebuilder makes it easy to scaffold webhooks:
+Kubebuilder упрощает генерацию каркаса вебхуков:
 
 ```bash
 # Create validating webhook
 kubebuilder create webhook --group database --version v1 --kind Database --programmatic-validation
 ```
 
-This generates:
-- Webhook handler code
-- Webhook configuration manifests
-- Certificate setup
+Это генерирует:
+- Код обработчика вебхука
+- Манифесты конфигурации вебхука
+- Настройку сертификатов
 
-## Webhook Handler Structure
+## Структура обработчика вебхука
 
-The generated webhook handler in `internal/webhook/v1/database_webhook.go` looks like this:
+Сгенерированный обработчик вебхука в `internal/webhook/v1/database_webhook.go` выглядит так:
 
 ```go
 package v1
@@ -125,17 +125,17 @@ func (v *DatabaseCustomValidator) ValidateDelete(ctx context.Context, obj runtim
 }
 ```
 
-**Key points about the structure:**
-- Webhook code is in `internal/webhook/v1/` directory, not in `api/v1/`
-- Uses a separate `DatabaseCustomValidator` struct (not methods on Database type)
-- Implements `webhook.CustomValidator` interface
-- All methods receive `context.Context` as first parameter
-- `ValidateUpdate` receives both `oldObj` and `newObj` as `runtime.Object`
-- Objects must be type-asserted to the actual Database type
+**Ключевые моменты о структуре:**
+- Код вебхука находится в каталоге `internal/webhook/v1/`, а не в `api/v1/`
+- Используется отдельная структура `DatabaseCustomValidator` (а не методы типа Database)
+- Реализует интерфейс `webhook.CustomValidator`
+- Все методы получают `context.Context` первым параметром
+- `ValidateUpdate` получает и `oldObj`, и `newObj` как `runtime.Object`
+- Объекты нужно приводить по типу (type-assert) к фактическому типу Database
 
-## Implementing Validation Logic
+## Реализация логики валидации
 
-### Example: Cross-Field Validation
+### Пример: валидация между полями
 
 ```go
 func (v *DatabaseCustomValidator) ValidateCreate(ctx context.Context, obj runtime.Object) (admission.Warnings, error) {
@@ -161,7 +161,7 @@ func (v *DatabaseCustomValidator) ValidateCreate(ctx context.Context, obj runtim
 }
 ```
 
-### Example: Update Validation
+### Пример: валидация обновления
 
 ```go
 func (v *DatabaseCustomValidator) ValidateUpdate(ctx context.Context, oldObj, newObj runtime.Object) (admission.Warnings, error) {
@@ -195,7 +195,7 @@ func (v *DatabaseCustomValidator) ValidateUpdate(ctx context.Context, oldObj, ne
 }
 ```
 
-## Validation Decision Tree
+## Дерево решений валидации
 
 ```mermaid
 flowchart TD
@@ -213,9 +213,9 @@ flowchart TD
     style ACCEPT fill:#90EE90
 ```
 
-## Error Messages
+## Сообщения об ошибках
 
-Provide clear, actionable error messages:
+Предоставляйте понятные, применимые сообщения об ошибках:
 
 ```go
 func (v *DatabaseCustomValidator) ValidateCreate(ctx context.Context, obj runtime.Object) (admission.Warnings, error) {
@@ -241,7 +241,7 @@ func (v *DatabaseCustomValidator) ValidateCreate(ctx context.Context, obj runtim
 }
 ```
 
-## Schema Validation vs Webhook Validation
+## Валидация схемы против валидации вебхуком
 
 ```mermaid
 graph TB
@@ -262,38 +262,38 @@ graph TB
     style WEBHOOK fill:#FFB6C1
 ```
 
-**CRD Schema:**
-- Fast (no network call)
-- Simple validation
-- Type checking
-- Pattern matching
+**Схема CRD:**
+- Быстрая (без сетевого вызова)
+- Простая валидация
+- Проверка типов
+- Сопоставление с шаблоном
 
-**Webhook:**
-- More flexible
-- Complex logic
-- External data
-- Cross-field validation
+**Вебхук:**
+- Более гибкий
+- Сложная логика
+- Внешние данные
+- Валидация между полями
 
-**Best Practice:** Use schema for simple validation, webhook for complex validation.
+**Лучшая практика:** используйте схему для простой валидации, вебхук — для сложной.
 
-## Webhook Markers
+## Маркеры вебхука
 
-Kubebuilder uses markers to configure webhooks:
+Kubebuilder использует маркеры для настройки вебхуков:
 
 ```go
 // +kubebuilder:webhook:path=/validate-database-example-com-v1-database,mutating=false,failurePolicy=fail,sideEffects=None,groups=database.example.com,resources=databases,verbs=create;update,versions=v1,name=vdatabase-v1.kb.io,admissionReviewVersions=v1
 ```
 
-**Parameters:**
-- `path`: Webhook endpoint path
-- `mutating`: false for validating webhook
-- `failurePolicy`: fail or ignore
-- `sideEffects`: None, NoneOnDryRun, or Some
-- `groups`, `resources`, `verbs`, `versions`: What to validate
-- `name`: Unique webhook name (format: `vdatabase-v1.kb.io`)
-- `admissionReviewVersions`: API versions for admission review (e.g., `v1`)
+**Параметры:**
+- `path`: путь эндпоинта вебхука
+- `mutating`: false для валидирующего вебхука
+- `failurePolicy`: fail или ignore
+- `sideEffects`: None, NoneOnDryRun или Some
+- `groups`, `resources`, `verbs`, `versions`: что валидировать
+- `name`: уникальное имя вебхука (формат: `vdatabase-v1.kb.io`)
+- `admissionReviewVersions`: версии API для admission review (например, `v1`)
 
-## Failure Policies
+## Политики при сбое (Failure Policies)
 
 ```mermaid
 graph TB
@@ -308,63 +308,63 @@ graph TB
     style IGNORE fill:#90EE90
 ```
 
-**Fail Policy:**
-- If webhook fails, reject the request
-- Safer, but can block operations if webhook is down
+**Политика Fail:**
+- Если вебхук завершается сбоем, запрос отклоняется
+- Безопаснее, но может блокировать операции, если вебхук недоступен
 
-**Ignore Policy:**
-- If webhook fails, allow the request
-- Less safe, but more resilient
+**Политика Ignore:**
+- Если вебхук завершается сбоем, запрос разрешается
+- Менее безопасно, но более устойчиво
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Validating webhooks** check resources and accept/reject
-- Use kubebuilder to **scaffold webhooks** easily
-- Implement `webhook.CustomValidator` interface with a separate validator struct
-- Methods receive `context.Context` as first parameter
-- `ValidateUpdate` receives both old and new objects as `runtime.Object`
-- Type-assert `runtime.Object` to your actual resource type
-- Provide **clear error messages** for users
-- Use for **complex validation** beyond CRD schema
-- Choose appropriate **failure policy** (fail vs ignore)
-- **Schema validation** runs first, then webhook validation
+- **Валидирующие вебхуки** проверяют ресурсы и принимают/отклоняют
+- Используйте kubebuilder для лёгкой **генерации каркаса вебхуков**
+- Реализуйте интерфейс `webhook.CustomValidator` с отдельной структурой-валидатором
+- Методы получают `context.Context` первым параметром
+- `ValidateUpdate` получает и старый, и новый объект как `runtime.Object`
+- Приводите по типу `runtime.Object` к фактическому типу вашего ресурса
+- Предоставляйте **понятные сообщения об ошибках** для пользователей
+- Используйте для **сложной валидации** за рамками схемы CRD
+- Выбирайте подходящую **политику при сбое** (fail или ignore)
+- **Валидация схемы** запускается первой, затем валидация вебхуком
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When implementing validating webhooks:
-- Use a separate validator struct implementing `webhook.CustomValidator`
-- Webhook code goes in `internal/webhook/v1/` directory
-- Type-assert `runtime.Object` parameters to your actual resource type
-- Use for complex validation logic
-- Provide clear, actionable error messages
-- Handle all operations (create, update, delete)
-- Consider failure policy carefully
-- Keep validation fast (affects API latency)
-- Test thoroughly with valid and invalid resources
+При реализации валидирующих вебхуков:
+- Используйте отдельную структуру-валидатор, реализующую `webhook.CustomValidator`
+- Код вебхука размещается в каталоге `internal/webhook/v1/`
+- Приводите по типу параметры `runtime.Object` к фактическому типу вашего ресурса
+- Используйте для сложной логики валидации
+- Предоставляйте понятные, применимые сообщения об ошибках
+- Обрабатывайте все операции (create, update, delete)
+- Тщательно выбирайте политику при сбое
+- Держите валидацию быстрой (влияет на задержку API)
+- Тщательно тестируйте на корректных и некорректных ресурсах
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 5.2: Building Validating Webhook](../labs/lab-02-validating-webhooks.md) - Hands-on exercises for this lesson
+- [Лабораторная 5.2: Создание валидирующего вебхука](../labs/lab-02-validating-webhooks.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Validating Admission Webhooks](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook)
-- [AdmissionReview API](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response)
-- [Webhook Configuration](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-configuration)
+### Официальная документация
+- [Валидирующие вебхуки допуска](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#validatingadmissionwebhook)
+- [API AdmissionReview](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response)
+- [Конфигурация вебхука](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-configuration)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 9: Webhooks
-- **Programming Kubernetes** by Michael Hausenblas and Stefan Schimanski - Chapter 9: Admission Control
-- [Kubebuilder Webhooks](https://book.kubebuilder.io/cronjob-tutorial/webhook-implementation.html)
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 9: Webhooks
+- **Programming Kubernetes**, Michael Hausenblas и Stefan Schimanski — глава 9: Admission Control
+- [Вебхуки Kubebuilder](https://book.kubebuilder.io/cronjob-tutorial/webhook-implementation.html)
 
-### Related Topics
-- [AdmissionReview Request/Response](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response)
-- [Webhook Failure Policy](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy)
-- [Webhook Timeouts](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts)
+### Смежные темы
+- [Запрос/ответ AdmissionReview](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response)
+- [Политика при сбое вебхука](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy)
+- [Таймауты вебхука](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand validating webhooks, let's learn about mutating webhooks for defaulting and mutation.
+Теперь, когда вы понимаете валидирующие вебхуки, давайте изучим мутирующие вебхуки для установки значений по умолчанию и мутации.
 
-**Navigation:** [← Previous: Admission Control](01-admission-control.md) | [Module Overview](../README.md) | [Next: Mutating Webhooks →](03-mutating-webhooks.md)
+**Навигация:** [← Предыдущий: Контроль допуска](01-admission-control.md) | [Обзор модуля](../README.md) | [Далее: Мутирующие вебхуки →](03-mutating-webhooks.md)

@@ -2,43 +2,43 @@
 layout: default
 title: "Lab 05.4: Webhook Deployment"
 nav_order: 14
-parent: "Module 5: Webhooks & Admission Control"
-grand_parent: Modules
+parent: "Модуль 5: Вебхуки и контроль допуска"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 5.4: Webhook Deployment and Certificates
+# Лабораторная 5.4: Развёртывание вебхуков и сертификаты
 
-**Related Lesson:** [Lesson 5.4: Webhook Deployment and Certificates](../lessons/04-webhook-deployment.md)  
-**Navigation:** [← Previous Lab: Mutating Webhooks](lab-03-mutating-webhooks.md) | [Module Overview](../README.md)
+**Связанный урок:** [Урок 5.4: Развёртывание вебхуков и сертификаты](../lessons/04-webhook-deployment.md)  
+**Навигация:** [← Предыдущая лабораторная: Мутирующие вебхуки](lab-03-mutating-webhooks.md) | [Обзор модуля](../README.md)
 
-## Objectives
+## Цели
 
-- Understand certificate requirements for webhooks
-- Deploy operator with webhooks to cluster
-- Configure cert-manager for certificate management
-- Troubleshoot webhook issues
+- Понять требования к сертификатам для вебхуков
+- Развернуть оператор с вебхуками в кластер
+- Настроить cert-manager для управления сертификатами
+- Устранять неполадки вебхуков
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 5.3](lab-03-mutating-webhooks.md)
-- Database operator with webhooks
-- Understanding of TLS and certificates
-- kind cluster with cert-manager installed (from `scripts/setup-kind-cluster.sh`)
+- Завершение [Лабораторной 5.3](lab-03-mutating-webhooks.md)
+- Оператор Database с вебхуками
+- Понимание TLS и сертификатов
+- Кластер kind с установленным cert-manager (из `scripts/setup-kind-cluster.sh`)
 
-## Understanding Webhook Certificate Requirements
+## Понимание требований к сертификатам вебхуков
 
-Webhooks require TLS certificates because the Kubernetes API server communicates with webhooks over HTTPS. The certificate must be trusted by the API server.
+Вебхукам нужны TLS-сертификаты, потому что API-сервер Kubernetes взаимодействует с вебхуками по HTTPS. Сертификат должен быть доверенным для API-сервера.
 
-**Two approaches:**
-1. **cert-manager (Recommended)** - Automatically manages certificates in the cluster
-2. **Manual certificates** - For special cases only
+**Два подхода:**
+1. **cert-manager (рекомендуется)** — автоматически управляет сертификатами в кластере
+2. **Ручные сертификаты** — только для особых случаев
 
-> **Note:** The kubebuilder-generated project is already configured to work with cert-manager. The `config/default/kustomization.yaml` includes cert-manager resources.
+> **Примечание:** проект, сгенерированный kubebuilder, уже настроен для работы с cert-manager. `config/default/kustomization.yaml` включает ресурсы cert-manager.
 
-## Exercise 1: Verify Cert-Manager Setup
+## Упражнение 1: проверка настройки Cert-Manager
 
-### Task 1.1: Check Cert-Manager is Running
+### Задача 1.1: проверьте, что Cert-Manager запущен
 
 ```bash
 # If you used scripts/setup-kind-cluster.sh, cert-manager is already installed
@@ -50,7 +50,7 @@ kubectl get pods -n cert-manager
 # cert-manager-webhook-xxx      Running
 ```
 
-### Task 1.2: Install Cert-Manager (if not installed)
+### Задача 1.2: установите Cert-Manager (если не установлен)
 
 ```bash
 # Only if cert-manager is not running
@@ -62,9 +62,9 @@ kubectl wait --for=condition=Available deployment/cert-manager-webhook -n cert-m
 kubectl wait --for=condition=Available deployment/cert-manager-cainjector -n cert-manager --timeout=120s
 ```
 
-## Exercise 2: Examine Kubebuilder's Cert-Manager Configuration
+## Упражнение 2: изучение конфигурации Cert-Manager в Kubebuilder
 
-### Task 2.1: Check Certificate Configuration
+### Задача 2.1: проверьте конфигурацию сертификата
 
 ```bash
 cd ~/postgres-operator
@@ -73,20 +73,20 @@ cd ~/postgres-operator
 cat config/certmanager/certificate-*.yaml
 ```
 
-This defines a Certificate resource that cert-manager will use to generate TLS certificates for the webhook.
+Это определяет ресурс Certificate, который cert-manager будет использовать для генерации TLS-сертификатов для вебхука.
 
-### Task 2.2: Check Kustomization
+### Задача 2.2: проверьте Kustomization
 
 ```bash
 # Check how cert-manager is integrated
 cat config/default/kustomization.yaml
 ```
 
-The `config/default/kustomization.yaml` should include `../certmanager` to enable cert-manager integration.
+`config/default/kustomization.yaml` должен включать `../certmanager` для активации интеграции с cert-manager.
 
-## Exercise 3: Deploy Operator with Webhooks
+## Упражнение 3: развёртывание оператора с вебхуками
 
-### Task 3.1: Build the Operator Image
+### Задача 3.1: соберите образ оператора
 
 ```bash
 cd ~/postgres-operator
@@ -98,7 +98,7 @@ make docker-build IMG=postgres-operator:latest
 # make docker-build IMG=postgres-operator:latest CONTAINER_TOOL=podman
 ```
 
-### Task 3.2: Load Image into Kind
+### Задача 3.2: загрузите образ в Kind
 
 ```bash
 # For Docker:
@@ -110,7 +110,7 @@ kind load docker-image postgres-operator:latest --name k8s-operators-course
 # rm /tmp/postgres-operator.tar
 ```
 
-### Task 3.3: Deploy to Cluster
+### Задача 3.3: разверните в кластер
 
 ```bash
 # Deploy operator with webhooks
@@ -120,7 +120,7 @@ make deploy IMG=postgres-operator:latest
 # make deploy IMG=localhost/postgres-operator:latest
 ```
 
-### Task 3.4: Verify Deployment
+### Задача 3.4: проверьте развёртывание
 
 ```bash
 # Check deployment
@@ -133,9 +133,9 @@ kubectl get pods -n postgres-operator-system
 kubectl wait --for=condition=Ready pod -l control-plane=controller-manager -n postgres-operator-system --timeout=120s
 ```
 
-## Exercise 4: Verify Webhook Configuration
+## Упражнение 4: проверка конфигурации вебхука
 
-### Task 4.1: Check Webhook Configurations
+### Задача 4.1: проверьте конфигурации вебхуков
 
 ```bash
 # Check validating webhook
@@ -148,7 +148,7 @@ kubectl get mutatingwebhookconfigurations
 kubectl describe validatingwebhookconfiguration postgres-operator-validating-webhook-configuration
 ```
 
-### Task 4.2: Check Certificates
+### Задача 4.2: проверьте сертификаты
 
 ```bash
 # Check certificate was created by cert-manager
@@ -161,7 +161,7 @@ kubectl describe certificate -n postgres-operator-system
 kubectl get secret -n postgres-operator-system | grep tls
 ```
 
-### Task 4.3: Check Webhook Service
+### Задача 4.3: проверьте сервис вебхука
 
 ```bash
 # Check webhook service
@@ -171,9 +171,9 @@ kubectl get service -n postgres-operator-system
 kubectl get endpoints -n postgres-operator-system
 ```
 
-## Exercise 5: Test Webhooks
+## Упражнение 5: тестирование вебхуков
 
-### Task 5.1: Test Mutating Webhook (Defaults)
+### Задача 5.1: протестируйте мутирующий вебхук (значения по умолчанию)
 
 ```bash
 # Create resource with minimal spec
@@ -203,7 +203,7 @@ kubectl get database webhook-test -o jsonpath='{.metadata.labels}'
 echo
 ```
 
-### Task 5.2: Test Validating Webhook (Rejection)
+### Задача 5.2: протестируйте валидирующий вебхук (отклонение)
 
 ```bash
 # Try to create invalid resource
@@ -223,7 +223,7 @@ EOF
 # Should be rejected with validation error
 ```
 
-### Task 5.3: Test Update Validation
+### Задача 5.3: протестируйте валидацию обновления
 
 ```bash
 # Try to reduce storage (should fail)
@@ -232,9 +232,9 @@ kubectl patch database webhook-test --type merge -p '{"spec":{"storage":{"size":
 # Should be rejected
 ```
 
-## Exercise 6: Troubleshoot Webhook Issues
+## Упражнение 6: устранение неполадок вебхуков
 
-### Task 6.1: Check Operator Logs
+### Задача 6.1: проверьте логи оператора
 
 ```bash
 # Get operator logs
@@ -244,7 +244,7 @@ kubectl logs -n postgres-operator-system deployment/postgres-operator-controller
 kubectl logs -n postgres-operator-system deployment/postgres-operator-controller-manager | grep -i webhook
 ```
 
-### Task 6.2: Check Certificate Status
+### Задача 6.2: проверьте статус сертификата
 
 ```bash
 # Check certificate status
@@ -257,9 +257,9 @@ kubectl describe certificate -n postgres-operator-system
 kubectl logs -n cert-manager deployment/cert-manager
 ```
 
-### Task 6.3: Common Issues and Fixes
+### Задача 6.3: распространённые проблемы и их решения
 
-**Issue: Certificate not ready**
+**Проблема: сертификат не готов**
 ```bash
 # Check cert-manager is running
 kubectl get pods -n cert-manager
@@ -268,7 +268,7 @@ kubectl get pods -n cert-manager
 kubectl describe certificate -n postgres-operator-system
 ```
 
-**Issue: Webhook connection refused**
+**Проблема: отказ в соединении с вебхуком**
 ```bash
 # Check service endpoints
 kubectl get endpoints -n postgres-operator-system
@@ -277,13 +277,13 @@ kubectl get endpoints -n postgres-operator-system
 kubectl get pods -n postgres-operator-system
 ```
 
-**Issue: CA bundle mismatch**
+**Проблема: несоответствие CA bundle**
 ```bash
 # Check CA bundle in webhook config
 kubectl get validatingwebhookconfiguration -o jsonpath='{.items[0].webhooks[0].clientConfig.caBundle}' | base64 -d | openssl x509 -text -noout | head -20
 ```
 
-## Cleanup
+## Очистка
 
 ```bash
 # Delete test resources
@@ -293,40 +293,40 @@ kubectl delete databases --all
 make undeploy
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Verified cert-manager setup
-- Examined kubebuilder's cert-manager integration
-- Deployed operator with webhooks to cluster
-- Verified webhook configuration and certificates
-- Tested webhook functionality
-- Learned troubleshooting techniques
+В этой лабораторной вы:
+- Проверили настройку cert-manager
+- Изучили интеграцию kubebuilder с cert-manager
+- Развернули оператор с вебхуками в кластер
+- Проверили конфигурацию вебхуков и сертификаты
+- Протестировали функциональность вебхуков
+- Изучили приёмы устранения неполадок
 
-## Key Learnings
+## Ключевые уроки
 
-1. Webhooks require TLS certificates - API server must trust them
-2. cert-manager automatically manages certificates in the cluster
-3. Kubebuilder projects are pre-configured for cert-manager
-4. Webhooks cannot easily work with `make run` (requires in-cluster deployment)
-5. Use `kubectl describe` and logs for troubleshooting
-6. Certificate issues are common - check cert-manager status first
+1. Вебхукам нужны TLS-сертификаты — API-сервер должен им доверять
+2. cert-manager автоматически управляет сертификатами в кластере
+3. Проекты kubebuilder предварительно настроены для cert-manager
+4. Вебхуки не могут легко работать через `make run` (требуют развёртывания в кластере)
+5. Используйте `kubectl describe` и логи для устранения неполадок
+6. Проблемы с сертификатами распространены — сначала проверяйте статус cert-manager
 
-## Solutions
+## Решения
 
-This lab focuses on deployment and certificates. For webhook implementation, refer to:
-- [Validating Webhook](../solutions/validating-webhook.go) - From Lab 5.2
-- [Mutating Webhook](../solutions/mutating-webhook.go) - From Lab 5.3
+Эта лабораторная посвящена развёртыванию и сертификатам. Для реализации вебхуков см.:
+- [Validating Webhook](../solutions/validating-webhook.go) — из Лабораторной 5.2
+- [Mutating Webhook](../solutions/mutating-webhook.go) — из Лабораторной 5.3
 
-## Congratulations!
+## Поздравляем!
 
-You've completed Module 5! You now understand:
-- Admission control and webhooks
-- Validating webhooks for custom validation
-- Mutating webhooks for defaulting
-- Certificate management with cert-manager
-- Webhook deployment and troubleshooting
+Вы завершили Модуль 5! Теперь вы понимаете:
+- Контроль допуска и вебхуки
+- Валидирующие вебхуки для пользовательской валидации
+- Мутирующие вебхуки для установки значений по умолчанию
+- Управление сертификатами с cert-manager
+- Развёртывание вебхуков и устранение неполадок
 
-In Module 6, you'll learn about testing and debugging operators!
+В Модуле 6 вы изучите тестирование и отладку операторов!
 
-**Navigation:** [← Previous Lab: Mutating Webhooks](lab-03-mutating-webhooks.md) | [Related Lesson](../lessons/04-webhook-deployment.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущая лабораторная: Мутирующие вебхуки](lab-03-mutating-webhooks.md) | [Связанный урок](../lessons/04-webhook-deployment.md) | [Обзор модуля](../README.md)
