@@ -1,24 +1,24 @@
-# Module 7 Solutions
+# Решения Модуля 7
 
-This directory contains complete, working solutions for Module 7 labs, aligned with kubebuilder project structure and conventions.
+Этот каталог содержит полные рабочие решения для лабораторных Модуля 7, согласованные со структурой и соглашениями проекта kubebuilder.
 
-## Files
+## Файлы
 
-- [**Dockerfile**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/Dockerfile): Production-ready multi-stage Dockerfile
-- [**rbac.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/rbac.yaml): Optimized RBAC configuration
-- [**security.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/security.yaml): Security best practices
-- [**leader-election.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/leader-election.go): Complete main.go with leader election
-- [**ha-deployment.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/ha-deployment.yaml): High availability deployment with PDB
-- [**ratelimiter.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/ratelimiter.go): Rate limiting examples
-- [**performance.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/performance.go): Performance optimization examples
-- [**helm-chart/**](https://github.com/piyushjajoo/k8s-operators-course/tree/main/module-07/solutions/helm-chart): Helm chart generated from Kustomize
-- [**github-actions/**](https://github.com/piyushjajoo/k8s-operators-course/tree/main/module-07/solutions/github-actions): CI/CD workflows for automated releases
+- [**Dockerfile**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/Dockerfile): готовый к продакшену многоэтапный Dockerfile
+- [**rbac.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/rbac.yaml): оптимизированная конфигурация RBAC
+- [**security.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/security.yaml): лучшие практики безопасности
+- [**leader-election.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/leader-election.go): полный main.go с выбором лидера
+- [**ha-deployment.yaml**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/ha-deployment.yaml): развёртывание высокой доступности с PDB
+- [**ratelimiter.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/ratelimiter.go): примеры ограничения частоты
+- [**performance.go**](https://github.com/piyushjajoo/k8s-operators-course/blob/main/module-07/solutions/performance.go): примеры оптимизации производительности
+- [**helm-chart/**](https://github.com/piyushjajoo/k8s-operators-course/tree/main/module-07/solutions/helm-chart): Helm-чарт, сгенерированный из Kustomize
+- [**github-actions/**](https://github.com/piyushjajoo/k8s-operators-course/tree/main/module-07/solutions/github-actions): CI/CD-workflows для автоматизированных релизов
 
-## Kubebuilder Integration
+## Интеграция с Kubebuilder
 
-These solutions are designed to work with kubebuilder projects from Modules 1-6:
+Эти решения предназначены для работы с проектами kubebuilder из Модулей 1–6:
 
-### Project Structure Reference
+### Справка по структуре проекта
 ```
 your-operator/
 ├── cmd/
@@ -43,12 +43,12 @@ your-operator/
 └── Makefile                 # Use make targets for building/deploying
 ```
 
-**Important:** The Dockerfile copies `internal/` (not just `internal/controller/`) to include both controllers AND webhooks in the final image.
+**Важно:** Dockerfile копирует `internal/` (а не только `internal/controller/`), чтобы включить в итоговый образ и контроллеры, И вебхуки.
 
-## Usage
+## Использование
 
-### 1. Container Image (Lab 7.1)
-Kubebuilder already generates a Dockerfile. Use the kubebuilder make targets:
+### 1. Образ контейнера (Лабораторная 7.1)
+Kubebuilder уже генерирует Dockerfile. Используйте цели make от kubebuilder:
 ```bash
 # Build image
 make docker-build IMG=postgres-operator:v0.1.0
@@ -60,8 +60,8 @@ make docker-push IMG=postgres-operator:v0.1.0
 kind load docker-image postgres-operator:v0.1.0 --name k8s-operators-course
 ```
 
-### 2. RBAC (Lab 7.2)
-Review your controller RBAC markers and regenerate:
+### 2. RBAC (Лабораторная 7.2)
+Проверьте маркеры RBAC контроллера и перегенерируйте:
 ```bash
 # View generated RBAC
 cat config/rbac/role.yaml
@@ -70,33 +70,33 @@ cat config/rbac/role.yaml
 make manifests
 ```
 
-### 3. Security (Lab 7.2)
-Update `config/manager/manager.yaml` with security contexts. Apply network policies:
+### 3. Безопасность (Лабораторная 7.2)
+Обновите `config/manager/manager.yaml` контекстами безопасности. Примените сетевые политики:
 ```bash
 # Create network policy directory
 mkdir -p config/network-policy
 # Add network policy and update kustomization.yaml
 ```
 
-### 4. High Availability (Lab 7.3)
-Update `config/manager/manager.yaml`:
-- Set `replicas: 3`
-- Add `--leader-elect` to args
-- Create `config/manager/pdb.yaml` for Pod Disruption Budget
+### 4. Высокая доступность (Лабораторная 7.3)
+Обновите `config/manager/manager.yaml`:
+- Установите `replicas: 3`
+- Добавьте `--leader-elect` в args
+- Создайте `config/manager/pdb.yaml` для бюджета прерывания подов
 
-Deploy:
+Разверните:
 ```bash
 make deploy IMG=postgres-operator:v0.1.0
 ```
 
-### 5. Performance (Lab 7.4)
-Add to `internal/controller/database_controller.go`:
-- Configure `WithOptions(controller.Options{...})` in SetupWithManager
-- Add field indexes in `cmd/main.go`
-- Register custom metrics with `metrics.Registry`
+### 5. Производительность (Лабораторная 7.4)
+Добавьте в `internal/controller/database_controller.go`:
+- Настройте `WithOptions(controller.Options{...})` в SetupWithManager
+- Добавьте индексы полей в `cmd/main.go`
+- Зарегистрируйте пользовательские метрики через `metrics.Registry`
 
-### 6. Helm Chart (Lab 7.1)
-The `make helm-chart` target generates a Helm chart from Kustomize:
+### 6. Helm-чарт (Лабораторная 7.1)
+Цель `make helm-chart` генерирует Helm-чарт из Kustomize:
 ```bash
 # Generate helm chart from kustomize
 make helm-chart IMG=postgres-operator:v0.1.0
@@ -114,7 +114,7 @@ make helm-install
 make helm-uninstall
 ```
 
-## Key Commands
+## Ключевые команды
 
 ```bash
 # Build and push image
@@ -141,9 +141,9 @@ make helm-install
 make helm-uninstall
 ```
 
-## Helm Chart Generation from Kustomize
+## Генерация Helm-чарта из Kustomize
 
-Add these targets to your Makefile to generate Helm charts automatically:
+Добавьте эти цели в ваш Makefile для автоматической генерации Helm-чартов:
 
 ```makefile
 CHART_NAME ?= postgres-operator
@@ -217,11 +217,11 @@ helm-uninstall: ## Uninstall Helm chart
 	helm uninstall $(CHART_NAME) --namespace $(CHART_NAME)-system
 ```
 
-## Notes
+## Примечания
 
-- All solutions follow kubebuilder project conventions
-- Security configurations match kubebuilder defaults (distroless, non-root, capabilities dropped)
-- Leader election is built into kubebuilder via `--leader-elect` flag
-- Performance optimizations use controller-runtime's built-in features
-- Helm charts are generated from Kustomize; the chart packages all resources into a single `manifests.yaml`
-- For production Helm charts, consider splitting resources into separate templates for better customization
+- Все решения следуют соглашениям проекта kubebuilder
+- Конфигурации безопасности соответствуют значениям по умолчанию kubebuilder (distroless, не от root, отброшенные capabilities)
+- Выбор лидера встроен в kubebuilder через флаг `--leader-elect`
+- Оптимизации производительности используют встроенные возможности controller-runtime
+- Helm-чарты генерируются из Kustomize; чарт упаковывает все ресурсы в единый `manifests.yaml`
+- Для продакшен-Helm-чартов рассмотрите разделение ресурсов на отдельные шаблоны для лучшей кастомизации

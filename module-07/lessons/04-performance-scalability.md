@@ -2,92 +2,92 @@
 layout: default
 title: "07.4 Performance Scalability"
 nav_order: 4
-parent: "Module 7: Production Considerations"
-grand_parent: Modules
+parent: "Модуль 7: Подготовка к продакшену"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 7.4: Performance and Scalability
+# Урок 7.4: Производительность и масштабируемость
 
-**Navigation:** [← Previous: High Availability](03-high-availability.md) | [Module Overview](../README.md)
+**Навигация:** [← Предыдущий: Высокая доступность](03-high-availability.md) | [Обзор модуля](../README.md)
 
-## Introduction
+## Введение
 
-As operators manage more resources, performance becomes critical. This lesson covers rate limiting, batch reconciliation, caching strategies, and techniques for managing large-scale deployments efficiently.
+По мере того как операторы управляют всё большим числом ресурсов, производительность становится критичной. Этот урок охватывает ограничение частоты (rate limiting), пакетное согласование, стратегии кеширования и приёмы эффективного управления крупномасштабными развёртываниями.
 
-## Theory: Performance and Scalability
+## Теория: производительность и масштабируемость
 
-Performance optimization ensures operators **scale efficiently** as they manage more resources.
+Оптимизация производительности гарантирует, что операторы **эффективно масштабируются** по мере управления бо́льшим числом ресурсов.
 
-### Why Performance Matters
+### Почему производительность важна
 
-**Scalability:**
-- Operators must handle growth
-- Performance degrades with scale
-- Optimization enables scaling
-- Cost efficiency
+**Масштабируемость:**
+- Операторы должны справляться с ростом
+- Производительность деградирует с масштабом
+- Оптимизация обеспечивает масштабирование
+- Экономическая эффективность
 
-**User Experience:**
-- Fast reconciliation
-- Responsive status updates
-- Low latency
-- Better resource utilization
+**Опыт пользователя:**
+- Быстрое согласование
+- Отзывчивые обновления статуса
+- Низкая задержка
+- Лучшее использование ресурсов
 
-**Resource Efficiency:**
-- Lower API server load
-- Reduced network traffic
-- Lower CPU/memory usage
-- Cost savings
+**Эффективность ресурсов:**
+- Меньшая нагрузка на API-сервер
+- Сниженный сетевой трафик
+- Меньшее использование CPU/памяти
+- Экономия затрат
 
-### Performance Bottlenecks
+### Узкие места производительности
 
-**API Server Load:**
-- Too many API calls
-- Inefficient queries
-- No caching
-- Rate limiting issues
+**Нагрузка на API-сервер:**
+- Слишком много вызовов API
+- Неэффективные запросы
+- Отсутствие кеширования
+- Проблемы с ограничением частоты
 
-**Reconciliation Overhead:**
-- Inefficient reconciliation logic
-- Unnecessary work
-- No batching
-- Sequential processing
+**Накладные расходы согласования:**
+- Неэффективная логика согласования
+- Ненужная работа
+- Отсутствие пакетной обработки
+- Последовательная обработка
 
-**Memory Usage:**
-- Large caches
-- Memory leaks
-- Inefficient data structures
-- No cleanup
+**Использование памяти:**
+- Большие кеши
+- Утечки памяти
+- Неэффективные структуры данных
+- Отсутствие очистки
 
-### Optimization Strategies
+### Стратегии оптимизации
 
-**Rate Limiting:**
-- Control API call rate
-- Prevent API server overload
-- Respect API server limits
-- Smooth traffic patterns
+**Ограничение частоты:**
+- Контроль частоты вызовов API
+- Предотвращение перегрузки API-сервера
+- Соблюдение лимитов API-сервера
+- Сглаживание паттернов трафика
 
-**Caching:**
-- Cache frequently accessed data
-- Reduce API calls
-- Faster lookups
-- Use informers
+**Кеширование:**
+- Кеширование часто используемых данных
+- Сокращение вызовов API
+- Более быстрый поиск
+- Использование информеров
 
-**Batch Processing:**
-- Process multiple resources together
-- Reduce overhead
-- Improve efficiency
-- Better resource utilization
+**Пакетная обработка:**
+- Обработка нескольких ресурсов вместе
+- Сокращение накладных расходов
+- Повышение эффективности
+- Лучшее использование ресурсов
 
-**Parallel Processing:**
-- Process independent work in parallel
-- Utilize multiple cores
-- Faster completion
-- Careful with shared state
+**Параллельная обработка:**
+- Обработка независимой работы параллельно
+- Использование нескольких ядер
+- Более быстрое завершение
+- Осторожность с общим состоянием
 
-Understanding performance helps you build scalable, efficient operators.
+Понимание производительности помогает создавать масштабируемые, эффективные операторы.
 
-## Performance Optimization Strategies
+## Стратегии оптимизации производительности
 
 ```mermaid
 graph TB
@@ -106,9 +106,9 @@ graph TB
     style PERFORMANCE fill:#90EE90
 ```
 
-## Rate Limiting
+## Ограничение частоты (Rate Limiting)
 
-### Why Rate Limit?
+### Зачем ограничивать частоту?
 
 ```mermaid
 flowchart TD
@@ -125,9 +125,9 @@ flowchart TD
     style SUCCESS fill:#90EE90
 ```
 
-### Using Controller-Runtime's Built-in Rate Limiting
+### Использование встроенного ограничения частоты в Controller-Runtime
 
-Controller-runtime (used by kubebuilder) includes built-in rate limiting. Configure it when setting up your controller:
+Controller-runtime (используемый kubebuilder) включает встроенное ограничение частоты. Настройте его при конфигурации контроллера:
 
 ```go
 // In internal/controller/database_controller.go
@@ -158,9 +158,9 @@ func (r *DatabaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 }
 ```
 
-### Custom Rate Limiting for API Calls
+### Пользовательское ограничение частоты для вызовов API
 
-For rate limiting external API calls within reconciliation:
+Для ограничения частоты внешних вызовов API внутри согласования:
 
 ```go
 import (
@@ -190,9 +190,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-## Batch Reconciliation
+## Пакетное согласование
 
-### Batch Processing Flow
+### Процесс пакетной обработки
 
 ```mermaid
 sequenceDiagram
@@ -209,7 +209,7 @@ sequenceDiagram
     Note over Controller: Process multiple<br/>resources together
 ```
 
-### Batch Reconciliation Example
+### Пример пакетного согласования
 
 ```go
 func (r *DatabaseReconciler) ReconcileBatch(ctx context.Context, requests []ctrl.Request) (ctrl.Result, error) {
@@ -247,9 +247,9 @@ func (r *DatabaseReconciler) ReconcileBatch(ctx context.Context, requests []ctrl
 }
 ```
 
-## Caching Strategies
+## Стратегии кеширования
 
-### Client Caching
+### Кеширование клиента
 
 ```mermaid
 graph TB
@@ -268,9 +268,9 @@ graph TB
     style FAST fill:#FFB6C1
 ```
 
-### Kubebuilder's Built-in Caching
+### Встроенное кеширование Kubebuilder
 
-Controller-runtime (used by kubebuilder) provides automatic caching through the Manager's client. When you use `r.Get()` or `r.List()`, it reads from the cache, not directly from the API server:
+Controller-runtime (используемый kubebuilder) обеспечивает автоматическое кеширование через клиент Manager. Когда вы используете `r.Get()` или `r.List()`, чтение идёт из кеша, а не напрямую из API-сервера:
 
 ```go
 // In your controller - reads from cache by default
@@ -291,9 +291,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-### Custom Indexers for Fast Lookups
+### Пользовательские индексаторы для быстрого поиска
 
-Add custom indexes in your controller setup to enable fast filtering:
+Добавьте пользовательские индексы при настройке контроллера, чтобы обеспечить быструю фильтрацию:
 
 ```go
 // In cmd/main.go or during controller setup
@@ -317,9 +317,9 @@ err := r.List(ctx, dbList, client.MatchingFields{
 })
 ```
 
-## Parallel Processing
+## Параллельная обработка
 
-### Concurrent Reconciliation
+### Конкурентное согласование
 
 ```go
 func (r *DatabaseReconciler) ReconcileParallel(ctx context.Context, requests []ctrl.Request) error {
@@ -354,9 +354,9 @@ func (r *DatabaseReconciler) ReconcileParallel(ctx context.Context, requests []c
 }
 ```
 
-## Managing Large Clusters
+## Управление большими кластерами
 
-### Scaling Considerations
+### Соображения масштабирования
 
 ```mermaid
 graph TB
@@ -375,9 +375,9 @@ graph TB
     style LARGE fill:#FFB6C1
 ```
 
-### Optimization Techniques
+### Приёмы оптимизации
 
-1. **Use Field Selectors**
+1. **Используйте селекторы полей**
    ```go
    // Instead of listing all, use field selector
    databases := &databasev1.DatabaseList{}
@@ -386,7 +386,7 @@ graph TB
    })
    ```
 
-2. **Limit List Results**
+2. **Ограничивайте результаты List**
    ```go
    databases := &databasev1.DatabaseList{}
    r.List(ctx, databases, &client.ListOptions{
@@ -394,16 +394,16 @@ graph TB
    })
    ```
 
-3. **Use Indexes**
+3. **Используйте индексы**
    ```go
    // Create index for frequent queries
    mgr.GetFieldIndexer().IndexField(ctx, &databasev1.Database{},
        "spec.environment", indexEnvironment)
    ```
 
-## Performance Monitoring
+## Мониторинг производительности
 
-### Key Metrics
+### Ключевые метрики
 
 ```mermaid
 graph TB
@@ -417,7 +417,7 @@ graph TB
     style METRICS fill:#90EE90
 ```
 
-### Monitoring Performance
+### Мониторинг производительности
 
 ```go
 var (
@@ -438,55 +438,55 @@ var (
 )
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **Controller-runtime caching** is automatic in kubebuilder
-- **MaxConcurrentReconciles** controls parallel reconciliations
-- **RateLimiter** in controller options manages requeue rates
-- **Field indexes** enable fast filtered lookups
-- **`client.MatchingFields`** optimizes queries
-- **Metrics** are available at `:8080/metrics` by default
-- **Scale strategies** depend on cluster size
+- **Кеширование controller-runtime** автоматическое в kubebuilder
+- **MaxConcurrentReconciles** контролирует параллельные согласования
+- **RateLimiter** в опциях контроллера управляет частотой повторов
+- **Индексы полей** обеспечивают быстрый фильтрованный поиск
+- **`client.MatchingFields`** оптимизирует запросы
+- **Метрики** доступны на `:8080/metrics` по умолчанию
+- **Стратегии масштабирования** зависят от размера кластера
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When optimizing kubebuilder operators:
-- Use controller-runtime's built-in caching (automatic)
-- Configure `MaxConcurrentReconciles` in `SetupWithManager`
-- Set up custom field indexes for frequent lookups
-- Use `client.MatchingFields{}` for filtered queries
-- Monitor metrics at the default metrics endpoint
-- Use `rate.Limiter` for external API calls
-- Increase replicas with leader election for scale
-- Profile with `go tool pprof` if needed
+При оптимизации операторов kubebuilder:
+- Используйте встроенное кеширование controller-runtime (автоматическое)
+- Настраивайте `MaxConcurrentReconciles` в `SetupWithManager`
+- Настраивайте пользовательские индексы полей для частого поиска
+- Используйте `client.MatchingFields{}` для фильтрованных запросов
+- Отслеживайте метрики на эндпоинте метрик по умолчанию
+- Используйте `rate.Limiter` для внешних вызовов API
+- Увеличивайте число реплик с выбором лидера для масштабирования
+- Профилируйте с помощью `go tool pprof` при необходимости
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 7.4: Optimizing Performance](../labs/lab-04-performance-scalability.md) - Hands-on exercises for this lesson
+- [Лабораторная 7.4: Оптимизация производительности](../labs/lab-04-performance-scalability.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [Kubernetes API Rate Limiting](https://kubernetes.io/docs/concepts/cluster-administration/flow-control/)
-- [Controller Performance](https://kubernetes.io/docs/concepts/architecture/controller/#controller-performance)
+### Официальная документация
+- [Ограничение частоты API Kubernetes](https://kubernetes.io/docs/concepts/cluster-administration/flow-control/)
+- [Производительность контроллера](https://kubernetes.io/docs/concepts/architecture/controller/#controller-performance)
 
-### Further Reading
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 15: Performance
-- **High Performance Go** by Ian Lance Taylor - Go performance optimization
+### Дополнительное чтение
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 15: Performance
+- **High Performance Go**, Ian Lance Taylor — оптимизация производительности Go
 
-### Related Topics
-- [API Priority and Fairness](https://kubernetes.io/docs/concepts/cluster-administration/flow-control/)
-- [Profiling Go Programs](https://go.dev/blog/pprof)
-- [Caching Strategies](https://kubernetes.io/docs/concepts/architecture/controller/#caching)
+### Смежные темы
+- [Приоритет и справедливость API (API Priority and Fairness)](https://kubernetes.io/docs/concepts/cluster-administration/flow-control/)
+- [Профилирование Go-программ](https://go.dev/blog/pprof)
+- [Стратегии кеширования](https://kubernetes.io/docs/concepts/architecture/controller/#caching)
 
-## Next Steps
+## Дальнейшие шаги
 
-Congratulations! You've completed Module 7. You now understand:
-- Packaging and distribution
-- RBAC and security
-- High availability
-- Performance optimization
+Поздравляем! Вы завершили Модуль 7. Теперь вы понимаете:
+- Упаковку и распространение
+- RBAC и безопасность
+- Высокую доступность
+- Оптимизацию производительности
 
-In [Module 8](../../module-08/README.md), you'll learn about advanced topics and real-world patterns.
+В [Модуле 8](../../module-08/README.md) вы изучите продвинутые темы и практические паттерны.
 
-**Navigation:** [← Previous: High Availability](03-high-availability.md) | [Module Overview](../README.md) | [Next: Module 8 →](../../module-08/README.md)
+**Навигация:** [← Предыдущий: Высокая доступность](03-high-availability.md) | [Обзор модуля](../README.md) | [Далее: Модуль 8 →](../../module-08/README.md)

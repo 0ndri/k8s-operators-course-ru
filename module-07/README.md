@@ -1,114 +1,113 @@
 ---
 layout: default
-title: "Module 7: Production Considerations"
+title: "Модуль 7: Подготовка к продакшену"
 nav_order: 7
-parent: Modules
+parent: Модули
 has_children: true
 has_toc: false
 permalink: /module-07/
 mermaid: true
 ---
 
-# Module 7: Production Considerations
+# Модуль 7: Подготовка к продакшену
 
-## Overview
+## Обзор
 
-Now that you can build, test, and debug operators ([Module 6](../module-06/README.md)), it's time to prepare them for production. This module covers packaging, distribution, security, high availability, and performance optimization - all essential for running operators in production environments.
+Теперь, когда вы умеете создавать, тестировать и отлаживать операторы ([Модуль 6](../module-06/README.md)), пришло время подготовить их к продакшену. Этот модуль охватывает упаковку, распространение, безопасность, высокую доступность и оптимизацию производительности — всё это необходимо для запуска операторов в продакшен-средах.
 
-**Duration:** 6-7 hours  
-**Prerequisites:** 
-- Completion of [Module 1: Kubernetes Architecture Deep Dive](../module-01/README.md)
-- Completion of [Module 2: Introduction to Operators](../module-02/README.md)
-- Completion of [Module 3: Building Custom Controllers](../module-03/README.md)
-- Completion of [Module 4: Advanced Reconciliation Patterns](../module-04/README.md)
-- Completion of [Module 5: Webhooks and Admission Control](../module-05/README.md)
-- Completion of [Module 6: Testing and Debugging](../module-06/README.md)
-- Understanding of container images and Helm
+**Продолжительность:** 6–7 часов  
+**Предварительные требования:** 
+- Завершение [Модуля 1: Глубокое погружение в архитектуру Kubernetes](../module-01/README.md)
+- Завершение [Модуля 2: Введение в операторы](../module-02/README.md)
+- Завершение [Модуля 3: Создание кастомных контроллеров](../module-03/README.md)
+- Завершение [Модуля 4: Продвинутые паттерны согласования](../module-04/README.md)
+- Завершение [Модуля 5: Вебхуки и контроль допуска](../module-05/README.md)
+- Завершение [Модуля 6: Тестирование и отладка](../module-06/README.md)
+- Понимание образов контейнеров и Helm
 
-## Learning Objectives
+## Цели обучения
 
-By the end of this module, you will:
+К концу этого модуля вы:
 
-- Package operators for distribution (images, Helm charts, OLM bundles)
-- Configure proper RBAC and security
-- Implement high availability with leader election
-- Optimize performance and scalability
-- Understand production deployment best practices
+- Научитесь упаковывать операторы для распространения (образы, Helm-чарты, OLM-бандлы)
+- Настроите корректный RBAC и безопасность
+- Реализуете высокую доступность с выбором лидера
+- Оптимизируете производительность и масштабируемость
+- Разберётесь в лучших практиках развёртывания в продакшене
 
-## Module Structure
+## Структура модуля
 
-1. **[Lesson 7.1: Packaging and Distribution](lessons/01-packaging-distribution.md)**
-   - [Lab 7.1: Packaging Your Operator](labs/lab-01-packaging-distribution.md)
+1. **[Урок 7.1: Упаковка и распространение](lessons/01-packaging-distribution.md)**
+   - [Лабораторная 7.1: Упаковка вашего оператора](labs/lab-01-packaging-distribution.md)
 
-2. **[Lesson 7.2: RBAC and Security](lessons/02-rbac-security.md)**
-   - [Lab 7.2: Configuring RBAC](labs/lab-02-rbac-security.md)
+2. **[Урок 7.2: RBAC и безопасность](lessons/02-rbac-security.md)**
+   - [Лабораторная 7.2: Настройка RBAC](labs/lab-02-rbac-security.md)
 
-3. **[Lesson 7.3: High Availability](lessons/03-high-availability.md)**
-   - [Lab 7.3: Implementing HA](labs/lab-03-high-availability.md)
+3. **[Урок 7.3: Высокая доступность](lessons/03-high-availability.md)**
+   - [Лабораторная 7.3: Реализация HA](labs/lab-03-high-availability.md)
 
-4. **[Lesson 7.4: Performance and Scalability](lessons/04-performance-scalability.md)**
-   - [Lab 7.4: Optimizing Performance](labs/lab-04-performance-scalability.md)
+4. **[Урок 7.4: Производительность и масштабируемость](lessons/04-performance-scalability.md)**
+   - [Лабораторная 7.4: Оптимизация производительности](labs/lab-04-performance-scalability.md)
 
-## Prerequisites Check
+## Проверка предварительных требований
 
-Before starting, ensure you've completed:
+Перед началом убедитесь, что вы завершили:
 
-- ✅ [Module 6](../module-06/README.md): Operator with tests and observability
-- ✅ Have a working operator from previous modules
-- ✅ Understand container images and Docker
-- ✅ Basic understanding of Helm charts
+- ✅ [Модуль 6](../module-06/README.md): оператор с тестами и наблюдаемостью
+- ✅ Имеете рабочий оператор из предыдущих модулей
+- ✅ Понимаете образы контейнеров и Docker
+- ✅ Базовое понимание Helm-чартов
 
-If you haven't completed Module 6, start with [Module 6: Testing and Debugging](../module-06/README.md).
+Если вы не завершили Модуль 6, начните с [Модуля 6: Тестирование и отладка](../module-06/README.md).
 
-## What You'll Build
+## Что вы создадите
 
-Throughout this module, you'll prepare your Database operator for production:
+На протяжении этого модуля вы подготовите свой оператор Database к продакшену:
 
-- Container image for distribution
-- Helm chart for easy deployment
-- Proper RBAC configuration
-- High availability setup
-- Performance optimizations
+- Образ контейнера для распространения
+- Helm-чарт для удобного развёртывания
+- Корректную конфигурацию RBAC
+- Настройку высокой доступности
+- Оптимизации производительности
 
-## Setup
+## Настройка
 
-Before starting this module:
+Перед началом этого модуля:
 
-1. **Have your Database operator from Module 3/4/5/6:**
-   - Should have a working operator
-   - Tests should be passing
-   - Ready for production deployment
+1. **Подготовьте свой оператор Database из Модулей 3/4/5/6:**
+   - Должен быть рабочий оператор
+   - Тесты должны проходить
+   - Готов к развёртыванию в продакшене
 
-2. **Ensure development environment is ready:**
+2. **Убедитесь, что среда разработки готова:**
    ```bash
    ./scripts/setup-dev-environment.sh
    ```
 
-3. **Have access to a container registry:**
-   - Docker Hub, GitHub Container Registry, or private registry
-   - For local testing, you can use kind's image loading
+3. **Обеспечьте доступ к реестру контейнеров:**
+   - Docker Hub, GitHub Container Registry или приватный реестр
+   - Для локального тестирования можно использовать загрузку образов kind
 
-## Hands-on Labs
+## Практические лабораторные работы
 
-Each lesson includes hands-on exercises that prepare your operator for production.
+Каждый урок включает практические упражнения, которые готовят ваш оператор к продакшену.
 
-- [Lab 7.1: Packaging Your Operator](labs/lab-01-packaging-distribution.md)
-- [Lab 7.2: Configuring RBAC](labs/lab-02-rbac-security.md)
-- [Lab 7.3: Implementing HA](labs/lab-03-high-availability.md)
-- [Lab 7.4: Optimizing Performance](labs/lab-04-performance-scalability.md)
+- [Лабораторная 7.1: Упаковка вашего оператора](labs/lab-01-packaging-distribution.md)
+- [Лабораторная 7.2: Настройка RBAC](labs/lab-02-rbac-security.md)
+- [Лабораторная 7.3: Реализация HA](labs/lab-03-high-availability.md)
+- [Лабораторная 7.4: Оптимизация производительности](labs/lab-04-performance-scalability.md)
 
-## Solutions
+## Решения
 
-Complete working solutions for all labs are available in the [solutions directory](solutions/):
-- [Lab 7.1 Solutions](solutions/) - Container image and Helm chart examples
-- [Lab 7.2 Solutions](solutions/) - RBAC configuration examples
-- [Lab 7.3 Solutions](solutions/) - Leader election and HA examples
-- [Lab 7.4 Solutions](solutions/) - Performance optimization examples
+Полные рабочие решения для всех лабораторных доступны в [каталоге решений](solutions/):
+- [Решения лабораторной 7.1](solutions/) — примеры образа контейнера и Helm-чарта
+- [Решения лабораторной 7.2](solutions/) — примеры конфигурации RBAC
+- [Решения лабораторной 7.3](solutions/) — примеры выбора лидера и HA
+- [Решения лабораторной 7.4](solutions/) — примеры оптимизации производительности
 
 
-## Navigation
+## Навигация
 
-- [← Previous: Module 6 - Testing and Debugging](../module-06/README.md)
-- [Course Overview](../README.md)
-- [Next: Module 8 - Advanced Topics →](../module-08/README.md)
-
+- [← Предыдущий: Модуль 6 — Тестирование и отладка](../module-06/README.md)
+- [Обзор курса](../README.md)
+- [Далее: Модуль 8 — Продвинутые темы →](../module-08/README.md)

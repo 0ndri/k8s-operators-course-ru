@@ -2,35 +2,35 @@
 layout: default
 title: "Lab 07.3: High Availability"
 nav_order: 13
-parent: "Module 7: Production Considerations"
-grand_parent: Modules
+parent: "Модуль 7: Подготовка к продакшену"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lab 7.3: Implementing High Availability
+# Лабораторная 7.3: Реализация высокой доступности
 
-**Related Lesson:** [Lesson 7.3: High Availability](../lessons/03-high-availability.md)  
-**Navigation:** [← Previous Lab: RBAC](lab-02-rbac-security.md) | [Module Overview](../README.md) | [Next Lab: Performance →](lab-04-performance-scalability.md)
+**Связанный урок:** [Урок 7.3: Высокая доступность](../lessons/03-high-availability.md)  
+**Навигация:** [← Предыдущая лабораторная: RBAC](lab-02-rbac-security.md) | [Обзор модуля](../README.md) | [Следующая лабораторная: Производительность →](lab-04-performance-scalability.md)
 
-## Objectives
+## Цели
 
-- Enable leader election
-- Deploy multiple replicas
-- Configure resource limits
-- Test failover scenarios
-- Set up Pod Disruption Budget
+- Включить выбор лидера
+- Развернуть несколько реплик
+- Настроить лимиты ресурсов
+- Протестировать сценарии отказоустойчивости (failover)
+- Настроить бюджет прерывания подов (Pod Disruption Budget)
 
-## Prerequisites
+## Предварительные требования
 
-- Completion of [Lab 7.2](lab-02-rbac-security.md)
-- Operator ready for deployment
-- Understanding of leader election
+- Завершение [Лабораторной 7.2](lab-02-rbac-security.md)
+- Оператор, готовый к развёртыванию
+- Понимание выбора лидера
 
-## Exercise 1: Enable Leader Election
+## Упражнение 1: включение выбора лидера
 
-Kubebuilder's generated `cmd/main.go` already supports leader election via the `--leader-elect` flag.
+Сгенерированный kubebuilder `cmd/main.go` уже поддерживает выбор лидера через флаг `--leader-elect`.
 
-### Task 1.1: Review Leader Election Code
+### Задача 1.1: изучите код выбора лидера
 
 ```bash
 # Navigate to your operator project
@@ -40,7 +40,7 @@ cd ~/postgres-operator
 grep -A 20 "LeaderElection" cmd/main.go
 ```
 
-You should see code like:
+Вы должны увидеть код вроде:
 
 ```go
 var enableLeaderElection bool
@@ -54,9 +54,9 @@ mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 })
 ```
 
-### Task 1.2: Enable Leader Election in Deployment
+### Задача 1.2: включите выбор лидера в развёртывании
 
-Update `config/manager/manager.yaml` to add the `--leader-elect` flag:
+Обновите `config/manager/manager.yaml`, добавив флаг `--leader-elect`:
 
 ```yaml
 spec:
@@ -69,7 +69,7 @@ spec:
         - --health-probe-bind-address=:8081
 ```
 
-### Task 1.3: Deploy and Verify
+### Задача 1.3: разверните и проверьте
 
 ```bash
 # For Docker: Build and Deploy the operator with network policies enabled
@@ -91,11 +91,11 @@ kubectl get lease -n postgres-operator-system
 kubectl logs -n postgres-operator-system -l control-plane=controller-manager | grep -i "leader"
 ```
 
-## Exercise 2: Deploy Multiple Replicas
+## Упражнение 2: развёртывание нескольких реплик
 
-### Task 2.1: Update Deployment Replicas
+### Задача 2.1: обновите количество реплик развёртывания
 
-Edit `config/manager/manager.yaml` to increase replicas:
+Отредактируйте `config/manager/manager.yaml`, чтобы увеличить число реплик:
 
 ```yaml
 apiVersion: apps/v1
@@ -124,7 +124,7 @@ spec:
             memory: 64Mi
 ```
 
-### Task 2.2: Deploy and Verify
+### Задача 2.2: разверните и проверьте
 
 ```bash
 # For Docker: Build and Deploy the operator with network policies enabled
@@ -152,11 +152,11 @@ for pod in $(kubectl get pods -n postgres-operator-system -l control-plane=contr
 done
 ```
 
-## Exercise 3: Configure Resource Limits
+## Упражнение 3: настройка лимитов ресурсов
 
-### Task 3.1: Set Resource Requests and Limits
+### Задача 3.1: задайте запросы и лимиты ресурсов
 
-Update deployment:
+Обновите развёртывание:
 
 ```yaml
 resources:
@@ -168,7 +168,7 @@ resources:
     memory: 512Mi
 ```
 
-### Task 3.2: Monitor Resource Usage
+### Задача 3.2: отслеживайте использование ресурсов
 
 ```bash
 # Check resource usage
@@ -178,9 +178,9 @@ kubectl top pods -l control-plane=controller-manager
 watch kubectl top pods -l control-plane=controller-manager
 ```
 
-## Exercise 4: Test Failover
+## Упражнение 4: тестирование отказоустойчивости
 
-### Task 4.1: Identify Leader
+### Задача 4.1: определите лидера
 
 ```bash
 # List all pods
@@ -198,7 +198,7 @@ echo "Leader pod: $LEADER_POD"
 kubectl logs -n postgres-operator-system $LEADER_POD | grep -i "became leader"
 ```
 
-### Task 4.2: Simulate Leader Failure
+### Задача 4.2: имитируйте отказ лидера
 
 ```bash
 # Get the leader pod name
@@ -217,11 +217,11 @@ watch kubectl get lease -n postgres-operator-system -o jsonpath='{.items[0].spec
 kubectl logs -n postgres-operator-system -l control-plane=controller-manager --tail=20 | grep -i "reconcil"
 ```
 
-## Exercise 5: Pod Disruption Budget
+## Упражнение 5: бюджет прерывания подов (Pod Disruption Budget)
 
-### Task 5.1: Create PDB
+### Задача 5.1: создайте PDB
 
-Create `config/manager/pdb.yaml`:
+Создайте `config/manager/pdb.yaml`:
 
 ```bash
 cat > config/manager/pdb.yaml << 'EOF'
@@ -238,7 +238,7 @@ spec:
 EOF
 ```
 
-Add to `config/manager/kustomization.yaml`:
+Добавьте в `config/manager/kustomization.yaml`:
 
 ```yaml
 resources:
@@ -246,7 +246,7 @@ resources:
 - pdb.yaml
 ```
 
-### Task 5.2: Deploy and Test PDB
+### Задача 5.2: разверните и протестируйте PDB
 
 ```bash
 # For Docker: Build and Deploy the operator with network policies enabled
@@ -268,11 +268,11 @@ kubectl get pdb -n postgres-operator-system
 kubectl describe pdb -n postgres-operator-system postgres-operator-controller-manager-pdb
 ```
 
-**Important:** PDB only protects against **voluntary disruptions** (evictions), NOT direct `kubectl delete pod` commands!
+**Важно:** PDB защищает только от **добровольных прерываний** (evictions), а НЕ от прямых команд `kubectl delete pod`!
 
-### Task 5.3: Test PDB with Rollout Restart
+### Задача 5.3: протестируйте PDB с помощью rollout restart
 
-The easiest way to test PDB is using `kubectl rollout restart`, which uses the eviction API internally:
+Проще всего протестировать PDB с помощью `kubectl rollout restart`, который внутри использует API вытеснения (eviction):
 
 ```bash
 # Check current PDB status - note ALLOWED DISRUPTIONS
@@ -292,14 +292,14 @@ kubectl get pods -n postgres-operator-system -l control-plane=controller-manager
 watch kubectl get pdb -n postgres-operator-system
 ```
 
-**What you should observe:**
-- Pods are replaced one at a time (not all at once)
-- `ALLOWED DISRUPTIONS` changes as pods are terminated/created
-- At least 2 pods remain `Running` throughout the rollout
+**Что вы должны увидеть:**
+- Поды заменяются по одному (не все сразу)
+- `ALLOWED DISRUPTIONS` меняется по мере завершения/создания подов
+- Как минимум 2 пода остаются в состоянии `Running` на протяжении всего процесса
 
-### Task 5.4: Understand How PDB Works with Rollouts
+### Задача 5.4: разберитесь, как PDB работает с обновлениями
 
-Let's understand the math behind PDB:
+Разберём математику, лежащую в основе PDB:
 
 ```bash
 # Check current state
@@ -309,20 +309,20 @@ kubectl get pdb -n postgres-operator-system
 # With 3 healthy pods and minAvailable=2: 3 - 2 = 1 disruption allowed
 ```
 
-**Important:** PDB does NOT block rollouts! Here's why:
+**Важно:** PDB НЕ блокирует обновления! Вот почему:
 
-1. Initial: 3 healthy pods, `minAvailable=2`, `allowedDisruptions=1`
-2. Rollout starts: new pod created → 4 healthy
-3. `allowedDisruptions = 4 - 2 = 2` → old pod terminated
-4. Now 3 healthy (2 old + 1 new), `allowedDisruptions = 1`
-5. Another new pod created → 4 healthy → old pod terminated
-6. Repeat until complete
+1. Начально: 3 здоровых пода, `minAvailable=2`, `allowedDisruptions=1`
+2. Начинается обновление: создаётся новый под → 4 здоровых
+3. `allowedDisruptions = 4 - 2 = 2` → старый под завершается
+4. Теперь 3 здоровых (2 старых + 1 новый), `allowedDisruptions = 1`
+5. Создаётся ещё один новый под → 4 здоровых → старый под завершается
+6. Повторяется до завершения
 
-**PDB ensures pods are replaced ONE AT A TIME, not all at once!**
+**PDB обеспечивает замену подов ПО ОДНОМУ, а не всех сразу!**
 
-### What PDB Actually Protects Against
+### От чего PDB на самом деле защищает
 
-PDB protects against **external disruptions**, not deployment rollouts:
+PDB защищает от **внешних прерываний**, а не от обновлений развёртывания:
 
 ```bash
 # PDB protects against these scenarios:
@@ -341,9 +341,9 @@ kubectl drain <node-name> --ignore-daemonsets
 # Tools using eviction API respect PDB
 ```
 
-### Verify PDB Rate-Limits Disruptions
+### Убедитесь, что PDB ограничивает частоту прерываний
 
-Watch a rollout to see PDB ensuring pods are replaced one at a time:
+Понаблюдайте за обновлением, чтобы увидеть, как PDB обеспечивает замену подов по одному:
 
 ```bash
 # Ensure we have 3 replicas and minAvailable=2
@@ -364,9 +364,9 @@ kubectl rollout restart deployment/postgres-operator-controller-manager -n postg
 # Press Ctrl+C when done watching
 ```
 
-**Without PDB**, Kubernetes might terminate multiple pods simultaneously during disruptions. **With PDB**, it ensures `minAvailable` pods always remain running.
+**Без PDB** Kubernetes может завершить несколько подов одновременно во время прерываний. **С PDB** он гарантирует, что `minAvailable` подов всегда остаются запущенными.
 
-### Understanding PDB Behavior
+### Понимание поведения PDB
 
 ```bash
 # Check current PDB status
@@ -380,16 +380,16 @@ kubectl get pdb -n postgres-operator-system
 # Example: 3 healthy - 2 minimum = 1 allowed disruption
 ```
 
-**Why `kubectl delete pod` doesn't respect PDB:**
-- `kubectl delete` is a **direct deletion**, not an eviction
-- PDB only protects against the **Eviction API** used by:
-  - `kubectl drain` (node maintenance)
-  - `kubectl rollout restart` (deployment updates)
-  - Cluster Autoscaler (scale down)
-  - Kubernetes scheduler (pod preemption)
-- In production, these tools use eviction, so PDB works as intended
+**Почему `kubectl delete pod` не соблюдает PDB:**
+- `kubectl delete` — это **прямое удаление**, а не вытеснение (eviction)
+- PDB защищает только от **API вытеснения (Eviction API)**, используемого:
+  - `kubectl drain` (обслуживание узла)
+  - `kubectl rollout restart` (обновления развёртывания)
+  - Cluster Autoscaler (уменьшение масштаба)
+  - Планировщик Kubernetes (вытеснение подов, preemption)
+- В продакшене эти инструменты используют вытеснение, поэтому PDB работает как задумано
 
-## Cleanup
+## Очистка
 
 ```bash
 # Undeploy operator
@@ -399,34 +399,34 @@ make undeploy
 kubectl scale deployment -n postgres-operator-system controller-manager --replicas=1
 ```
 
-## Lab Summary
+## Итоги лабораторной
 
-In this lab, you:
-- Enabled leader election via `--leader-elect` flag
-- Deployed multiple replicas by updating `config/manager/manager.yaml`
-- Configured resource limits
-- Tested failover by deleting leader pod
-- Set up Pod Disruption Budget
-- Tested PDB using the Eviction API
+В этой лабораторной вы:
+- Включили выбор лидера через флаг `--leader-elect`
+- Развернули несколько реплик, обновив `config/manager/manager.yaml`
+- Настроили лимиты ресурсов
+- Протестировали отказоустойчивость, удалив под-лидер
+- Настроили бюджет прерывания подов
+- Протестировали PDB с помощью API вытеснения
 
-## Key Learnings
+## Ключевые уроки
 
-1. Leader election is enabled via command-line flag in kubebuilder
-2. Increase replicas in `config/manager/manager.yaml` for HA
-3. Use `make deploy` to apply all configurations
-4. Failover is automatic - standby pods acquire the lease
-5. **PDB only protects against voluntary disruptions** (evictions, not direct deletion)
-6. Use `kubectl drain` or Eviction API to test PDB - NOT `kubectl delete pod`
-7. Health checks are pre-configured by kubebuilder
+1. Выбор лидера включается флагом командной строки в kubebuilder
+2. Увеличивайте число реплик в `config/manager/manager.yaml` для HA
+3. Используйте `make deploy` для применения всех конфигураций
+4. Отказоустойчивость автоматическая — резервные поды получают аренду (lease)
+5. **PDB защищает только от добровольных прерываний** (вытеснений, а не прямого удаления)
+6. Используйте `kubectl drain` или API вытеснения для тестирования PDB — НЕ `kubectl delete pod`
+7. Проверки здоровья предварительно настроены kubebuilder
 
-## Solutions
+## Решения
 
-Complete working solutions for this lab are available in the [solutions directory](../solutions/):
-- [Leader Election Configuration](../solutions/leader-election.go) - Complete leader election setup
-- [HA Deployment](../solutions/ha-deployment.yaml) - HA deployment with PDB
+Полные рабочие решения для этой лабораторной доступны в [каталоге решений](../solutions/):
+- [Leader Election Configuration](../solutions/leader-election.go) — полная настройка выбора лидера
+- [HA Deployment](../solutions/ha-deployment.yaml) — HA-развёртывание с PDB
 
-## Next Steps
+## Дальнейшие шаги
 
-Now let's optimize performance!
+Теперь давайте оптимизируем производительность!
 
-**Navigation:** [← Previous Lab: RBAC](lab-02-rbac-security.md) | [Related Lesson](../lessons/03-high-availability.md) | [Next Lab: Performance →](lab-04-performance-scalability.md)
+**Навигация:** [← Предыдущая лабораторная: RBAC](lab-02-rbac-security.md) | [Связанный урок](../lessons/03-high-availability.md) | [Следующая лабораторная: Производительность →](lab-04-performance-scalability.md)

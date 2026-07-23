@@ -1,18 +1,8 @@
----
-layout: default
-title: Обзор курса
-nav_order: 0
-nav_exclude: true
----
-
-
-
-> ⚠️ Данный проект является переводом оригинального курса [Piyush Jajoo](https://github.com/piyushjajoo), доступного по ссылке [k8s-operators-course](https://github.com/piyushjajoo/k8s-operators-course). Благодарим автора за проделанную работу!
-
 
 # Курс «Разработка операторов Kubernetes»
 
-Полноценный практический и бесплатный курс по созданию готовых к продакшену операторов Kubernetes с помощью Kubebuilder.
+> ⚠️ Данный проект является переводом оригинального курса [Piyush Jajoo](https://github.com/piyushjajoo), доступного по ссылке [k8s-operators-course](https://github.com/piyushjajoo/k8s-operators-course). Благодарим автора за проделанную работу!
+
 
 ## Обзор курса
 

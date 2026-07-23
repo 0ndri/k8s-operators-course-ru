@@ -2,86 +2,86 @@
 layout: default
 title: "07.2 Rbac Security"
 nav_order: 2
-parent: "Module 7: Production Considerations"
-grand_parent: Modules
+parent: "Модуль 7: Подготовка к продакшену"
+grand_parent: Модули
 mermaid: true
 ---
 
-# Lesson 7.2: RBAC and Security
+# Урок 7.2: RBAC и безопасность
 
-**Navigation:** [← Previous: Packaging and Distribution](01-packaging-distribution.md) | [Module Overview](../README.md) | [Next: High Availability →](03-high-availability.md)
+**Навигация:** [← Предыдущий: Упаковка и распространение](01-packaging-distribution.md) | [Обзор модуля](../README.md) | [Далее: Высокая доступность →](03-high-availability.md)
 
-## Introduction
+## Введение
 
-Operators need permissions to manage resources, but they should follow the **principle of least privilege** - only requesting the minimum permissions needed. This lesson covers RBAC (Role-Based Access Control) configuration and security best practices for operators.
+Операторам нужны разрешения для управления ресурсами, но они должны следовать **принципу наименьших привилегий** — запрашивать только минимально необходимые разрешения. Этот урок охватывает конфигурацию RBAC (управление доступом на основе ролей) и лучшие практики безопасности для операторов.
 
-## Theory: RBAC and Security
+## Теория: RBAC и безопасность
 
-Security is critical for production operators - they have **significant permissions** in your cluster.
+Безопасность критически важна для продакшен-операторов — у них **значительные разрешения** в вашем кластере.
 
-### Why Security Matters
+### Почему безопасность важна
 
-**Attack Surface:**
-- Operators run with elevated permissions
-- Compromised operator = compromised cluster
-- Security breaches can be catastrophic
-- Compliance requirements
+**Поверхность атаки:**
+- Операторы работают с повышенными привилегиями
+- Скомпрометированный оператор = скомпрометированный кластер
+- Нарушения безопасности могут быть катастрофическими
+- Требования комплаенса
 
-**Principle of Least Privilege:**
-- Grant minimum permissions needed
-- Reduce attack surface
-- Limit blast radius
-- Follow security best practices
+**Принцип наименьших привилегий:**
+- Предоставляйте минимально необходимые разрешения
+- Уменьшайте поверхность атаки
+- Ограничивайте радиус поражения (blast radius)
+- Следуйте лучшим практикам безопасности
 
-**Defense in Depth:**
-- Multiple security layers
-- RBAC for authorization
-- Network policies for isolation
-- Security contexts for containers
+**Эшелонированная защита (defense in depth):**
+- Несколько уровней безопасности
+- RBAC для авторизации
+- Сетевые политики для изоляции
+- Контексты безопасности для контейнеров
 
-### RBAC Components
+### Компоненты RBAC
 
 **Service Account:**
-- Identity for operator pod
-- Used for authentication
-- Tied to RBAC permissions
+- Идентичность для пода оператора
+- Используется для аутентификации
+- Привязан к разрешениям RBAC
 
 **Role/ClusterRole:**
-- Defines permissions
-- Role: Namespace-scoped
-- ClusterRole: Cluster-scoped
+- Определяет разрешения
+- Role: в рамках пространства имён
+- ClusterRole: в рамках кластера
 
 **RoleBinding/ClusterRoleBinding:**
-- Binds role to service account
-- Grants permissions
-- RoleBinding: Namespace-scoped
-- ClusterRoleBinding: Cluster-scoped
+- Привязывает роль к service account
+- Предоставляет разрешения
+- RoleBinding: в рамках пространства имён
+- ClusterRoleBinding: в рамках кластера
 
-### Security Best Practices
+### Лучшие практики безопасности
 
-**Image Security:**
-- Use distroless images
-- Scan for vulnerabilities
-- Keep images updated
-- Minimal base images
+**Безопасность образов:**
+- Используйте distroless-образы
+- Сканируйте на уязвимости
+- Держите образы обновлёнными
+- Минимальные базовые образы
 
-**Container Security:**
-- Run as non-root
-- Read-only root filesystem
-- Drop all capabilities
-- Use security contexts
+**Безопасность контейнеров:**
+- Запуск не от root
+- Файловая система root только для чтения
+- Отбрасывание всех capabilities
+- Использование контекстов безопасности
 
-**Network Security:**
-- Network policies
-- Limit network access
-- Isolate operator traffic
-- Encrypt communication
+**Сетевая безопасность:**
+- Сетевые политики
+- Ограничение сетевого доступа
+- Изоляция трафика оператора
+- Шифрование связи
 
-Understanding security helps you build secure, production-ready operators.
+Понимание безопасности помогает создавать безопасные, готовые к продакшену операторы.
 
-## RBAC Architecture
+## Архитектура RBAC
 
-Here's how RBAC works for operators:
+Вот как работает RBAC для операторов:
 
 ```mermaid
 graph TB
@@ -100,7 +100,7 @@ graph TB
     style PERMISSIONS fill:#90EE90
 ```
 
-## RBAC Components
+## Компоненты RBAC
 
 ### Service Account
 
@@ -112,7 +112,7 @@ metadata:
   namespace: default
 ```
 
-### Role vs ClusterRole
+### Role против ClusterRole
 
 ```mermaid
 graph TB
@@ -128,12 +128,12 @@ graph TB
     style CLUSTERROLE fill:#FFB6C1
 ```
 
-**Role**: Permissions within a namespace  
-**ClusterRole**: Permissions across all namespaces
+**Role**: разрешения в рамках пространства имён  
+**ClusterRole**: разрешения во всех пространствах имён
 
-## Kubebuilder RBAC Markers
+## Маркеры RBAC Kubebuilder
 
-Kubebuilder generates RBAC automatically from markers in your controller code. These markers are placed just above your `Reconcile` function:
+Kubebuilder генерирует RBAC автоматически из маркеров в коде вашего контроллера. Эти маркеры размещаются прямо над функцией `Reconcile`:
 
 ```go
 // +kubebuilder:rbac:groups=database.example.com,resources=databases,verbs=get;list;watch;create;update;patch;delete
@@ -148,9 +148,9 @@ func (r *DatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 }
 ```
 
-### Generating RBAC Manifests
+### Генерация манифестов RBAC
 
-After updating markers, regenerate RBAC manifests:
+После обновления маркеров перегенерируйте манифесты RBAC:
 
 ```bash
 # Generate RBAC from markers
@@ -160,12 +160,12 @@ make manifests
 cat config/rbac/role.yaml
 ```
 
-The generated manifests are in `config/rbac/`:
-- `role.yaml` - ClusterRole with permissions
-- `role_binding.yaml` - ClusterRoleBinding
-- `service_account.yaml` - ServiceAccount for the operator
+Сгенерированные манифесты находятся в `config/rbac/`:
+- `role.yaml` — ClusterRole с разрешениями
+- `role_binding.yaml` — ClusterRoleBinding
+- `service_account.yaml` — ServiceAccount для оператора
 
-### RBAC Marker Format
+### Формат маркера RBAC
 
 ```mermaid
 graph LR
@@ -179,7 +179,7 @@ graph LR
     style MARKER fill:#90EE90
 ```
 
-## Principle of Least Privilege
+## Принцип наименьших привилегий
 
 ```mermaid
 flowchart TD
@@ -193,23 +193,23 @@ flowchart TD
     style MINIMUM fill:#90EE90
 ```
 
-**Best Practices:**
-- Only request permissions you need
-- Use specific verbs (not `*`)
-- Use specific resources (not `*`)
-- Review generated RBAC
-- Test with minimal permissions
+**Лучшие практики:**
+- Запрашивайте только нужные разрешения
+- Используйте конкретные глаголы (verbs), а не `*`
+- Используйте конкретные ресурсы, а не `*`
+- Проверяйте сгенерированный RBAC
+- Тестируйте с минимальными разрешениями
 
-## Security Best Practices
+## Лучшие практики безопасности
 
-### Practice 1: Use Distroless Images
+### Практика 1: используйте distroless-образы
 
 ```dockerfile
 FROM gcr.io/distroless/static:nonroot
 # No shell, no package manager, minimal attack surface
 ```
 
-### Practice 2: Run as Non-Root
+### Практика 2: запуск не от root
 
 ```yaml
 securityContext:
@@ -221,7 +221,7 @@ securityContext:
     - ALL
 ```
 
-### Practice 3: Read-Only Root Filesystem
+### Практика 3: файловая система root только для чтения
 
 ```yaml
 securityContext:
@@ -234,13 +234,13 @@ volumes:
   emptyDir: {}
 ```
 
-### Practice 4: Network Policies
+### Практика 4: сетевые политики
 
-Network Policies are essential for **defense in depth** - they control network traffic to and from your operator pods, limiting the blast radius if an attacker compromises your operator.
+Сетевые политики (Network Policies) необходимы для **эшелонированной защиты** — они контролируют сетевой трафик к вашим подам оператора и от них, ограничивая радиус поражения, если злоумышленник скомпрометирует ваш оператор.
 
-#### Kubebuilder-Generated Network Policies
+#### Сетевые политики, сгенерированные Kubebuilder
 
-**Good news!** Kubebuilder automatically generates network policies in `config/network-policy/`:
+**Хорошая новость!** Kubebuilder автоматически генерирует сетевые политики в `config/network-policy/`:
 
 ```
 config/network-policy/
@@ -249,14 +249,14 @@ config/network-policy/
 └── kustomization.yaml
 ```
 
-These are **disabled by default**. To enable them, uncomment in `config/default/kustomization.yaml`:
+Они **отключены по умолчанию**. Чтобы включить их, раскомментируйте в `config/default/kustomization.yaml`:
 
 ```yaml
 # [NETWORK POLICY] Protect the /metrics endpoint and Webhook Server
 - ../network-policy  # Uncomment this line
 ```
 
-#### How Kubebuilder's Network Policies Work
+#### Как работают сетевые политики Kubebuilder
 
 ```mermaid
 graph TB
@@ -283,11 +283,11 @@ graph TB
     style OTHER fill:#FF6B6B
 ```
 
-**Kubebuilder's approach:**
-- **Metrics access**: Only namespaces labeled `metrics: enabled` can scrape metrics (port 8443)
-- **Webhook access**: Only namespaces labeled `webhook: enabled` can use webhooks (port 443)
+**Подход Kubebuilder:**
+- **Доступ к метрикам**: только пространства имён с меткой `metrics: enabled` могут собирать метрики (порт 8443)
+- **Доступ к вебхукам**: только пространства имён с меткой `webhook: enabled` могут использовать вебхуки (порт 443)
 
-#### Kubebuilder Network Policy Example
+#### Пример сетевой политики Kubebuilder
 
 ```yaml
 # config/network-policy/allow-metrics-traffic.yaml
@@ -313,9 +313,9 @@ spec:
           protocol: TCP
 ```
 
-#### Labeling Namespaces
+#### Пометка пространств имён метками
 
-For the policies to allow traffic, label your namespaces:
+Чтобы политики разрешали трафик, пометьте свои пространства имён:
 
 ```bash
 # Allow Prometheus to scrape metrics
@@ -325,20 +325,20 @@ kubectl label namespace monitoring metrics=enabled
 kubectl label namespace default webhook=enabled
 ```
 
-#### Key Concepts
+#### Ключевые концепции
 
-| Field | Description |
+| Поле | Описание |
 |-------|-------------|
-| `podSelector` | Selects pods the policy applies to (empty = all pods in namespace) |
-| `policyTypes` | Which direction to control: `Ingress`, `Egress`, or both |
-| `ingress.from` | Who can send traffic TO the selected pods |
-| `namespaceSelector` | Match pods in namespaces with specific labels |
+| `podSelector` | Выбирает поды, к которым применяется политика (пусто = все поды в пространстве имён) |
+| `policyTypes` | Какое направление контролировать: `Ingress`, `Egress` или оба |
+| `ingress.from` | Кто может отправлять трафик К выбранным подам |
+| `namespaceSelector` | Сопоставление подов в пространствах имён с определёнными метками |
 
-**Important:** Network Policies require a CNI plugin that supports them (Calico, Cilium, Weave, etc.). The default Kubernetes networking (kubenet) does NOT enforce Network Policies!
+**Важно:** сетевые политики требуют CNI-плагина, который их поддерживает (Calico, Cilium, Weave и т. д.). Сеть Kubernetes по умолчанию (kubenet) НЕ применяет сетевые политики!
 
-## Security Scanning
+## Сканирование безопасности
 
-### Scanning Flow
+### Процесс сканирования
 
 ```mermaid
 sequenceDiagram
@@ -357,9 +357,9 @@ sequenceDiagram
     Note over Scanner: Tools: Trivy,<br/>Grype, Snyk
 ```
 
-## Kubebuilder Security Configuration
+## Конфигурация безопасности Kubebuilder
 
-Kubebuilder's generated deployment in `config/manager/manager.yaml` includes security best practices:
+Сгенерированное развёртывание Kubebuilder в `config/manager/manager.yaml` включает лучшие практики безопасности:
 
 ```yaml
 spec:
@@ -384,56 +384,56 @@ spec:
             memory: 64Mi
 ```
 
-## Key Takeaways
+## Ключевые выводы
 
-- **RBAC** controls operator permissions
-- **Service Accounts** identify the operator
-- **Roles** are namespaced, **ClusterRoles** are cluster-wide
-- **Kubebuilder markers** generate RBAC automatically via `make manifests`
-- **Principle of least privilege** minimizes risk
-- **Kubebuilder's Dockerfile** uses distroless images by default
-- **Security scanning** finds vulnerabilities
-- **Review `config/rbac/`** to verify generated permissions
-- **Network Policies** provide defense in depth by restricting network traffic
-- Operators typically only need egress to **Kubernetes API (443)** and **DNS (53)**
+- **RBAC** контролирует разрешения оператора
+- **Service Accounts** идентифицируют оператор
+- **Role** ограничены пространством имён, **ClusterRole** — уровнем кластера
+- **Маркеры Kubebuilder** автоматически генерируют RBAC через `make manifests`
+- **Принцип наименьших привилегий** минимизирует риск
+- **Dockerfile от Kubebuilder** по умолчанию использует distroless-образы
+- **Сканирование безопасности** находит уязвимости
+- **Проверяйте `config/rbac/`**, чтобы убедиться в сгенерированных разрешениях
+- **Сетевые политики** обеспечивают эшелонированную защиту, ограничивая сетевой трафик
+- Операторам обычно нужен только egress к **API Kubernetes (443)** и **DNS (53)**
 
-## Understanding for Building Operators
+## Что нужно понимать для создания операторов
 
-When configuring RBAC and security with kubebuilder:
-- Add RBAC markers above your Reconcile function
-- Run `make manifests` to regenerate RBAC
-- Review `config/rbac/role.yaml` for generated permissions
-- Remove unnecessary markers to minimize permissions
-- Use the distroless base image (already in kubebuilder Dockerfile)
-- Configure security contexts in `config/manager/manager.yaml`
-- **Enable network policies by uncommenting `../network-policy` in `config/default/kustomization.yaml`**
-- **Label namespaces with `metrics: enabled` and `webhook: enabled` as needed**
-- Scan images for vulnerabilities before deployment
-- **Test network policies in a cluster with CNI support (Calico, Cilium)**
+При настройке RBAC и безопасности с kubebuilder:
+- Добавляйте маркеры RBAC над функцией Reconcile
+- Запускайте `make manifests` для перегенерации RBAC
+- Проверяйте `config/rbac/role.yaml` на сгенерированные разрешения
+- Удаляйте ненужные маркеры для минимизации разрешений
+- Используйте базовый образ distroless (уже в Dockerfile kubebuilder)
+- Настраивайте контексты безопасности в `config/manager/manager.yaml`
+- **Включайте сетевые политики, раскомментировав `../network-policy` в `config/default/kustomization.yaml`**
+- **Помечайте пространства имён метками `metrics: enabled` и `webhook: enabled` по необходимости**
+- Сканируйте образы на уязвимости перед развёртыванием
+- **Тестируйте сетевые политики в кластере с поддержкой CNI (Calico, Cilium)**
 
-## Related Lab
+## Связанная лабораторная работа
 
-- [Lab 7.2: Configuring RBAC](../labs/lab-02-rbac-security.md) - Hands-on exercises for this lesson
+- [Лабораторная 7.2: Настройка RBAC](../labs/lab-02-rbac-security.md) — практические упражнения для этого урока
 
-## References
+## Источники
 
-### Official Documentation
-- [RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
+### Официальная документация
+- [Авторизация RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 - [Service Accounts](https://kubernetes.io/docs/concepts/security/service-accounts/)
-- [Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+- [Сетевые политики](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 
-### Further Reading
-- **Kubernetes Security** by Andrew Martin and Michael Hausenblas - Security best practices
-- **Kubernetes Operators** by Jason Dobies and Joshua Wood - Chapter 13: Security
-- [Kubernetes Security Best Practices](https://kubernetes.io/docs/concepts/security/)
+### Дополнительное чтение
+- **Kubernetes Security**, Andrew Martin и Michael Hausenblas — лучшие практики безопасности
+- **Kubernetes Operators**, Jason Dobies и Joshua Wood — глава 13: Security
+- [Лучшие практики безопасности Kubernetes](https://kubernetes.io/docs/concepts/security/)
 
-### Related Topics
-- [Pod Security Standards](https://kubernetes.io/docs/concepts/security/pod-security-standards/)
-- [Security Contexts](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
-- [Image Security](https://kubernetes.io/docs/concepts/security/application-security-checklist/#image-security)
+### Смежные темы
+- [Стандарты безопасности подов](https://kubernetes.io/docs/concepts/security/pod-security-standards/)
+- [Контексты безопасности](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+- [Безопасность образов](https://kubernetes.io/docs/concepts/security/application-security-checklist/#image-security)
 
-## Next Steps
+## Дальнейшие шаги
 
-Now that you understand RBAC and security, let's learn about high availability.
+Теперь, когда вы понимаете RBAC и безопасность, давайте изучим высокую доступность.
 
-**Navigation:** [← Previous: Packaging and Distribution](01-packaging-distribution.md) | [Module Overview](../README.md) | [Next: High Availability →](03-high-availability.md)
+**Навигация:** [← Предыдущий: Упаковка и распространение](01-packaging-distribution.md) | [Обзор модуля](../README.md) | [Далее: Высокая доступность →](03-high-availability.md)
